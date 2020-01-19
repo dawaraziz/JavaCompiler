@@ -1,4 +1,4 @@
-package com.company;
+package com.project;
 
 class StateTrans {
     String input;

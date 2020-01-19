@@ -1,6 +1,5 @@
-package com.company;
+package com.project;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +12,13 @@ class State {
     Kind kind;
     List<StateTrans> transitions = new ArrayList<>();
 
-    public State(String name, boolean accept, Kind kind) {
+    State(String name, boolean accept, Kind kind) {
         this.name = name;
         this.accept = accept;
         this.kind = kind;
+    }
+
+    void addTransition(String input, State nextState) {
+        transitions.add(new StateTrans(input, nextState));
     }
 }

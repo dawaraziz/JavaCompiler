@@ -1,4 +1,4 @@
-package com.company;
+package com.project;
 
 public enum Kind {
     ABSTRACT,
@@ -55,5 +55,9 @@ public enum Kind {
     VOID,
     VOLATILE,
     WHILE,
-    VARIABLE
+    VARIABLE,
+    DECNUM,
+    OCTNUM,
+    HEXNUM,
+
 }
