@@ -3,9 +3,9 @@ package com.project;
 import java.util.ArrayList;
 import java.util.List;
 
-class State {
+import static com.project.ScannerDFA.ERRSTATE;
 
-    static State ERRSTATE = new State("ERR", false, null);
+class State {
 
     String name;
     boolean accept;
@@ -20,5 +20,17 @@ class State {
 
     void addTransition(String input, State nextState) {
         transitions.add(new StateTrans(input, nextState));
+    }
+
+    State nextState(char input) {
+        State ret = ERRSTATE;
+
+        for (StateTrans stateTrans : transitions) {
+            for (char c : stateTrans.input.toCharArray()) {
+                if (input == c) return stateTrans.nextState;
+            }
+        }
+
+        return ret;
     }
 }
