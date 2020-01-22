@@ -1,5 +1,6 @@
-package com.project;
+package com.project.scanner;
 
+@SuppressWarnings("SpellCheckingInspection")
 public enum Kind {
     ABSTRACT,
     ASSERT,
