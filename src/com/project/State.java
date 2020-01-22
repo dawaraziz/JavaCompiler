@@ -26,6 +26,7 @@ class State {
         State ret = ERRSTATE;
 
         for (StateTrans stateTrans : transitions) {
+            if (stateTrans.input == null) return stateTrans.nextState;
             for (char c : stateTrans.input.toCharArray()) {
                 if (input == c) return stateTrans.nextState;
             }
