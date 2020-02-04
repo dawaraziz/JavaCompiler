@@ -1,18 +1,12 @@
-package com.project;
+char c = '\b'
+char c = '\t'
+char c = '\n'
+char c = '\f'
+char c = '\r'
+char c = '\"'
+char c = '\''
+char c = '\\'
+char c = '\1'
+String x = "\t\\\234 \b \1 asda \2"
 
-import com.project.scanner.JavaScanner;
-import com.project.scanner.Token;
-
-import java.util.ArrayList;
-
-public class Main {
-    public static void main(String[] args) {
-        ArrayList<Token> tokens = JavaScanner.tokenizeFile(args[0]);
-
-        for (Token token : tokens) {
-            System.out.println(token.getLexeme() + " " + token.getKind());
-        }
-
-        System.exit(0);
-    }
-}
+import x.d.f.q.w.e.as;

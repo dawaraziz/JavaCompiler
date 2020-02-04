@@ -1,7 +1,7 @@
 package com.project.scanner;
 
 public class Token {
-    private final String lexeme;
+    private String lexeme;
     private final Kind kind;
 
     Token(final String lexeme, final Kind kind) {
@@ -15,5 +15,9 @@ public class Token {
 
     public Kind getKind() {
         return kind;
+    }
+
+    public void setLexeme(String lexeme) {
+        this.lexeme = lexeme;
     }
 }

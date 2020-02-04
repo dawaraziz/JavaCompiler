@@ -27,6 +27,7 @@ public class JavaScanner {
         final ArrayList<Token> tokenList = new ArrayList<>();
 
         boolean inBlockComment = false;
+        int lineCounter = 1;
         while (fileScanner.hasNextLine()) {
 
             String line = fileScanner.nextLine();
@@ -34,15 +35,23 @@ public class JavaScanner {
 
                 // Used to checkpoint last accepted state in DFA.
                 int rollbackMarker = 0;
-                State rollbackState = null;
+                ScannerState rollbackState = null;
 
                 // If we are in a block quote, we want to stay in until we exit.
-                State state = inBlockComment ? BLOCK_COMMENT : START_STATE;
+                ScannerState state = inBlockComment ? BLOCK_COMMENT : START_STATE;
 
                 for (int i = 0; i < line.length(); ++i) {
+                    char c = line.charAt(i);
+
+                    // Checks if all our input is within the ASCII range.
+                    if (c > 128) {
+                        System.err.println("Unicode character identified on line " + lineCounter + " at " + i);
+                        System.err.println(line);
+                        System.exit(42);
+                    }
 
                     // Fetch the next DFA state for our input.
-                    state = state.nextState(line.charAt(i));
+                    state = state.nextState(c);
 
                     // Checkpoint the state if it's accepting.
                     if (state.accept) {
@@ -60,7 +69,7 @@ public class JavaScanner {
                                 tokenList.add(new Token(line.substring(0, rollbackMarker), rollbackState.kind));
                             }
                         } else {
-                            System.err.println("Error: no scanned token on line at " + i);
+                            System.err.println("Error: no scanned token on line " + lineCounter + " at " + i);
                             System.err.println(line);
                             System.exit(42);
                         }
@@ -72,6 +81,8 @@ public class JavaScanner {
                 // Cut the lexeme off the line, and rescan it.
                 line = line.substring(rollbackMarker);
             }
+
+            ++lineCounter;
         }
         return tokenList;
     }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import static com.project.scanner.ScannerDFA.ERRSTATE;
 
-class State {
+class ScannerState {
 
     final boolean accept;
     final Kind kind;
@@ -16,25 +16,25 @@ class State {
 
     static class StateTrans {
         final String input;
-        final State nextState;
+        final ScannerState nextState;
 
-        StateTrans(final String input, final State nextState) {
+        StateTrans(final String input, final ScannerState nextState) {
             this.input = input;
             this.nextState = nextState;
         }
     }
 
-    State(final String name, final boolean accept, final Kind kind) {
+    ScannerState(final String name, final boolean accept, final Kind kind) {
         this.name = name;
         this.accept = accept;
         this.kind = kind;
     }
 
-    void addTransition(final String input, final State nextState) {
+    void addTransition(final String input, final ScannerState nextState) {
         transitions.add(new StateTrans(input, nextState));
     }
 
-    State nextState(final char input) {
+    ScannerState nextState(final char input) {
         for (StateTrans stateTrans : transitions) {
             if (stateTrans.input == null) return stateTrans.nextState;
             for (char c : stateTrans.input.toCharArray()) {
