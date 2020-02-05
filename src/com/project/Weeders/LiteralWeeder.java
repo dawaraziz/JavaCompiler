@@ -43,16 +43,12 @@ public class LiteralWeeder {
                 if (literal.charAt(0) != '\\' && literal.length() != 1) {
                     System.err.println("Encountered too many character in CHARACTER_LITERAL: " + token.getLexeme());
                     System.exit(42);
-                }
-
-                if (escapes.containsKey(literal)) {
+                } else if (escapes.containsKey(literal)) {
                     token.setLexeme(escapes.get(literal));
                 } else if (isEscapedOctal(literal)) {
                     token.setLexeme(Integer.toString(getOctalValue(literal)));
-                } else {
-                    System.err.println("Encountered invalid CHARACTER_LITERAL: " + token.getLexeme());
-                    System.exit(42);
                 }
+
             } else if (token.getKind() == Kind.STRING_LITERAL) {
                 String literal = token.getLexeme().substring(1, token.getLexeme().length() - 1);
                 StringBuilder escapedString = new StringBuilder();
