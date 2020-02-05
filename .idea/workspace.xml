@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/$PRODUCT_WORKSPACE_FILE$" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cs444-w20-group33.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/project/scanner/JavaScanner.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/test.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="Fixed bug with single character literals.">
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/JavaParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ParserState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ProductionRule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/Symbol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/Kind.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/Kind.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/ScannerDFA.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/StateTrans.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/test.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -93,6 +85,21 @@
       <option name="presentableId" value="Default" />
       <updated>1579656979548</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added literal escaping weeder.&#10;&#10;Started blocks, statements, and expressions.">
+      <created>1580853550062</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1580853550062</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fixed bug with single character literals.">
+      <created>1580934141222</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1580934141222</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -108,6 +115,11 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added literal escaping weeder.&#10;&#10;Started blocks, statements, and expressions." />
+    <MESSAGE value="Fixed bug with single character literals." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug with single character literals." />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -116,7 +128,33 @@
           <line>1962</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>55</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>116</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>75</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="ScannerDFA.whitespace" language="JAVA" />
+        <watch expression="ScannerDFA.newLine" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
