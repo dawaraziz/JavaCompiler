@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/project/Parser/Parser.java" afterDir="false" />
+    <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="Fixed bug with single character literals.">
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/JavaParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ParserState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ProductionRule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/parser/Symbol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/test.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,11 +27,6 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1WjJH4pMgnNsaeT3weHCJvTPNqV" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -74,6 +73,21 @@
       <option name="presentableId" value="Default" />
       <updated>1579656979548</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added literal escaping weeder.&#10;&#10;Started blocks, statements, and expressions.">
+      <created>1580853550062</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1580853550062</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fixed bug with single character literals.">
+      <created>1580934141222</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1580934141222</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -89,35 +103,10 @@
       </map>
     </option>
   </component>
-  <component name="WindowStateProjectService">
-    <state x="104" y="51" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1580919640545">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state x="104" y="51" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.732@0.23.1280.732" timestamp="1580919640545" />
-    <state x="221" y="23" key="CommitChangelistDialog2" timestamp="1580921048416">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state x="221" y="23" key="CommitChangelistDialog2/0.23.1280.732@0.23.1280.732" timestamp="1580921048416" />
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1580935062853">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1580935062853" />
-    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1580935062852">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1580935062852" />
-    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1580935062852">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1580935062852" />
-    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1580935062852">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1580935062852" />
-    <state x="306" y="24" width="667" height="729" key="find.popup" timestamp="1580922670897">
-      <screen x="0" y="23" width="1280" height="732" />
-    </state>
-    <state x="306" y="24" width="667" height="729" key="find.popup/0.23.1280.732@0.23.1280.732" timestamp="1580922670897" />
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added literal escaping weeder.&#10;&#10;Started blocks, statements, and expressions." />
+    <MESSAGE value="Fixed bug with single character literals." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug with single character literals." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -127,7 +116,33 @@
           <line>1962</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>55</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>116</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>75</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/project/Weeders/LiteralWeeder.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="ScannerDFA.whitespace" language="JAVA" />
+        <watch expression="ScannerDFA.newLine" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
