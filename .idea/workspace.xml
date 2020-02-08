@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="Fixed bug with single character literals.">
-      <change afterPath="$PROJECT_DIR$/src/com/project/parser/JavaParser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ParserState.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/project/parser/ProductionRule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/project/parser/Symbol.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/project/Parser/Jlalr1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/CFG.cfg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/CFG_BACKUP.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/scanner/ScannerDFA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/scanner/ScannerDFA.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/scanner/ScannerDFA.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/tests/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/tests/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/project/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/test.txt" afterDir="false" />
     </list>
@@ -30,7 +33,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/com/project/scanner" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/resources" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
   </component>
   <component name="RecentsManager">
@@ -38,10 +41,24 @@
       <recent name="com.project.scanner" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/resources" />
       <recent name="C:\Users\Alfred\Desktop\Git Repos\cs444-w20-group33\src\com\project\scanner" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Jlalr1">
+    <configuration name="Jlalr1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.project.Parser.Jlalr1" />
+      <module name="cs444-w20-group33" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.project.Parser.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.project.Main" />
       <module name="cs444-w20-group33" />
@@ -56,8 +73,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.Jlalr1" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Jlalr1" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -107,6 +129,36 @@
     <MESSAGE value="Added literal escaping weeder.&#10;&#10;Started blocks, statements, and expressions." />
     <MESSAGE value="Fixed bug with single character literals." />
     <option name="LAST_COMMIT_MESSAGE" value="Fixed bug with single character literals." />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1581177602090">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581177602090" />
+    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1581177602089">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1581177602089" />
+    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1581177602089">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1581177602089" />
+    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1581177602089">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1581177602089" />
+    <state x="0" y="23" width="1280" height="732" key="MergeDialog" timestamp="1581157734094">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state x="0" y="23" width="1280" height="732" key="MergeDialog/0.23.1280.732@0.23.1280.732" timestamp="1581157734094" />
+    <state x="353" y="112" key="MultipleFileMergeDialog" timestamp="1581157734169">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state x="353" y="112" key="MultipleFileMergeDialog/0.23.1280.732@0.23.1280.732" timestamp="1581157734169" />
+    <state x="429" y="313" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1581157517903">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state x="429" y="313" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.732@0.23.1280.732" timestamp="1581157517903" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

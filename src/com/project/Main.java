@@ -1,5 +1,6 @@
 package com.project;
 
+import com.project.Parser.Jlalr1;
 import com.project.Weeders.LiteralWeeder;
 import com.project.scanner.JavaScanner;
 import com.project.scanner.Token;
@@ -10,7 +11,6 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Token> tokens = JavaScanner.tokenizeFile(args[0]);
         LiteralWeeder.weed(tokens);
-
         // Parser
 
 
