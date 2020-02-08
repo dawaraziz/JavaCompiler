@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="Fixed bug with single character literals.">
+      <change afterPath="$PROJECT_DIR$/src/resources/CFGtest.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/CFG.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/parsetable.lr1" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/parsetable.lr1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/resources/parse_table.jlr1" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/parse_table.jlr1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/parsetable.lr1" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/parsetable.lr1" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,22 +149,38 @@
       <screen x="0" y="23" width="1280" height="732" />
     </state>
     <state x="184" y="78" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.732@0.23.1280.732" timestamp="1581181154537" />
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1581188241632">
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1581204202814">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581188241632" />
-    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1581188241631">
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581204202814" />
+    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1581204202813">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1581188241631" />
-    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1581188241630">
+    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1581204202813" />
+    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1581204202812">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1581188241630" />
-    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1581188241631">
+    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1581204202812" />
+    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1581204202814">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1581188241631" />
+    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1581204202814" />
+    <state width="1238" height="227" key="GridCell.Tab.1.bottom" timestamp="1581190987578">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="227" key="GridCell.Tab.1.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581190987578" />
+    <state width="1238" height="227" key="GridCell.Tab.1.center" timestamp="1581190987578">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="227" key="GridCell.Tab.1.center/0.23.1280.732@0.23.1280.732" timestamp="1581190987578" />
+    <state width="1238" height="227" key="GridCell.Tab.1.left" timestamp="1581190987577">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="227" key="GridCell.Tab.1.left/0.23.1280.732@0.23.1280.732" timestamp="1581190987577" />
+    <state width="1238" height="227" key="GridCell.Tab.1.right" timestamp="1581190987578">
+      <screen x="0" y="23" width="1280" height="732" />
+    </state>
+    <state width="1238" height="227" key="GridCell.Tab.1.right/0.23.1280.732@0.23.1280.732" timestamp="1581190987578" />
     <state x="0" y="23" width="1280" height="732" key="MergeDialog" timestamp="1581157734094">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
