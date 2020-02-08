@@ -3,16 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="2165386e-5c69-4cca-9bbe-112e5093fefa" name="Default Changelist" comment="Fixed bug with single character literals.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Error.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Error.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Grammar.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Grammar.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Jlalr1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Jlalr1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Production.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Production.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Util.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/com/project/Parser/Util.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs444-w20-group33/resources/CFG.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/project/Parser/Jlalr1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/project/Parser/Jlalr1.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/resources/CFG.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/resources/CFG.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/CFG.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/parse_table.jlr1" beforeDir="false" afterPath="$PROJECT_DIR$/src/resources/parse_table.jlr1" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,22 +147,22 @@
       <screen x="0" y="23" width="1280" height="732" />
     </state>
     <state x="184" y="78" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.732@0.23.1280.732" timestamp="1581181154537" />
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1581185108687">
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom" timestamp="1581188241632">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581185108686" />
-    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1581185108685">
+    <state width="1238" height="182" key="GridCell.Tab.0.bottom/0.23.1280.732@0.23.1280.732" timestamp="1581188241632" />
+    <state width="1238" height="182" key="GridCell.Tab.0.center" timestamp="1581188241631">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1581185108685" />
-    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1581185108685">
+    <state width="1238" height="182" key="GridCell.Tab.0.center/0.23.1280.732@0.23.1280.732" timestamp="1581188241631" />
+    <state width="1238" height="182" key="GridCell.Tab.0.left" timestamp="1581188241630">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1581185108685" />
-    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1581185108685">
+    <state width="1238" height="182" key="GridCell.Tab.0.left/0.23.1280.732@0.23.1280.732" timestamp="1581188241630" />
+    <state width="1238" height="182" key="GridCell.Tab.0.right" timestamp="1581188241631">
       <screen x="0" y="23" width="1280" height="732" />
     </state>
-    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1581185108685" />
+    <state width="1238" height="182" key="GridCell.Tab.0.right/0.23.1280.732@0.23.1280.732" timestamp="1581188241631" />
     <state x="0" y="23" width="1280" height="732" key="MergeDialog" timestamp="1581157734094">
       <screen x="0" y="23" width="1280" height="732" />
     </state>

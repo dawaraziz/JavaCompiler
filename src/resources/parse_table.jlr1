@@ -64,7 +64,7 @@ while
 ||
 }
 ~
-106
+104
 S
 H
 PACKAGEopt
@@ -74,8 +74,6 @@ CLASS_NAME
 PACKAGE_NAME
 TYPE_NAME
 EXPRESSION_NAME
-AMBIGUOUS_NAME
-METHOD_NAME
 PACKAGE_OR_TYPE_NAME
 LITERAL
 REFERENCE_TYPE
@@ -172,7 +170,7 @@ FIELD_ACCESS
 METHOD_INVOCATION
 ARRAY_ACCESS
 S
-226
+222
 S BOF H EOF
 H PACKAGEopt MULT_IMPORTopt TYPE_DECLARATIONopt
 CLASS_NAME VARIABLE_ID
@@ -181,13 +179,9 @@ PACKAGE_NAME PACKAGE_NAME . VARIABLE_ID
 TYPE_NAME VARIABLE_ID
 TYPE_NAME PACKAGE_OR_TYPE_NAME . VARIABLE_ID
 EXPRESSION_NAME VARIABLE_ID
-EXPRESSION_NAME AMBIGUOUS_NAME . VARIABLE_ID
-METHOD_NAME VARIABLE_ID
-METHOD_NAME AMBIGUOUS_NAME . VARIABLE_ID
+EXPRESSION_NAME EXPRESSION_NAME . VARIABLE_ID
 PACKAGE_OR_TYPE_NAME VARIABLE_ID
 PACKAGE_OR_TYPE_NAME PACKAGE_OR_TYPE_NAME . VARIABLE_ID
-AMBIGUOUS_NAME VARIABLE_ID
-AMBIGUOUS_NAME AMBIGUOUS_NAME . VARIABLE_ID
 LITERAL INTEGER_LITERAL
 LITERAL CHARACTER_LITERAL
 LITERAL STRING_LITERAL
@@ -393,7 +387,7 @@ ARRAY_CREATION_EXPRESSION new NON_ARRAY_TYPE [ EXPRESSIONopt ]
 FIELD_ACCESS PRIMARY_EXPRESSION . VARIABLE_ID
 FIELD_ACCESS super . VARIABLE_ID
 FIELD_ACCESS CLASS_NAME . super . VARIABLE_ID
-METHOD_INVOCATION METHOD_NAME ( ARGUMENT_LISTopt )
+METHOD_INVOCATION EXPRESSION_NAME ( ARGUMENT_LISTopt )
 METHOD_INVOCATION PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt )
 METHOD_INVOCATION super . VARIABLE_ID ( ARGUMENT_LISTopt )
 METHOD_INVOCATION CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt )
@@ -402,1175 +396,111 @@ ARRAY_ACCESS PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ]
 Computing start state
 Computing goto actions
 Going
+.Going
+.....Going
 Going
-......Going
+...Going
+.Going
+Going
+.....Going
+Going
+.Going
+.Going
+Going
+...Going
+.Going
+Going
+Going
+..............Going
+.Going
+Going
+..Going
+.Going
+Going
+Going
+Going
+...Going
+Going
+...Going
+Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+...Going
 .....Going
 Going
 Going
+.Going
 Going
+............Going
 Going
 Going
-Going
-Going
-Going
-Going
-Going
-Going
-..................................................Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-..................................Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-...Going
-................Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-..........Going
-Going
-Going
-......Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-................Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.......Going
-Going
-Going
-Going
+...........Going
 ....Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-Going
 ...Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+..Going
+Going
+.Going
+Going
 ........Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-....Going
-....Going
-Going
-Going
-Going
-Going
-Going
-Going
-...............................................Going
-Going
-Going
-.Going
-.Going
-.........................................Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-............................................Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-.............Going
-.Going
-Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-..........................................Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-.....Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-...Going
-Going
-.Going
-.Going
-..........Going
-.Going
-Going
-..Going
-..Going
-Going
-................Going
-Going
-Going
-.Going
-.Going
-Going
-Going
 .Going
-.Going
-..Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-.Going
-.....Going
-Going
-Going.
-.Going
-..Going
-Going
-...Going
-Going
-.Going
-.Going
-..........Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-..Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-..Going
-Going
-Going
-.Going
-Going
 Going
 .Going
 .Going
-Going
-.Going
-Going
-Going
-....Going
-.Going
-Going
-Going
-..Going.
-.........Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.............................................Going
-..........................................Going
-..Going
-.Going
 .Going
-Going
-Going
-.Going
-.....Going
-...Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-..........Going
-Going
-.Going
-Going
-..Going
-..Going
-Going
-.Going
-Going
-Going.
-Going
-.Going
 .Going
-Going
-Going
-.Going
-..Going
-Going
 .Going
-Going
-Going
 .Going
 Going
 ..Going
 Going
 Going
 Going
-.Going
 Going
-.Going
 Going
-.Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-...Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-..Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-..Going
-Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-...Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-....Going
-Going
-Going
-Going
-Going
-Going
-.Going
-...Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-.....Going
-...Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-..........Going
-Going
-.Going
-Going
-..Going
-..Going
-Going
-.Going
-Going
-Going.
-Going
-.Going
-.Going
-Going
-Going
-.Going
-.Going
-.Going.
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going.
-.Going
-Going
-.Going
-Going
-Going
-.Going
-.....Going
-..........Going
-.Going
-.Going
-Going
-Going
-...Going
-Going
-.Going
-.Going
-Going
-.Going
-Going
-..Going
-..Going
-.Going
-Going.
-Going
-.Going
-Going
-..Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going.
-Going
-.Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going.
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-............................Going
-Going
-...Going
-.Going
-...Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-..Going
-Going
-..................Going
-.Going
-.Going
-...Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.....Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-...Going
-.Going
-.Going
-...Going
-Going
-Going
-Going
-Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-.Going
-Going
-...Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-...Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-..Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-Going.
-Going
-.Going
-Going
-Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-............................................Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-..Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-...Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-..Going.
-.Going
-.Going
-.Going
-.Going
-..Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-.Going
-Going
-.Going
-.....Going
-Going
-.Going
-.Going
-..Going
-Going
-...Going
-Going
-.Going
-.Going
-..........Going
-Going
-.Going
-Going
-.Going
-Going.
-Going
-Going
-Going
-Going
-..Going
-Going
-.Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-..Going
-Going
-Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-......Going
-Going
-Going
-Going
-Going
-Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-.Going
-.Going
-Going
-Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-.Going
-Going
-..Going
 .Going
 ............Going
 Going
@@ -1580,66 +510,338 @@ Going
 Going
 Going
 Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
-Going
 .Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
+..............Going
 Going
 Going
 .Going
 Going
-.Going
-.Going
-.Going
-.Going
-.Going
+Going
 ...Going
 Going
 Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
 Going
 Going
-.Going
-.Going
 Going
-.Going
-.Going
-..Going
+Going
 Going
 Going
 Going.
+Going
+Going
+Going
+....Going
+Going
+....Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+..Going
+.Going
 .Going
 .Going
 Going
 Going
+Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+Going
+.....Going
+Going
+...Going
+.Going
+....Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+........................................Going
+Going
+.Going
+Going
+Going
+Going
+..........................................Going
+Going
+.Going
+Going
+Going
+...Going
+...Going
+......................................................Going
+.Going
+Going
+.Going
+.........Going
+.Going
+.Going
+Going
+Going
+Going
+.....Going
+.............Going
+Going
+..Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+..Going
+.Going
+Going
+Going
+.Going
+.Going
+..Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+..........................................Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+Going
+Going
+.Going
+...Going
+.Going
+Going
+.Going
+Going
+.Going
+..Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+...........................................Going
+........................................Going
+...Going
+...Going
+.Going
+Going
+.Going
+.Going
+.........Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+..Going
+Going
+..Going
+.....Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+.Going
+..Going
+Going
+Going
+.Going
+Going
+..Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+..Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+..Going
+...Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going.
+Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+.Going
+Going
+..Going
+Going
+Going
+...Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+.........Going
+...Going
+...Going
+.Going
+Going
+.Going
+Going
+..Going
+.Going
+.....Going
+..Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+..Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+.........Going
+...Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+..Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+...Going
+...Going
+.Going
+Going
+.Going
+.Going
+.........Going
+.Going
 .Going
 Going
 Going
@@ -1647,26 +849,55 @@ Going
 ..Going
 Going
 Going
+..Going
+.....Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
 Going
 .Going
 Going
 .Going
 Going
 Going
+.Going.
+.Going
+Going
+.Going
+Going
+.Going
+Going
+...Going
+...Going
+.Going
+Going
+.Going
+.........Going
+.Going
 .Going
 .Going
 Going
 Going
-.Going
-.Going
 Going
-.Going
-.Going
 ..Going
 Going
-Going
-Going
 ..Going
+.Going
+...Going
+......Going
+Going
+Going
+Going
 Going
 Going
 .Going
@@ -1674,11 +905,6 @@ Going
 Going
 Going
 Going
-.Going
-Going
-Going
-Going
-Going
 Going
 .Going
 .Going
@@ -1686,40 +912,11 @@ Going
 Going
 Going
 Going
-Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-.Going
-.Going
+.Going.........................
 Going
 Going
 Going
 Going
-Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-.Going
-.Going
-.Going
-Going
-.Going
-Going
-Going
-.Going
-Going
-Going
-.Going
-.Going
-..Going
 Going
 Going
 Going
@@ -1731,28 +928,320 @@ Going
 Going
 Going
 Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
 .Going
 .Going
 .Going
 Going
 Going
 .Going
+..........................Going
+Going
+.Going
+...Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
 .Going
 .Going
 .Going
 Going
 Going
+..Going.
+Going
+Going.
+Going.
 Going
 .Going
 Going
-.Going
-..Going
+Going
+Going
 Going
 Going
 .Going
 ...Going
 Going
 Going
+..Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+..Going
+Going
+Going
+..Going
+..Going
+.Going
+...Going
+.Going
+Going
+.Going
+Going
+...Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.....Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+...Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+...Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+..Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+..Going
+...Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+..Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+..Going
+...Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+....Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+...Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+..Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+...................Going
+.Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
 .Going
 Going
 Going
@@ -1760,6 +1249,312 @@ Going
 Going
 .Going
 Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+..Going
+Going
+Going
+Going
+Going
+Going
+...Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+...Going
+Going
+Going
+.Going
+Going
+Going
+...Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+..Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+..Going
+Going.
+Going
+..Going
+.Going
+Going.
+Going.
+.Going
+Going
+Going
+..Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+..Going
+Going
+Going
+.Going
+Going
+..Going
+.Going
+Going.
+Going.
+.Going
+.Going
+.Going
+.Going
+...Going
+Going
+.Going
+Going
+..Going
+Going
+..Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+..........................................Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+..Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+...Going
+.Going
+Going
+Going
+..Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+.........Going
+...Going
+...Going
+.Going
+Going
+.Going
+Going
+..Going
+.Going
+.....Going
+..Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+Going
+..Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+.Going
+Going
+.Going
+.Going
+Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+Going
+.....Going
+Going
+.Going
+Going
+Going
+Going
 .Going
 .Going
 .Going
@@ -1768,70 +1563,1382 @@ Going
 Going
 .Going
 Going
-Going
-.Going
-.Going
-.Going
-Going
-Going
-Going
-.Going
-Going
-Going
 .Going
 Going
 .Going
 Going
 .Going
+.Going
+Going
+Going
 Going
 .Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+..Going
+Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+..Going
+.Going
+...Going
+.Going
+.Going
+.Going
+Going
+..Going
+.Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+..Going
+Going
+Going
+Going
+......Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+Going
+Going
+Going
+..Going
+Going
+Going
+Going
+Going
+Going
+...Going
+.Going
+Going
+Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+Going
+...Going
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.....Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+.Going
+...Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+Going
+....Going
+Going.
+.Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+.Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+.Going
+Going
+Going
+Going
+Going
+Going
+Going
+.Going
+.Going
+.Going
+Going
+.Going
+.Going
+Going
+Going
+.Going
+Going
+Going
+.Going
+Going
+Going
+.Going
+.Going
+Going
+Going
+.Going
+.Going
+Going
+.Going
+Going
 Computing reduce actions
-Going
 Error performing LR(1) construction: com.project.Parser.Error: Conflict on symbol ( in state 
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, instanceof)
-(AMBIGUOUS_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, .)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, new)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, INTEGER_LITERAL)
-(METHOD_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, ()
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, short)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, super)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, -)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, &)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, FALSE)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, [)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, TRUE)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, VARIABLE_ID)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, byte)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, int)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, while)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, %)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, /)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, })
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, char)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, >)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, boolean)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, <=)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, >=)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, else)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, CHARACTER_LITERAL)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, ==)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, &&)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, return)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, ||)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, if)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, this)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, {)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, NULL)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, *)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, |)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, !=)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, +)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, ()
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, ;)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, STRING_LITERAL)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, for)
-(EXPRESSION_NAME -> AMBIGUOUS_NAME . VARIABLE_ID ##, <)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, ()
+(FIELD_ACCESS -> super . VARIABLE_ID ##, boolean)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), char)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, FALSE)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, })
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), short)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, super)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), this)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), FALSE)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), <)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, -)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, ==)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), [)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, char)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), return)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, |)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), while)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, &&)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), >)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), -)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), for)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, &)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, <=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), if)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), ()
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), boolean)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), new)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, <)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, else)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), NULL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, %)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), *)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), <=)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, while)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), })
+(FIELD_ACCESS -> super . VARIABLE_ID ##, STRING_LITERAL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, short)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), else)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), ;)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, new)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), ==)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, NULL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, return)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), |)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), instanceof)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), super)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, byte)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), &&)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), INTEGER_LITERAL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, TRUE)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, .)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, >)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), VARIABLE_ID)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), &)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, VARIABLE_ID)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, /)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, this)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), /)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), int)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), byte)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), TRUE)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, *)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, {)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), %)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, [)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), .)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), >=)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, >=)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, ;)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), +)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, INTEGER_LITERAL)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), STRING_LITERAL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, if)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), {)
+(METHOD_INVOCATION -> super . VARIABLE_ID ## ( ARGUMENT_LISTopt ), CHARACTER_LITERAL)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, int)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, for)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, instanceof)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, +)
+(FIELD_ACCESS -> super . VARIABLE_ID ##, CHARACTER_LITERAL)
 
 Possible actions:
-reduce METHOD_NAME AMBIGUOUS_NAME . VARIABLE_ID
-reduce EXPRESSION_NAME AMBIGUOUS_NAME . VARIABLE_ID
+shift 
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, <)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, |)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), [)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, !=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, >=)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_OR_EXPRESSION || CONDITIONAL_AND_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, <=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, <)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, %)
+(EXPRESSION_NAME -> ## VARIABLE_ID, ()
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, <=)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, +)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, |)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, >=)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), +)
+(ASSIGNMENT_EXPRESSION -> ## CONDITIONAL_OR_EXPRESSION, ,)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), -)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, ==)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), &&)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, ||)
+(EXPRESSION -> ## ASSIGNMENT_EXPRESSION, ,)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, ))
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, %)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, <)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, =)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, !=)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, >)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), ,)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, <)
+(LITERAL -> ## STRING_LITERAL, /)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, /)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, ))
+(LITERAL -> ## STRING_LITERAL, %)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), >=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, .)
+(LITERAL -> ## FALSE, instanceof)
+(LITERAL -> ## TRUE, ))
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], >=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), <)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, ,)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, this)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, ==)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), .)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, ||)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, <=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), &&)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), .)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, *)
+(INCLUSIVE_OR_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION | AND_EXPRESSION, ))
+(ARGUMENT_LIST -> ## EXPRESSION, ))
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, %)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, |)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, +)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, -)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, |)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, instanceof)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, NULL)
+(LITERAL -> ## NULL, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, *)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, &)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, >=)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), &)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, >)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, *)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], <)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, instanceof)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, /)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, ))
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, -)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, ==)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, >=)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], >)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), <)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], |)
+(ARGUMENT_LIST -> ## ARGUMENT_LIST , EXPRESSION, ))
+(FIELD_ACCESS -> ## super . VARIABLE_ID, =)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), >=)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), ))
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, ||)
+(LITERAL -> ## INTEGER_LITERAL, <)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, <=)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, *)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, >=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, %)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, -)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), >=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, .)
+(LITERAL -> ## CHARACTER_LITERAL, [)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, *)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, ,)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], ,)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), return)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, <)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, ()
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, +)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), ,)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, +)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, ,)
+(EXPRESSION_NAME -> ## VARIABLE_ID, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, .)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, <=)
+(LITERAL -> ## STRING_LITERAL, |)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, ==)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), &)
+(LITERAL -> ## INTEGER_LITERAL, -)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, &&)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, <)
+(EXPRESSION_NAME -> ## VARIABLE_ID, <)
+(INCLUSIVE_OR_EXPRESSION -> ## AND_EXPRESSION, |)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, +)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, >=)
+(LITERAL -> ## NULL, [)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, &&)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, +)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, |)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, >=)
+(EXPRESSION_NAME -> ## VARIABLE_ID, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), +)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], ))
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, -)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), instanceof)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, *)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, instanceof)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, ==)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, -)
+(LITERAL -> ## NULL, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, |)
+(LITERAL -> ## TRUE, %)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, &)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), ||)
+(LITERAL -> ## CHARACTER_LITERAL, &&)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), !=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, |)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, +)
+(LITERAL -> ## CHARACTER_LITERAL, >=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, >)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, =)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, ,)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, ,)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, /)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], &)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, ||)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), .)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), [)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, ==)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, %)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, %)
+(LITERAL -> ## TRUE, !=)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, ||)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), >)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, ()
+(LITERAL -> ## INTEGER_LITERAL, ,)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, <=)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), ))
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, &)
+(LITERAL -> ## NULL, ||)
+(ASSIGNMENT -> ## LEFT_HAND_SIDE = ASSIGNMENT_EXPRESSION, ,)
+(LITERAL -> ## FALSE, *)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), FALSE)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, >)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, !=)
+(LITERAL -> ## NULL, ))
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, ==)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, -)
+(LITERAL -> ## TRUE, [)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, ==)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, [)
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, &)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, ==)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), |)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, <=)
+(EXPRESSION_NAME -> ## VARIABLE_ID, instanceof)
+(LITERAL -> ## TRUE, *)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, *)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, STRING_LITERAL)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, /)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, -)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, ==)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, |)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, <=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, +)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, %)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, >=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, &)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], -)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, &&)
+(LITERAL -> ## TRUE, |)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, ,)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), |)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, .)
+(EXPRESSION_NAME -> ## VARIABLE_ID, >)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), *)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], instanceof)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, instanceof)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, <)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), ))
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), ==)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), new)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, ==)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), if)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, >=)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), |)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), %)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, instanceof)
+(LITERAL -> ## STRING_LITERAL, ==)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), ;)
+(LITERAL -> ## CHARACTER_LITERAL, %)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, <=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, !=)
+(LITERAL -> ## CHARACTER_LITERAL, !=)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, -)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, /)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), CHARACTER_LITERAL)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, <)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, +)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, new)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), instanceof)
+(CONDITIONAL_AND_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION, ||)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), instanceof)
+(LITERAL -> ## CHARACTER_LITERAL, >)
+(INCLUSIVE_OR_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION | AND_EXPRESSION, ,)
+(ARGUMENT_LISTopt -> ## EPSILON, ))
+(LITERAL -> ## TRUE, -)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), while)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, +)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), -)
+(LITERAL -> ## NULL, +)
+(LITERAL -> ## CHARACTER_LITERAL, ,)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), /)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, %)
+(EXPRESSION_NAME -> ## VARIABLE_ID, ||)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, ,)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], <=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, ,)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, ))
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, |)
+(LEFT_HAND_SIDE -> ## EXPRESSION_NAME, =)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, FALSE)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, *)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, !=)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), *)
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, !=)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, >)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, &)
+(LITERAL -> ## INTEGER_LITERAL, ==)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, &)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, ||)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), .)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, [)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION, ))
+(ASSIGNMENT_EXPRESSION -> ## ASSIGNMENT, ,)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, .)
+(LITERAL -> ## FALSE, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, ==)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), -)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, +)
+(LITERAL -> ## NULL, ,)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, ||)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, ==)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), !=)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], =)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, !=)
+(LITERAL -> ## CHARACTER_LITERAL, -)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, ==)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, instanceof)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, !)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, +)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), TRUE)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, !=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, !=)
+(LITERAL -> ## FALSE, ,)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), >)
+(LITERAL -> ## FALSE, /)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], +)
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, &&)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), <)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), ))
+(LEFT_HAND_SIDE -> ## FIELD_ACCESS, =)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, .)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, -)
+(LITERAL -> ## NULL, >)
+(EXPRESSION_NAME -> ## VARIABLE_ID, >=)
+(LITERAL -> ## INTEGER_LITERAL, ))
+(LITERAL -> ## INTEGER_LITERAL, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, &&)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, &&)
+(ARGUMENT_LIST -> ## EXPRESSION, ,)
+(LITERAL -> ## CHARACTER_LITERAL, +)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, <)
+(LITERAL -> ## NULL, <)
+(LITERAL -> ## FALSE, &&)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, <=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, ==)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, |)
+(INCLUSIVE_OR_EXPRESSION -> ## AND_EXPRESSION, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, ==)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, <)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), <=)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, -)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, instanceof)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], >=)
+(EXPRESSION_NAME -> ## VARIABLE_ID, &)
+(LITERAL -> ## NULL, &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, ,)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), &&)
+(LITERAL -> ## FALSE, .)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, [)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, >=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, ==)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, %)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, >=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, /)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), +)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, *)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, ,)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, +)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, instanceof)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, <=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, |)
+(LITERAL -> ## FALSE, ))
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), ||)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, <=)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, <)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, -)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), ,)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], &&)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), <)
+(LITERAL -> ## INTEGER_LITERAL, +)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, &&)
+(LITERAL -> ## STRING_LITERAL, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), boolean)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, new)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, &)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], >=)
+(CONDITIONAL_AND_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION, &&)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], &)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, <=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, &)
+(ASSIGNMENT_EXPRESSION -> ## ASSIGNMENT, ))
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, |)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], >)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, ))
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], /)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), [)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), |)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, &&)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, &&)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, *)
+(EXPRESSION_NAME -> ## VARIABLE_ID, !=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, <)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), >)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], ,)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, |)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, ,)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, ,)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), +)
+(EXPRESSION_NAME -> ## VARIABLE_ID, -)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, ||)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, %)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), NULL)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, &)
+(LITERAL -> ## NULL, !=)
+(CONDITIONAL_AND_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION && INCLUSIVE_OR_EXPRESSION, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, >)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, &)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), ||)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], /)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), .)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, [)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, *)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, &)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, ==)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, !)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], &&)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), ==)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, *)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), &)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, -)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), ()
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, ,)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, ==)
+(LITERAL -> ## NULL, instanceof)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], .)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, &)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, .)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, super)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), instanceof)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], ||)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), +)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, ==)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION, ,)
+(EXPRESSION_NAME -> ## VARIABLE_ID, +)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, ,)
+(LITERAL -> ## CHARACTER_LITERAL, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, %)
+(EXPRESSION_NAME -> ## VARIABLE_ID, %)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), !=)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), >)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, ,)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, >=)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, instanceof)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, !=)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, ))
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), <=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, <=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, !=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, instanceof)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, ||)
+(EXPRESSION_NAME -> ## VARIABLE_ID, /)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, !=)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), <)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, -)
+(EXPRESSION_NAME -> ## VARIABLE_ID, <=)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, !=)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, &&)
+(LITERAL -> ## INTEGER_LITERAL, |)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), instanceof)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), else)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, |)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), for)
+(LITERAL -> ## STRING_LITERAL, !=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), %)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, ==)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, <)
+(ASSIGNMENT -> ## LEFT_HAND_SIDE = ASSIGNMENT_EXPRESSION, ))
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], >)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, <=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, ))
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, |)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, >)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, ,)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, >)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, >)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), <=)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, instanceof)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), /)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, /)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, +)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, /)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), ))
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, !=)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, ~)
+(LITERAL -> ## NULL, &)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, <=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, ==)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, *)
+(LITERAL -> ## FALSE, >)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), &&)
+(LITERAL -> ## CHARACTER_LITERAL, *)
+(LITERAL -> ## INTEGER_LITERAL, [)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], -)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), <=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, ))
+(LITERAL -> ## INTEGER_LITERAL, /)
+(LITERAL -> ## CHARACTER_LITERAL, instanceof)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, &&)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], !=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, ,)
+(LITERAL -> ## FALSE, +)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), [)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], <=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, instanceof)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, ,)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, ))
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, -)
+(LITERAL -> ## FALSE, ||)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, <=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, +)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, >)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), &)
+(LITERAL -> ## FALSE, !=)
+(LITERAL -> ## TRUE, ,)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, +)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], %)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, +)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, <)
+(LITERAL -> ## STRING_LITERAL, instanceof)
+(CONDITIONAL_AND_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION, ))
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), [)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), instanceof)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), ||)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, *)
+(LITERAL -> ## TRUE, &)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, >=)
+(LITERAL -> ## FALSE, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, [)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, <)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, ,)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, &&)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, *)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, ==)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), >)
+(INCLUSIVE_OR_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION | AND_EXPRESSION, |)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], ,)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_OR_EXPRESSION || CONDITIONAL_AND_EXPRESSION, ,)
+(LITERAL -> ## FALSE, |)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), -)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, /)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, &)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, &&)
+(LITERAL -> ## CHARACTER_LITERAL, |)
+(CONDITIONAL_AND_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION, ,)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, &&)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, ))
+(LITERAL -> ## INTEGER_LITERAL, &&)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, %)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, >=)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, %)
+(EXPRESSION_NAME -> ## VARIABLE_ID, [)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, &)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, FALSE)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, <=)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), *)
+(LITERAL -> ## INTEGER_LITERAL, instanceof)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), &&)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, instanceof)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, >)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, <)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, !=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), %)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), +)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, |)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, *)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, instanceof)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), %)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, %)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, &)
+(CONDITIONAL_AND_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION && INCLUSIVE_OR_EXPRESSION, &&)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, /)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), <)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, %)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, [)
+(INCLUSIVE_OR_EXPRESSION -> ## AND_EXPRESSION, ))
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, ||)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), %)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, !=)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], ==)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), instanceof)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, &)
+(LITERAL -> ## NULL, .)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, ,)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, -)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], %)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, .)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, <)
+(LITERAL -> ## STRING_LITERAL, *)
+(LITERAL -> ## NULL, /)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), <)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), >=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, >)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), .)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, <=)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), &)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, +)
+(LITERAL -> ## TRUE, ==)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, ||)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, |)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), &&)
+(LITERAL -> ## STRING_LITERAL, ,)
+(EXPRESSION_NAME -> ## VARIABLE_ID, |)
+(LITERAL -> ## INTEGER_LITERAL, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, <=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, >=)
+(EXPRESSION_NAME -> ## VARIABLE_ID, .)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, +)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, <)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, +)
+(LITERAL -> ## FALSE, ==)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], .)
+(LITERAL -> ## FALSE, -)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, !=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, >)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, ))
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, ||)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, +)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, >=)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, ||)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, ))
+(LITERAL -> ## CHARACTER_LITERAL, <)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), !=)
+(LITERAL -> ## STRING_LITERAL, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, +)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, |)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, ==)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), ,)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, |)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, <=)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, ~)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, +)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, instanceof)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, ,)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), STRING_LITERAL)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, %)
+(INCLUSIVE_OR_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION | AND_EXPRESSION, &&)
+(LITERAL -> ## INTEGER_LITERAL, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, /)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), -)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, TRUE)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, >)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), byte)
+(EXPRESSION -> ## ASSIGNMENT_EXPRESSION, ))
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, <=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, +)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, ))
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), &&)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, %)
+(LITERAL -> ## TRUE, +)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, <)
+(CONDITIONAL_AND_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION && INCLUSIVE_OR_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, <=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, ==)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, |)
+(LITERAL -> ## INTEGER_LITERAL, .)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), %)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), [)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, &)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], ||)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, <=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, +)
+(LITERAL -> ## TRUE, /)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), /)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), &)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], *)
+(CONDITIONAL_OR_EXPRESSION -> ## CONDITIONAL_OR_EXPRESSION || CONDITIONAL_AND_EXPRESSION, ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, >=)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, &)
+(LITERAL -> ## STRING_LITERAL, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), ==)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), super)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), !=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, %)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, %)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, +)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, ==)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), >)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], ))
+(LEFT_HAND_SIDE -> ## ARRAY_ACCESS, =)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, ))
+(LITERAL -> ## TRUE, <)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, |)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, <=)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, !=)
+(LITERAL -> ## NULL, >=)
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), %)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, -)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, ==)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, !=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, -)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, <=)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), -)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), VARIABLE_ID)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, this)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, &)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, >)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, .)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, |)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], |)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), *)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, instanceof)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, STRING_LITERAL)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, *)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, <)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, =)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, &&)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, !=)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, ,)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), |)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, &&)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, &&)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, ,)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, >=)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, ,)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, ==)
+(LITERAL -> ## TRUE, <=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), -)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, >=)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, &&)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, ||)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, -)
+(LITERAL -> ## STRING_LITERAL, >)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, [)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, ,)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), ||)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, ,)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, ))
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, ==)
+(LITERAL -> ## NULL, *)
+(LITERAL -> ## NULL, <=)
+(LITERAL -> ## CHARACTER_LITERAL, .)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, |)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, -)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, ,)
+(LITERAL -> ## INTEGER_LITERAL, &)
+(LITERAL -> ## CHARACTER_LITERAL, ==)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, -)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, &&)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), {)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, ==)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), !=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, ))
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], !=)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], *)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), short)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, CHARACTER_LITERAL)
+(LITERAL -> ## STRING_LITERAL, [)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), >=)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, .)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, &&)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, instanceof)
+(LITERAL -> ## TRUE, ||)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, &)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, &)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, &&)
+(LITERAL -> ## INTEGER_LITERAL, %)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, ==)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, /)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), ==)
+(LITERAL -> ## TRUE, >)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), <=)
+(LITERAL -> ## TRUE, >=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, !=)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), >=)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), })
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, .)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, &)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, ||)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], %)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, ))
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, -)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, &)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], [)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, <)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), ))
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), ==)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, ))
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, ))
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, instanceof)
+(INCLUSIVE_OR_EXPRESSION -> ## INCLUSIVE_OR_EXPRESSION | AND_EXPRESSION, ||)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, -)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, VARIABLE_ID)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, .)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, instanceof)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, |)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), >)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, >)
+(LITERAL -> ## NULL, ==)
+(LITERAL -> ## STRING_LITERAL, <=)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, /)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, &)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], =)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION >= ADDITIVE_EXPRESSION, &&)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, >)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), |)
+(LITERAL -> ## INTEGER_LITERAL, <=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, ||)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, CHARACTER_LITERAL)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), &)
+(CLASS_NAME -> ## VARIABLE_ID, .)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), *)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, -)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, ,)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, <)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), <=)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], |)
+(AND_EXPRESSION -> ## EQUALITY_EXPRESSION, &&)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, >)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, &)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), ==)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), *)
+(LITERAL -> ## FALSE, >=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_INSTANCE_CREATION_EXPRESSION, |)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), ,)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, &&)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, ||)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, VARIABLE_ID)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), char)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), !=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, ))
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, ||)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, &&)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), ,)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION != RELATIONAL_EXPRESSION, ==)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), ||)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), int)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, !=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## CLASS_NAME . this, |)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, +)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, !=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, ,)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), <=)
+(LITERAL -> ## STRING_LITERAL, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## UNARY_EXPRESSION, !=)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, >=)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, &)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, instanceof)
+(ARGUMENT_LISTopt -> ## ARGUMENT_LIST, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), ==)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, ,)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), |)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], [)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, !=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION / UNARY_EXPRESSION, ||)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, /)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, INTEGER_LITERAL)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, +)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, |)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, ))
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), .)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, ))
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), +)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), <)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, /)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], .)
+(EQUALITY_EXPRESSION -> ## RELATIONAL_EXPRESSION, |)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION <= ADDITIVE_EXPRESSION, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, |)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, ||)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, >)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, [)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, [)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), >=)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, TRUE)
+(METHOD_INVOCATION -> ## PRIMARY_EXPRESSION . ( ARGUMENT_LISTopt ), instanceof)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), this)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, &)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, <)
+(LITERAL -> ## CHARACTER_LITERAL, &)
+(CAST_EXPRESSION -> ## ( REFERENCE_TYPE ) UNARY_EXPRESSION_NOT_PLUS_MINUS, ()
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], ==)
+(LITERAL -> ## TRUE, .)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, -)
+(RELATIONAL_EXPRESSION -> ## ADDITIVE_EXPRESSION, instanceof)
+(ARGUMENT_LIST -> ## ARGUMENT_LIST , EXPRESSION, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, <=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION > ADDITIVE_EXPRESSION, >=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## this, [)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, <)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, instanceof)
+(METHOD_INVOCATION -> super . VARIABLE_ID ( ## ARGUMENT_LISTopt ), INTEGER_LITERAL)
+(LITERAL -> ## STRING_LITERAL, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, !=)
+(LITERAL -> ## FALSE, [)
+(LITERAL -> ## TRUE, instanceof)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, |)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, ||)
+(FIELD_ACCESS -> ## PRIMARY_EXPRESSION . VARIABLE_ID, !=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, !=)
+(EQUALITY_EXPRESSION -> ## EQUALITY_EXPRESSION == RELATIONAL_EXPRESSION, &&)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION + MULTIPLICATIVE_EXPRESSION, ||)
+(AND_EXPRESSION -> ## AND_EXPRESSION & EQUALITY_EXPRESSION, |)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], instanceof)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ~ UNARY_EXPRESSION, -)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, .)
+(FIELD_ACCESS -> ## CLASS_NAME . super . VARIABLE_ID, !=)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, &&)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, super)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, *)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), <=)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, -)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION instanceof ADDITIVE_EXPRESSION, >)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, %)
+(LITERAL -> ## FALSE, &)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, !=)
+(POST_FIX_EXPRESSION -> ## PRIMARY_EXPRESSION, <)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), %)
+(LITERAL -> ## STRING_LITERAL, .)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, <=)
+(PRIMARY_EXPRESSION -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY, /)
+(LITERAL -> ## FALSE, %)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION % UNARY_EXPRESSION, *)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], <)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, <)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, ||)
+(POST_FIX_EXPRESSION -> ## EXPRESSION_NAME, /)
+(LITERAL -> ## CHARACTER_LITERAL, <=)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, >=)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, |)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), |)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## CAST_EXPRESSION UNARY_EXPRESSION, %)
+(INCLUSIVE_OR_EXPRESSION -> ## AND_EXPRESSION, &&)
+(ARRAY_ACCESS -> ## PRIMARY_EXPRESSION_NO_NEW_ARRAY [ EXPRESSION ], +)
+(METHOD_INVOCATION -> ## CLASS_NAME . super . VARIABLE_ID ( ARGUMENT_LISTopt ), .)
+(LITERAL -> ## INTEGER_LITERAL, ||)
+(LITERAL -> ## STRING_LITERAL, +)
+(INCLUSIVE_OR_EXPRESSION -> ## AND_EXPRESSION, ||)
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], <=)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, instanceof)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## PRIMARY_EXPRESSION . new VARIABLE_ID ( ARGUMENT_LISTopt ), &)
+(LITERAL -> ## NULL, |)
+(LITERAL -> ## CHARACTER_LITERAL, /)
+(METHOD_INVOCATION -> ## EXPRESSION_NAME ( ARGUMENT_LISTopt ), [)
+(RELATIONAL_EXPRESSION -> ## RELATIONAL_EXPRESSION < ADDITIVE_EXPRESSION, &&)
+(LITERAL -> ## INTEGER_LITERAL, >)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, [)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, ))
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, >)
+(CONDITIONAL_AND_EXPRESSION -> ## CONDITIONAL_AND_EXPRESSION && INCLUSIVE_OR_EXPRESSION, ||)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, instanceof)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), +)
+(CLASS_INSTANCE_CREATION_EXPRESSION -> ## new CLASS_OR_INTERFACE_TYPE ( ARGUMENT_LISTopt ), [)
+(EXPRESSION_NAME -> ## VARIABLE_ID, ))
+(ARRAY_ACCESS -> ## EXPRESSION_NAME [ EXPRESSION ], ==)
+(PRIMARY_EXPRESSION -> ## ARRAY_CREATION_EXPRESSION, instanceof)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, instanceof)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, >=)
+(MULTIPLICATIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION * UNARY_EXPRESSION, /)
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, ,)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## POST_FIX_EXPRESSION, <)
+(LITERAL -> ## STRING_LITERAL, &&)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, <)
+(ARRAY_CREATION_EXPRESSION -> ## new NON_ARRAY_TYPE [ EXPRESSIONopt ], +)
+(UNARY_EXPRESSION -> ## - UNARY_EXPRESSION, &)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, ))
+(LITERAL -> ## TRUE, &&)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, INTEGER_LITERAL)
+(LITERAL -> ## CHARACTER_LITERAL, ||)
+(ADDITIVE_EXPRESSION -> ## ADDITIVE_EXPRESSION - MULTIPLICATIVE_EXPRESSION, <=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## METHOD_INVOCATION, *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ( EXPRESSION ), *)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, instanceof)
+(METHOD_INVOCATION -> ## super . VARIABLE_ID ( ARGUMENT_LISTopt ), -)
+(EXPRESSION_NAME -> ## VARIABLE_ID, =)
+(CAST_EXPRESSION -> ## ( PRIM_TYPE ) UNARY_EXPRESSION, NULL)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, <=)
+(LITERAL -> ## STRING_LITERAL, ))
+(UNARY_EXPRESSION -> ## UNARY_EXPRESSION_NOT_PLUS_MINUS, &&)
+(ADDITIVE_EXPRESSION -> ## MULTIPLICATIVE_EXPRESSION, ==)
+(EXPRESSION_NAME -> ## VARIABLE_ID, ==)
+(EXPRESSION_NAME -> ## VARIABLE_ID, ,)
+(ASSIGNMENT_EXPRESSION -> ## CONDITIONAL_OR_EXPRESSION, ))
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## LITERAL, >)
+(UNARY_EXPRESSION_NOT_PLUS_MINUS -> ## ! UNARY_EXPRESSION, instanceof)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## ARRAY_ACCESS, >=)
+(FIELD_ACCESS -> ## super . VARIABLE_ID, |)
+(EXPRESSION_NAME -> ## EXPRESSION_NAME . VARIABLE_ID, >=)
+(PRIMARY_EXPRESSION_NO_NEW_ARRAY -> ## FIELD_ACCESS, >)
+
+reduce FIELD_ACCESS super . VARIABLE_ID
