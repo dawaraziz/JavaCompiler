@@ -450,7 +450,6 @@ class Generator {
         // compute goto actions
         System.err.println("Computing goto actions");
         while(!q.isEmpty()) {
-            System.out.println("Going");
             State i = q.remove();
             for( Item item : i.items ) {
                 if(!item.hasNextSym()) continue;
@@ -686,7 +685,6 @@ public class Jlalr1 {
         try {
             jlalr.computeFirstFollowNullable();
             jlalr.generateLALR1Table();
-            System.out.println("Here3");
             jlalr.generateOutput();
         } catch(Error e) {
             System.err.println("Error performing LALR(1) construction: "+e);
