@@ -3,7 +3,6 @@ package com.project.Weeders;
 import com.project.ParseTree.ParseTree;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class ClassNameWeeder {
     public static void weed(final ParseTree parseTree, String[] args) {
