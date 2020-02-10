@@ -1,5 +1,0 @@
-public class J1_NamedTypeArray {
-    public String x;
-
-    public J1_NamedTypeArray();
-}
