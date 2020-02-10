@@ -12,8 +12,11 @@ public class MethodModifierWeeder {
         ArrayList<ParseTree> constructorDeclarations = parseTree.getChildrenWithLexeme("CONSTRUCTORDECLARATION");
 
         if (constructorDeclarations.isEmpty()) {
-            System.err.println("Encountered a class with no constructor.");
-            System.exit(42);
+            ArrayList<ParseTree> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+            if (!classDeclarations.isEmpty()) {
+                System.err.println("Encountered a class with no constructor.");
+                System.exit(42);
+            }
         }
 
         ArrayList<ParseTree> declarations = new ArrayList<>();

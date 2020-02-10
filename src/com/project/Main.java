@@ -5,6 +5,7 @@ import com.project.Parser.Pair;
 import com.project.Parser.ParserRule;
 import com.project.Parser.ParserState;
 import com.project.Weeders.ClassModifierWeeder;
+import com.project.Weeders.ClassNameWeeder;
 import com.project.Weeders.FieldModifierWeeder;
 import com.project.Weeders.LiteralWeeder;
 import com.project.Weeders.MethodModifierWeeder;
@@ -142,6 +143,7 @@ public class Main {
         ClassModifierWeeder.weed(parseTree);
         MethodModifierWeeder.weed(parseTree);
         FieldModifierWeeder.weed(parseTree);
+        ClassNameWeeder.weed(parseTree, args);
 
         System.exit(0);
     }
