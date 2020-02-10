@@ -23,19 +23,19 @@ public class ParseTree {
     boolean terminal = false;
     boolean traversed = false;
 
-    ArrayList children = new ArrayList();
+    ArrayList<ParseTree> children = new ArrayList<>();
 
     public ParseTree parent;
     public String lexeme;
 
-    public ParseTree( Kind kind,  boolean terminal,  boolean traversed,  ParseTree parent) {
+    public ParseTree(final Kind kind, final boolean terminal, final boolean traversed, final ParseTree parent) {
         this.kind = kind;
         this.terminal = terminal;
         this.traversed = traversed;
         this.parent = parent;
     }
 
-    public ParseTree( Kind kind,  String lexeme,  boolean terminal,  boolean traversed,  ParseTree parent) {
+    public ParseTree(final Kind kind, final String lexeme, final boolean terminal, final boolean traversed, final ParseTree parent) {
         this.kind = kind;
         this.lexeme = lexeme;
         this.terminal = terminal;
@@ -43,7 +43,7 @@ public class ParseTree {
         this.parent = parent;
     }
 
-    public ParseTree( String lexeme,  Kind kind) {
+    public ParseTree(final String lexeme, final Kind kind) {
         this.kind = kind;
         this.lexeme = lexeme;
         this.terminal = true;
@@ -66,7 +66,7 @@ public class ParseTree {
         return this.children.isEmpty();
     }
 
-    public ArrayList getChildren() {
+    public ArrayList<ParseTree> getChildren() {
         return this.children;
     }
 

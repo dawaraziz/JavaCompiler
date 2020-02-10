@@ -1,5 +1,7 @@
 package com.project.scanner;
 
+import com.project.Parser.ParseTree;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import static com.project.scanner.ScannerDFA.START_STATE;
 
 public class JavaScanner {
 
-    public static ArrayList<Token> tokenizeFile(final String fileName) {
+    public static ArrayList<ParseTree> tokenizeFile(final String fileName) {
         Scanner fileScanner = null;
 
         // Load the file into a string scanner.
@@ -24,7 +26,8 @@ public class JavaScanner {
             System.exit(42);
         }
 
-        final ArrayList<Token> tokenList = new ArrayList<>();
+        final ArrayList<ParseTree> tokenList = new ArrayList<>();
+        tokenList.add(new ParseTree("BOF", Kind.BOF));
 
         boolean inBlockComment = false;
         int lineCounter = 1;
@@ -66,7 +69,7 @@ public class JavaScanner {
 
                             // We may want to ignore certain accepting states, such as whitespace.
                             if (rollbackState.kind != null) {
-                                tokenList.add(new Token(line.substring(0, rollbackMarker), rollbackState.kind));
+                                tokenList.add(new ParseTree(line.substring(0, rollbackMarker), rollbackState.kind));
                             }
                         } else {
                             System.err.println("Error: no scanned token on line " + lineCounter + " at " + i);
@@ -84,6 +87,8 @@ public class JavaScanner {
 
             ++lineCounter;
         }
+
+        tokenList.add(new ParseTree("EOF", Kind.EOF));
         return tokenList;
     }
 }

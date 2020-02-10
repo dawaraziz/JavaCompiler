@@ -1,148 +1,148 @@
 package com.project;
 
-import com.project.Parser.Jlalr1;
-import com.project.Parser.ParsTree;
+import com.project.Parser.ParseTree;
+import com.project.Parser.ParserRule;
+import com.project.Parser.ParserState;
 import com.project.Weeders.LiteralWeeder;
 import com.project.scanner.JavaScanner;
-import com.project.scanner.Token;
+import javafx.util.Pair;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Stack;
 
 public class Main {
     public static void main(String[] args) {
-//        ArrayList<Token> tokens = JavaScanner.tokenizeFile(args[0]);
-//        LiteralWeeder.weed(tokens);
-        // Parser
+        ArrayList<ParseTree> tokens = JavaScanner.tokenizeFile(args[0]);
+        LiteralWeeder.weed(tokens);
 
+        for (ParseTree token : tokens) {
+            System.out.println(token.getLexeme() + " " + token.getKind());
+        }
 
-//        for (Token token : tokens) {
-//            System.out.println(token.getLexeme() + " " + token.getKind());
-//        }
+        Class fileClass = Main.class;
+        InputStream inputStreamCFG = fileClass.getResourceAsStream("input.cfg");
 
-        ParsTree pTree = new ParsTree("S", false, false, null);
+        Scanner scanner = new Scanner(inputStreamCFG);
+        int passInt = scanner.nextInt();
+        for (int i = 0; i <= passInt; ++i) {
+            scanner.nextLine();
+        }
+        passInt = scanner.nextInt();
+        for (int i = 0; i <= passInt; ++i) {
+            scanner.nextLine();
+        }
+        String startSymbol = scanner.nextLine();
+        passInt = scanner.nextInt();
+        scanner.nextLine();
+        ArrayList<ParserRule> reductionRules = new ArrayList<>();
+        for (int i = 0; i < passInt; ++i) {
+            String rule = scanner.nextLine();
+            reductionRules.add(new ParserRule(rule.toUpperCase()));
+        }
+        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("output.jlr1");
 
-        pTree.addChild("BOF", true, true, pTree);
-        pTree.addChild("H", false, false, pTree);
-        pTree.addChild("EOF", true, true, pTree);
+        ArrayList<ParserState> states = new ArrayList<>();
+        scanner = new Scanner(inputStreamJLR1);
+        int stateNumber = scanner.nextInt();
+        for (int i = 0; i < stateNumber; ++i) {
+            states.add(new ParserState());
+        }
 
-        ParsTree root = pTree;
+        HashMap<Pair<Integer, String>, Pair<String, Integer>> productionRules = new HashMap<>();
+        int transitionNumber = scanner.nextInt();
+        for (int i = 0; i < transitionNumber; ++i) {
+            int startState = scanner.nextInt();
+            String lookahead = scanner.next().toUpperCase();
+            String action = scanner.next();
+            int newState = scanner.nextInt();
 
-        pTree = pTree.getChild(1);
-        pTree.addChild("PACKAGEopt", false, false, pTree);
-        pTree.addChild("MULT_IMPORTopt", false, false, pTree);
-        pTree.addChild("TYPE_DECLARATIONopt", false, false, pTree);
+            productionRules.put(new Pair<>(startState, lookahead), new Pair<>(action, newState));
+        }
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("package", true, true, pTree);
-        pTree.addChild("TYPE_NAME", false, false, pTree);
-        pTree.addChild(";", true, true, pTree);
+        Stack<ParseTree> parseStack = new Stack<>();
+        Stack<Integer> statesVisited = new Stack<>();
 
-        pTree = pTree.getChild(1);
-        pTree.addChild("PACKAGE_OR_TYPE", false, false, pTree);
-        pTree.addChild(".", true, true, pTree);
-        pTree.addChild("VARID", false, false, pTree);
+        Stack<ParseTree> inputStack = new Stack<>();
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("VARID", false, false, pTree);
+        Collections.reverse(tokens);
+        for (ParseTree token : tokens) {
+            inputStack.push(token);
+        }
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("com", true, true, pTree);
-        pTree = pTree.getParent().getParent();
+        statesVisited.push(0);
 
-        pTree = pTree.getChild(2);
-        pTree.addChild("project", true, true, pTree);
-        pTree = pTree.getParent().getParent().getParent();
+        while (true) {
 
-        pTree = pTree.getChild(1);
-        pTree.addChild("EPSILON", true, true, pTree);
-        pTree = pTree.getParent();
+            ParseTree token = inputStack.peek();
 
-        pTree = pTree.getChild(2);
-        pTree.addChild("CLASS_MODIFIER", false, false, pTree);
-        pTree.addChild("class", true, true, pTree);
-        pTree.addChild("VARID", false, false, pTree);
-        pTree.addChild("SUPER", false, false, pTree);
-        pTree.addChild("INTERFACE", false, false, pTree);
-        pTree.addChild("{", true, true, pTree);
-        pTree.addChild("CLASS_BODY", false, false, pTree);
-        pTree.addChild("}", true, true, pTree);
+            if (!parseStack.isEmpty() && parseStack.peek().getLexeme().equals("COMPILATIONUNIT") && token.getLexeme().equals("EOF")) {
+                break;
+            }
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("public", true, true, pTree);
-        pTree = pTree.getParent();
+            String lookahead = null;
+            if (token.getKind() == null) {
+                lookahead = token.getLexeme();
+            } else {
+                lookahead = token.getKind().toString();
+            }
+            Pair currentLRState = new Pair<>(statesVisited.peek(), lookahead);
+            Pair<String, Integer> action = productionRules.get(currentLRState);
 
-        pTree = pTree.getChild(2);
-        pTree.addChild("A", true, true, pTree);
-        pTree = pTree.getParent();
+            if (action == null) {
+                System.err.println("Could not find production rule for pair: " + currentLRState.toString());
+                System.exit(42);
+            }
 
-        pTree = pTree.getChild(3);
-        pTree.addChild("EPSILON", true, true, pTree);
-        pTree = pTree.getParent();
+            if (action.getKey().equals("shift")) {
+                parseStack.push(inputStack.pop());
+                statesVisited.push(action.getValue());
+            } else {
+                ParserRule rule = reductionRules.get(action.getValue());
 
-        pTree = pTree.getChild(4);
-        pTree.addChild("EPSILON", true, true, pTree);
-        pTree = pTree.getParent();
+                ParseTree reducedSymbol = new ParseTree(null, rule.input, false, false, null);
 
-        pTree = pTree.getChild(6);
-        pTree.addChild("PROPERTY_DECLARATION", false, false, pTree);
-        pTree.addChild("CLASS_BODY", false, false, pTree);
+                for (int i = 0; i < rule.output.size(); ++i) {
+                    statesVisited.pop();
+                    ParseTree stackTop = parseStack.pop();
 
-        pTree = pTree.getChild(1);
-        pTree.addChild("EPSILON", true, true, pTree);
-        pTree = pTree.getParent();
+                    String stackTopValue = null;
+                    if (stackTop.getKind() == null) {
+                        stackTopValue = stackTop.getLexeme();
+                    } else {
+                        stackTopValue = stackTop.getKind().toString();
+                    }
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("PROPERTY_MODIFIERS", false, false, pTree);
-        pTree.addChild("TYPE", false, false, pTree);
-        pTree.addChild("VARID", false, false, pTree);
-        pTree.addChild("INSTANTIATION", false, false, pTree);
-        pTree.addChild(";", true, true, pTree);
+                    if (!stackTopValue.equals(rule.output.get(i))) {
+                        System.err.println("Expected " + rule.output.get(i) + ", saw " + stackTopValue);
+                        System.exit(42);
+                    }
 
-        pTree = pTree.getChild(0);
-        pTree.addChild("public", true, true, pTree);
-        pTree = pTree.getParent();
+                    stackTop.parent = reducedSymbol;
+                    reducedSymbol.addChild(stackTop);
+                }
 
-        pTree = pTree.getChild(1);
-        pTree.addChild("int", true, true, pTree);
-        pTree = pTree.getParent();
+                inputStack.push(reducedSymbol);
+            }
+        }
 
-        pTree = pTree.getChild(2);
-        pTree.addChild("a", true, true, pTree);
-        pTree = pTree.getParent();
-
-        pTree = pTree.getChild(3);
-        pTree.addChild("=", true, true, pTree);
-        pTree.addChild("EXPRESSION", false, false, pTree);
-
-        pTree = pTree.getChild(1);
-        pTree.addChild("NUM", false, false, pTree);
-        pTree.addChild("+", true, true, pTree);
-        pTree.addChild("NUM", false, false, pTree);
-
-        pTree = pTree.getChild(0);
-        pTree.addChild("1", true, true, pTree);
-        pTree = pTree.getParent();
-
-        pTree = pTree.getChild(2);
-        pTree.addChild("1", true, true, pTree);
-
-        printTree(root);
-
-        int x = 1-1;
+        printTree(parseStack.peek());
 
         System.exit(0);
     }
 
-    public static void printTree(ParsTree pTree) {
+    static void printTree(ParseTree pTree) {
         if (pTree.isTerminal() || pTree.noChildren()) {
-            if (pTree.getValue() != "EPSILON") System.out.println(pTree.getValue());
+            if (!pTree.getLexeme().equals("")) System.out.println(pTree.getLexeme());
             return;
         }
 
-        for (ParsTree child: pTree.getChildren()) {
+        for (ParseTree child : pTree.getChildren()) {
             printTree(child);
         }
-
     }
 }
 

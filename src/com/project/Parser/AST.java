@@ -2,7 +2,7 @@ package com.project.Parser;
 
 public class AST {
 
-    public AST buildASTTree(ParsTree pTree) {
+    public AST buildASTTree(ParseTree pTree) {
         AST tree = new AST();
 
 

@@ -1,7 +1,7 @@
 package com.project.Weeders;
 
+import com.project.Parser.ParseTree;
 import com.project.scanner.Kind;
-import com.project.scanner.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +21,10 @@ public class LiteralWeeder {
         escapes.put("\\\\", "\\");
     }
 
-    public static void weed(ArrayList<Token> tokenList) {
+    public static void weed(ArrayList<ParseTree> tokenList) {
         Kind previousKind = Kind.VARIABLE_ID;
 
-        for (Token token : tokenList) {
+        for (ParseTree token : tokenList) {
             if (token.getKind() == Kind.INTEGER_LITERAL) {
                 try {
                     long literal = Long.parseLong(token.getLexeme());
