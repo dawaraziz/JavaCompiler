@@ -16,6 +16,9 @@ import java.util.Stack;
 
 public class Main {
     public static void main(String[] args) {
+
+        if (args.length < 1) System.exit(42);
+
         ArrayList<ParseTree> tokens = JavaScanner.tokenizeFile(args[0]);
         LiteralWeeder.weed(tokens);
 
