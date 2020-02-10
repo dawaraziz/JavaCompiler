@@ -1,6 +1,6 @@
 package com.project.Weeders;
 
-import com.project.Parser.ParseTree;
+import com.project.ParseTree.ParseTree;
 import com.project.scanner.Kind;
 
 import java.util.ArrayList;

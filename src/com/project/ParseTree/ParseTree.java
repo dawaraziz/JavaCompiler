@@ -1,7 +1,8 @@
-package com.project.Parser;
+package com.project.ParseTree;
 
 import com.project.scanner.Kind;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ParseTree {
@@ -52,6 +53,55 @@ public class ParseTree {
 
     public void addChild(Kind value, boolean terminal, boolean traversed, ParseTree parent) {
         this.children.add(new ParseTree(value, terminal, traversed, parent));
+    }
+
+    public ArrayList<ParseTree> getChildrenWithLexeme(String lexeme) {
+        ArrayList<ParseTree> childrenWithLexeme = new ArrayList<>();
+
+        for (ParseTree child : children) {
+            childrenWithLexeme.addAll(child.getChildrenWithLexeme(lexeme));
+            if (child.lexeme.equals(lexeme)) {
+                childrenWithLexeme.add(child);
+            }
+        }
+
+        return childrenWithLexeme;
+    }
+
+    public ArrayList<ParseTree> getDirectChildrenWithLexeme(String lexeme) {
+        ArrayList<ParseTree> childrenWithLexeme = new ArrayList<>();
+
+        for (ParseTree child : children) {
+            if (child.lexeme.equals(lexeme)) {
+                childrenWithLexeme.add(child);
+            }
+        }
+
+        return childrenWithLexeme;
+    }
+
+    public static ArrayList<String> getStringList(ArrayList<ParseTree> parseTreeList) {
+        ArrayList<String> stringList = new ArrayList<>();
+
+        for (ParseTree parseTree : parseTreeList) {
+            stringList.add(parseTree.lexeme);
+        }
+
+        return stringList;
+    }
+
+    public ArrayList<ParseTree> getLeafNodes() {
+        ArrayList<ParseTree> leafNodes = new ArrayList<>();
+
+        if (children.isEmpty()) {
+            leafNodes.add(this);
+        } else {
+            for (ParseTree child : children) {
+                leafNodes.addAll(child.getLeafNodes());
+            }
+        }
+
+        return leafNodes;
     }
 
     public void addChild(ParseTree tree) {

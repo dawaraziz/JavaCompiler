@@ -1,34 +1,35 @@
 package com.project.Weeders;
 
-import com.project.AST.ASTSymbol;
+import com.project.ParseTree.ParseTree;
 
 import java.util.ArrayList;
 
-import static com.project.AST.ASTKinds.METHOD_MODIFIERS;
+import static com.project.ParseTree.ParseTree.getStringList;
 
 public class ClassModifierWeeder {
-    public static void weed(ASTSymbol currentSymbol) {
-        if (currentSymbol.type == METHOD_MODIFIERS) {
-            ArrayList<String> modifiers = new ArrayList<>();
+    public static void weed(final ParseTree parseTree) {
+        ArrayList<ParseTree> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+        for (ParseTree classDeclaration : classDeclarations) {
+            ArrayList<ParseTree> modifiers = classDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
 
-            for (ASTSymbol symbol : currentSymbol.children) {
-                modifiers.add(symbol.lexeme);
+            ArrayList<ParseTree> classModifiers = new ArrayList<>();
+            for (ParseTree modifier : modifiers) {
+                classModifiers.addAll(modifier.getLeafNodes());
             }
 
-            if (modifiers.contains("abstract")
-                    && (modifiers.contains("static") || modifiers.contains("final"))) {
-                System.err.println("Encountered an abstract and static/final class.");
+            ArrayList<String> stringModifiers = getStringList(classModifiers);
+
+            if (stringModifiers.contains("abstract") && stringModifiers.contains("final")) {
+                System.err.println("Encountered an abstract and final class.");
                 System.exit(42);
-            } else if (modifiers.contains("static") && modifiers.contains("final")) {
-                System.err.println("Encountered an final and static class.");
+            } else if (stringModifiers.contains("static")
+                    || stringModifiers.contains("protected")
+                    || stringModifiers.contains("native")) {
+                System.err.println("Encountered an invalid modifier static/protected/native on a class.");
                 System.exit(42);
-            } else if (modifiers.contains("native") && !modifiers.contains("static")) {
-                System.err.println("Encountered a non-static native class.");
+            } else if (!stringModifiers.contains("public")) {
+                System.err.println("Encountered non-public class.");
                 System.exit(42);
-            }
-        } else {
-            for (ASTSymbol symbol : currentSymbol.children) {
-                weed(symbol);
             }
         }
     }
