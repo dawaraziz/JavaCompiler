@@ -20,15 +20,20 @@ import java.util.Stack;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Sanity Check");
-        if (args.length < 1) System.exit(42);
+
+        if (args.length < 1) {
+            System.err.println("No argument passed; expected file name.");
+            System.exit(42);
+        }
 
         ArrayList<ParseTree> tokens = JavaScanner.tokenizeFile(args[0]);
         LiteralWeeder.weed(tokens);
 
+        System.out.println("Scanned Symbols:");
         for (ParseTree token : tokens) {
             System.out.println(token.getLexeme() + " " + token.getKind());
         }
+        System.out.println("-----------------------------------");
 
         Class fileClass = Main.class;
         InputStream inputStreamCFG = fileClass.getResourceAsStream("./input.cfg");
