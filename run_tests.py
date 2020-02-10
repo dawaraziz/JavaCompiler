@@ -15,7 +15,7 @@ def main():
 
     for root, subFolders, files in os.walk(test_dir):
         for folder in subFolders:
-            print("Running {} Tests".format(folder))
+            print("\033[0mRunning {} Tests".format(folder))
             legalTest = True if folder == ("legalJoos") else False
             for root, subFolders, files in os.walk(test_dir+"/"+folder):
                 for file in files:
@@ -25,18 +25,18 @@ def main():
                     if legalTest:
                         # We expect no failures for the legal tests
                         if retcode:
-                            print("\tError in {}: {}".format(file, result.stderr))
+                            print("\t{2}Error in {0}: {1}{2}".format(file, result.stderr, '\033[91m'))
                         else:
                             if show_all:
-                                print("\tPASSED: {} {}".format(file, result.stderr))
+                                print("\t{2}PASSED: {0} {1}{2}".format(file, result.stderr, '\033[92m'))
 
                     if not legalTest:
                         # Failing is a passed test for the illegal Joos 1W files
                         if retcode:
                             if show_all:
-                                print("\tPASSED: {} {}".format(file, result.stderr))
+                                print("\t{2}PASSED: {0} {1}{2}".format(file, result.stderr, '\033[92m'))
                         else:
-                            print("\tError in {}: {}".format(file, result.stderr))
+                            print("\t{2}Error in {0}: {1}{2}".format(file, "Should have failed!", '\033[91m'))
 
 
 
