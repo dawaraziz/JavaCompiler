@@ -9,7 +9,7 @@ public class ClassNameWeeder {
 
         // Strips the base name from the file argument.
         String filename = args[0];
-        String[] splitFilename = filename.split("\\\\");
+        String[] splitFilename = filename.split("[\\\\/]");
         String base = splitFilename[splitFilename.length - 1];
         String[] splitBase = base.split("\\.");
         if (splitBase.length != 2) {
