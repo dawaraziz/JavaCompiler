@@ -5,7 +5,7 @@ import com.project.Parser.ParserRule;
 import com.project.Parser.ParserState;
 import com.project.Weeders.LiteralWeeder;
 import com.project.scanner.JavaScanner;
-import javafx.util.Pair;
+import com.project.Parser.Pair;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Stack;
 
 public class Main {
     public static void main(String[] args) {
-
+        System.out.println("Sanity Check");
         if (args.length < 1) System.exit(42);
 
         ArrayList<ParseTree> tokens = JavaScanner.tokenizeFile(args[0]);
@@ -27,7 +27,7 @@ public class Main {
         }
 
         Class fileClass = Main.class;
-        InputStream inputStreamCFG = fileClass.getResourceAsStream("input.cfg");
+        InputStream inputStreamCFG = fileClass.getResourceAsStream("/input.cfg");
 
         Scanner scanner = new Scanner(inputStreamCFG);
         int passInt = scanner.nextInt();
@@ -46,7 +46,7 @@ public class Main {
             String rule = scanner.nextLine();
             reductionRules.add(new ParserRule(rule.toUpperCase()));
         }
-        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("output.jlr1");
+        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("/output.jlr1");
 
         ArrayList<ParserState> states = new ArrayList<>();
         scanner = new Scanner(inputStreamJLR1);
@@ -100,11 +100,11 @@ public class Main {
                 System.exit(42);
             }
 
-            if (action.getKey().equals("shift")) {
+            if (action.getO1().equals("shift")) {
                 parseStack.push(inputStack.pop());
-                statesVisited.push(action.getValue());
+                statesVisited.push(action.getO2());
             } else {
-                ParserRule rule = reductionRules.get(action.getValue());
+                ParserRule rule = reductionRules.get(action.getO2());
 
                 ParseTree reducedSymbol = new ParseTree(null, rule.input, false, false, null);
 
