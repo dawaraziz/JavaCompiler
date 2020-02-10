@@ -1,4 +1,4 @@
-package com.project.Parser;
+package tests.legalJoos;
 
 import com.project.scanner.Kind;
 
