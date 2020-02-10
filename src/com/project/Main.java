@@ -31,7 +31,7 @@ public class Main {
         }
 
         Class fileClass = Main.class;
-        InputStream inputStreamCFG = fileClass.getResourceAsStream("./input.cfg");
+        InputStream inputStreamCFG = fileClass.getResourceAsStream("/input.cfg");
 
         Scanner scanner = new Scanner(inputStreamCFG);
         int passInt = scanner.nextInt();
@@ -50,7 +50,7 @@ public class Main {
             String rule = scanner.nextLine();
             reductionRules.add(new ParserRule(rule.toUpperCase()));
         }
-        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("./output.jlr1");
+        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("/output.jlr1");
 
         ArrayList<ParserState> states = new ArrayList<>();
         scanner = new Scanner(inputStreamJLR1);
