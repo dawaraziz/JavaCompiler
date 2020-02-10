@@ -412,10 +412,6 @@ class ScannerDFA {
         FIN.addTransition("a", FINA);
         FINA.addTransition("l", FINAL);
         FINAL.addTransition(variable_chars, VARSTATE);
-        F.addTransition("i", FI);
-        FI.addTransition("n", FIN);
-        FIN.addTransition("a", FINA);
-        FINA.addTransition("l", FINAL);
         F.addTransition("o", FO);
         FO.addTransition("r", FOR);
         FOR.addTransition(variable_chars, VARSTATE);
@@ -453,10 +449,10 @@ class ScannerDFA {
         INSTANCEOF.addTransition(variable_chars, VARSTATE);
         I.addTransition("n", IN);
         IN.addTransition("t", INT);
+        INT.addTransition("e", INTE);
         INT.addTransition(variable_chars, VARSTATE);
         I.addTransition("n", IN);
         IN.addTransition("t", INT);
-        INT.addTransition("e", INTE);
         INTE.addTransition("r", INTER);
         INTER.addTransition("f", INTERF);
         INTERF.addTransition("a", INTERFA);

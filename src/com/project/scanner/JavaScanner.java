@@ -1,6 +1,6 @@
 package com.project.scanner;
 
-import com.project.Parser.ParseTree;
+import com.project.ParseTree.ParseTree;
 
 import java.io.File;
 import java.io.FileNotFoundException;

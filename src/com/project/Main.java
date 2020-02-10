@@ -1,11 +1,14 @@
 package com.project;
 
-import com.project.Parser.ParseTree;
+import com.project.ParseTree.ParseTree;
+import com.project.Parser.Pair;
 import com.project.Parser.ParserRule;
 import com.project.Parser.ParserState;
+import com.project.Weeders.ClassModifierWeeder;
+import com.project.Weeders.FieldModifierWeeder;
 import com.project.Weeders.LiteralWeeder;
+import com.project.Weeders.MethodModifierWeeder;
 import com.project.scanner.JavaScanner;
-import com.project.Parser.Pair;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ public class Main {
         }
 
         Class fileClass = Main.class;
-        InputStream inputStreamCFG = fileClass.getResourceAsStream("/input.cfg");
+        InputStream inputStreamCFG = fileClass.getResourceAsStream("./input.cfg");
 
         Scanner scanner = new Scanner(inputStreamCFG);
         int passInt = scanner.nextInt();
@@ -46,7 +49,7 @@ public class Main {
             String rule = scanner.nextLine();
             reductionRules.add(new ParserRule(rule.toUpperCase()));
         }
-        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("/output.jlr1");
+        InputStream inputStreamJLR1 = fileClass.getResourceAsStream("./output.jlr1");
 
         ArrayList<ParserState> states = new ArrayList<>();
         scanner = new Scanner(inputStreamJLR1);
@@ -86,7 +89,7 @@ public class Main {
                 break;
             }
 
-            String lookahead = null;
+            String lookahead;
             if (token.getKind() == null) {
                 lookahead = token.getLexeme();
             } else {
@@ -112,7 +115,7 @@ public class Main {
                     statesVisited.pop();
                     ParseTree stackTop = parseStack.pop();
 
-                    String stackTopValue = null;
+                    String stackTopValue;
                     if (stackTop.getKind() == null) {
                         stackTopValue = stackTop.getLexeme();
                     } else {
@@ -132,12 +135,18 @@ public class Main {
             }
         }
 
-        printTree(parseStack.peek());
+        ParseTree parseTree = parseStack.peek();
+
+        printTree(parseTree);
+
+        ClassModifierWeeder.weed(parseTree);
+        MethodModifierWeeder.weed(parseTree);
+        FieldModifierWeeder.weed(parseTree);
 
         System.exit(0);
     }
 
-    static void printTree(ParseTree pTree) {
+    private static void printTree(ParseTree pTree) {
         if (pTree.isTerminal() || pTree.noChildren()) {
             if (!pTree.getLexeme().equals("")) System.out.println(pTree.getLexeme());
             return;
