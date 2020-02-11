@@ -24,8 +24,9 @@ public class ClassNameWeeder {
             System.exit(42);
         }
 
-        ArrayList<ParseTree> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
-        for (ParseTree classDeclaration : classDeclarations) {
+        ArrayList<ParseTree> declarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+        declarations.addAll(parseTree.getChildrenWithLexeme("INTERFACEDECLARATION"));
+        for (ParseTree classDeclaration : declarations) {
             ArrayList<ParseTree> className = classDeclaration.getDirectChildrenWithLexeme(baseFilename);
             if (className.isEmpty()) {
                 System.err.println("File name does not match class name.");
