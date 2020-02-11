@@ -244,8 +244,6 @@ class ScannerDFA {
     static private final ScannerState AMPERSANDEQUAL = new ScannerState("&=", true, Kind.AMPERSANDEQUAL);
     static private final ScannerState ARROWEQUAL = new ScannerState("^=", true, Kind.ARROWEQUAL);
     static private final ScannerState BAREQUAL = new ScannerState("|=", true, Kind.BAREQUAL);
-    static private final ScannerState QUESTIONMARK = new ScannerState("?", true, Kind.QUESTIONMARK);
-    static private final ScannerState COLON = new ScannerState(":", true, Kind.COLON);
     static private final ScannerState DOT = new ScannerState(".", true, Kind.DOT);
     static private final ScannerState COMMA = new ScannerState(",", true, Kind.COMMA);
     static private final ScannerState SEMICOLON = new ScannerState(";", true, Kind.SEMICOLON);
@@ -302,11 +300,9 @@ class ScannerDFA {
         START_STATE.addTransition("+", PLUS);
         START_STATE.addTransition("-", MINUS);
         START_STATE.addTransition("/", SLASH);
-        START_STATE.addTransition(":", COLON);
         START_STATE.addTransition("<", LESS);
         START_STATE.addTransition("=", EQUAL);
         START_STATE.addTransition(">", GREATER);
-        START_STATE.addTransition("?", QUESTIONMARK);
         START_STATE.addTransition("^", UPARROW);
         START_STATE.addTransition("|", BAR);
         START_STATE.addTransition("~", TILDE);
