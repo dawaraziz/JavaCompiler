@@ -22,14 +22,12 @@ public class LiteralWeeder {
     }
 
     public static void weed(ArrayList<ParseTree> tokenList) {
-        Kind previousKind = Kind.VARIABLE_ID;
 
         for (ParseTree token : tokenList) {
             if (token.getKind() == Kind.INTEGER_LITERAL) {
                 try {
                     long literal = Long.parseLong(token.getLexeme());
-                    if (literal > Integer.MAX_VALUE &&
-                            !(previousKind == Kind.MINUS && -literal == Integer.MIN_VALUE)) {
+                    if (literal > Integer.MAX_VALUE) {
                         System.err.println("Encountered INTEGER_LITERAL overflow: " + token.getLexeme());
                         System.exit(42);
                     }
@@ -78,8 +76,6 @@ public class LiteralWeeder {
                 }
                 token.setLexeme(escapedString.toString());
             }
-
-            previousKind = token.getKind();
         }
     }
 

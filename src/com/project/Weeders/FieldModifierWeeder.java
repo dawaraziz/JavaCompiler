@@ -24,6 +24,21 @@ public class FieldModifierWeeder {
                 System.err.println("Encountered a final field.");
                 System.exit(42);
             }
+
+            if (stringModifiers.contains("private")) {
+                System.err.println("Encountered a private field.");
+                System.exit(42);
+            }
+
+            if (!(stringModifiers.contains("public") || stringModifiers.contains("protected"))) {
+                System.err.println("Encountered a package-private field.");
+                System.exit(42);
+            }
+
+            if (stringModifiers.contains("public") && stringModifiers.contains("protected")) {
+                System.err.println("Encountered a public and protected field.");
+                System.exit(42);
+            }
         }
     }
 }

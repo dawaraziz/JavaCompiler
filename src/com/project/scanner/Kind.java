@@ -21,6 +21,7 @@ public enum Kind {
     INSTANCEOF,
     INT,
     INTERFACE,
+    PRIVATE,
     NATIVE,
     NEW,
     PACKAGE,

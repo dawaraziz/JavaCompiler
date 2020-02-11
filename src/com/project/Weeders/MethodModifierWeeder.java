@@ -64,6 +64,16 @@ public class MethodModifierWeeder {
                 System.exit(42);
             }
 
+            if (!(stringModifiers.contains("public") || stringModifiers.contains("protected"))) {
+                System.err.println("Encountered package private method.");
+                System.exit(42);
+            }
+
+            if (stringModifiers.contains("private")) {
+                System.err.println("Encountered a private method.");
+                System.exit(42);
+            }
+
             if (stringModifiers.contains("native") || stringModifiers.contains("abstract")) {
                 ArrayList<ParseTree> blocks = methodDeclaration.parent.getChildrenWithLexeme("BLOCK");
                 if (!blocks.isEmpty()) {
