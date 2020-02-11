@@ -19,4 +19,3 @@ public class Je_1_LabeledStatements {
 	return 123;
     }
 }
-
