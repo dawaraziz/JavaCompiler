@@ -47,6 +47,9 @@ public class LiteralWeeder {
                     token.setLexeme(escapes.get(literal));
                 } else if (isEscapedOctal(literal)) {
                     token.setLexeme(Integer.toString(getOctalValue(literal)));
+                } else if (literal.charAt(0) == '\\') {
+                    System.err.println("Encountered invalid character literal: " + token.getLexeme());
+                    System.exit(42);
                 }
 
             } else if (token.getKind() == Kind.STRING_LITERAL) {
@@ -117,12 +120,17 @@ public class LiteralWeeder {
         StringBuilder escapedChars = new StringBuilder("\\");
         int scanLength = Integer.min(literal.length, 4);
 
-        for (int i = 1; i < scanLength; ++i) {
-            if (!Character.isDigit(literal[i])) {
+        int maxLength = Integer.MAX_VALUE;
+        for (int i = 1; i < Integer.min(scanLength, maxLength); ++i) {
+            if (!(literal[i] > '0' && literal[i] < '8')) {
                 if (i == 1) escapedChars.append(literal[i]);
                 break;
             } else {
                 escapedChars.append(literal[i]);
+
+                if (i == 1 && literal[i] > '3') {
+                    maxLength = 3;
+                }
             }
         }
         return escapedChars.toString();

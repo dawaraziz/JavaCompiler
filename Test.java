@@ -1,17 +1,17 @@
-public class J1_1_Cast_Complement{
+public class J1_1_AmbiguousName_AccessResultFromMethod{
 
-	public J1_1_Cast_Complement(){}
+	public int i;
+
+	public J1_1_AmbiguousName_AccessResultFromMethod(int j){
+		i = j;
+	}
+
+	public J1_1_AmbiguousName_AccessResultFromMethod inc(){
+		return new J1_1_AmbiguousName_AccessResultFromMethod(i+1);
+	}
 
 	public static int test(){
-
-		boolean t = true;
-		boolean b = (boolean)!t;
-		if (b){
-			return 124733;
-		}
-		else {
-			return 123;
-		}
+		return new J1_1_AmbiguousName_AccessResultFromMethod(120).inc().inc().inc().i;
 	}
 
 }
