@@ -1,7 +1,7 @@
-package com.project.scanner;
+package com.project.scanner.structure;
 
 @SuppressWarnings("SpellCheckingInspection")
-class ScannerDFA {
+public class ScannerDFA {
 
     static private final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static private final String lower = "abcdefghijklmnopqrstuvwxyz";
@@ -13,8 +13,8 @@ class ScannerDFA {
     static private final String whitespace = " \t\12";
     static private final String newLine = "\10\15";
 
-    static final ScannerState START_STATE = new ScannerState("Start", false, null);
-    static final ScannerState ERRSTATE = new ScannerState("ERR", false, null);
+    static final public ScannerState START_STATE = new ScannerState("Start", false, null);
+    static final public ScannerState ERRSTATE = new ScannerState("ERR", false, null);
 
     // States for each possible keyword.
     static private final ScannerState A = new ScannerState("a", true, Kind.VARIABLE_ID);
@@ -63,7 +63,7 @@ class ScannerDFA {
     static private final ScannerState EXTEN = new ScannerState("exten", true, Kind.VARIABLE_ID);
     static private final ScannerState EXTEND = new ScannerState("extend", true, Kind.VARIABLE_ID);
     static private final ScannerState EXTENDS = new ScannerState("extends", true, Kind.EXTENDS);
-    static private final ScannerState F = new ScannerState("f", true, Kind.VARIABLE_ID);;
+    static private final ScannerState F = new ScannerState("f", true, Kind.VARIABLE_ID);
     static private final ScannerState FL = new ScannerState("fl", true, Kind.VARIABLE_ID);
     static private final ScannerState FLO = new ScannerState("flo", true, Kind.VARIABLE_ID);
     static private final ScannerState FLOA = new ScannerState("floa", true, Kind.VARIABLE_ID);
@@ -250,8 +250,8 @@ class ScannerDFA {
 
     // State for comments, plus independently declared states.
     static private final ScannerState LINE_COMMENT = new ScannerState("LINE_COMMENT", true, null);
-    static final ScannerState BLOCK_COMMENT = new ScannerState("BLOCK_COMMENT", true, null);
-    static final ScannerState BLOCK_STAR = new ScannerState("BLOCK_STAR", true, null);
+    static final public ScannerState BLOCK_COMMENT = new ScannerState("BLOCK_COMMENT", true, null);
+    static final public ScannerState BLOCK_STAR = new ScannerState("BLOCK_STAR", true, null);
     static private final ScannerState BLOCK_END = new ScannerState("BLOCK_END", true, null);
 
     // States for character literals.

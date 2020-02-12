@@ -1,33 +1,33 @@
 package com.project.Weeders;
 
-import com.project.ParseTree.ParseTree;
+import com.project.parser.structure.ParserSymbol;
 
 import java.util.ArrayList;
 
 public class ClassNameWeeder {
-    public static void weed(final ParseTree parseTree, String[] args) {
+    public static void weed(final ParserSymbol parseTree, final String[] args) {
 
         // Strips the base name from the file argument.
-        String filename = args[0];
-        String[] splitFilename = filename.split("[\\\\/]");
-        String base = splitFilename[splitFilename.length - 1];
-        String[] splitBase = base.split("\\.");
+        final String filename = args[0];
+        final String[] splitFilename = filename.split("[\\\\/]");
+        final String base = splitFilename[splitFilename.length - 1];
+        final String[] splitBase = base.split("\\.");
         if (splitBase.length != 2) {
             System.err.println("File name is strange; definitely not CLASS_NAME.java.");
             System.exit(42);
         }
-        String baseFilename = splitBase[0];
-        String basePostfix = splitBase[1];
+        final String baseFilename = splitBase[0];
+        final String basePostfix = splitBase[1];
 
         if (!basePostfix.equals("java")) {
             System.err.println("File is not a .java file.");
             System.exit(42);
         }
 
-        ArrayList<ParseTree> declarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+        final ArrayList<ParserSymbol> declarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
         declarations.addAll(parseTree.getChildrenWithLexeme("INTERFACEDECLARATION"));
-        for (ParseTree classDeclaration : declarations) {
-            ArrayList<ParseTree> className = classDeclaration.getDirectChildrenWithLexeme(baseFilename);
+        for (final ParserSymbol classDeclaration : declarations) {
+            final ArrayList<ParserSymbol> className = classDeclaration.getDirectChildrenWithLexeme(baseFilename);
             if (className.isEmpty()) {
                 System.err.println("File name does not match class name.");
                 System.exit(42);

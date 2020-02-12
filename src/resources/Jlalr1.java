@@ -1,7 +1,6 @@
-package com.project.Parser;
+package resources;
 
 import java.util.*;
-import java.io.*;
 
 /*
    Copyright 2006,2008,2009 Ondrej Lhotak. All rights reserved.
@@ -32,6 +31,7 @@ import java.io.*;
  */
 
 /** Represents an item (a dotted production). */
+@SuppressWarnings("ALL")
 class Item {
     Production rule; // the production
     int pos; // position of the dot (0 <= pos <= rule.rhs.size())
@@ -87,6 +87,7 @@ class Item {
         return ret.toString();
     }
 }
+@SuppressWarnings("ALL")
 class State {
     public Set<Item> items;
     private State(Set<Item> items) {
@@ -115,6 +116,7 @@ class State {
 abstract class Action {
 }
 /** Represents a shift parser action. */
+@SuppressWarnings("ALL")
 class ShiftAction extends Action {
     State nextState; // the automaton state to move to after the shift
     public ShiftAction(State nextState) {
@@ -131,6 +133,7 @@ class ShiftAction extends Action {
     }
 }
 /** Represents a reduce parser action. */
+@SuppressWarnings("ALL")
 class ReduceAction extends Action {
     Production rule; // the production to reduce by
     public ReduceAction(Production rule) {
@@ -169,6 +172,7 @@ class ReduceAction extends Action {
 //}
 
 
+@SuppressWarnings("ALL")
 /** The main LALR/SLR generator class. */
 class Generator {
     /** The context-free grammar. */
@@ -600,7 +604,7 @@ class Generator {
         }
     }
 }
-
+@SuppressWarnings("ALL")
 class Jlr1 {
     public static final void main(String[] args) {
         Grammar grammar;
@@ -624,6 +628,7 @@ class Jlr1 {
         }
     }
 }
+@SuppressWarnings("ALL")
 class Jlr0 {
     public static final void main(String[] args) {
         Grammar grammar;
@@ -647,6 +652,7 @@ class Jlr0 {
         }
     }
 }
+@SuppressWarnings("ALL")
 class Jslr1 {
     public static final void main(String[] args) {
         Grammar grammar;
@@ -670,6 +676,7 @@ class Jslr1 {
         }
     }
 }
+@SuppressWarnings("ALL")
 public class Jlalr1 {
     public static final void main(String[] args) {
         Grammar grammar;
@@ -693,6 +700,7 @@ public class Jlalr1 {
         }
     }
 }
+@SuppressWarnings("ALL")
 /** A production in the grammar. */
 class Production {
     public String lhs;
@@ -721,6 +729,7 @@ class Production {
         return ret.toString();
     }
 }
+@SuppressWarnings("ALL")
 /** Representation of a context-free grammar. */
 class Grammar {
     Set<String> terminals = new LinkedHashSet<String>();
@@ -741,9 +750,11 @@ class Grammar {
         return ret;
     }
 }
+@SuppressWarnings("ALL")
 class Error extends RuntimeException {
     public Error(String s) { super(s); }
 }
+@SuppressWarnings("ALL")
 class Util {
     public static String readLine(Scanner in, String msg) {
         if(!in.hasNextLine()) throw new Error(msg+" but input file ended");
@@ -807,7 +818,7 @@ class Util {
             rhs.add(sym);
         }
         return Production.v(lhs,
-                (String[]) rhs.toArray(new String[rhs.size()]));
+                rhs.toArray(new String[rhs.size()]));
     }
     static String checkIndent(String line, int indent) {
         for(int i = 0; i < indent; i++) {

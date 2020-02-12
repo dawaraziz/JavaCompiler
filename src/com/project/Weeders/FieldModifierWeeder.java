@@ -1,24 +1,24 @@
 package com.project.Weeders;
 
-import com.project.ParseTree.ParseTree;
+import com.project.parser.structure.ParserSymbol;
 
 import java.util.ArrayList;
 
-import static com.project.ParseTree.ParseTree.getStringList;
+import static com.project.parser.structure.ParserSymbol.getStringList;
 
 public class FieldModifierWeeder {
-    public static void weed(final ParseTree parseTree) {
-        ArrayList<ParseTree> propertyDeclarations = parseTree.getChildrenWithLexeme("FIELDDECLARATION");
+    public static void weed(final ParserSymbol parseTree) {
+        final ArrayList<ParserSymbol> propertyDeclarations = parseTree.getChildrenWithLexeme("FIELDDECLARATION");
 
-        for (ParseTree propertyDeclaration : propertyDeclarations) {
-            ArrayList<ParseTree> modifiers = propertyDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
+        for (final ParserSymbol propertyDeclaration : propertyDeclarations) {
+            final ArrayList<ParserSymbol> modifiers = propertyDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
 
-            ArrayList<ParseTree> methodModifiers = new ArrayList<>();
-            for (ParseTree modifier : modifiers) {
+            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
+            for (final ParserSymbol modifier : modifiers) {
                 methodModifiers.addAll(modifier.getLeafNodes());
             }
 
-            ArrayList<String> stringModifiers = getStringList(methodModifiers);
+            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
 
             if (stringModifiers.contains("final")) {
                 System.err.println("Encountered a final field.");

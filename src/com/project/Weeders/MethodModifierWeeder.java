@@ -1,37 +1,37 @@
 package com.project.Weeders;
 
-import com.project.ParseTree.ParseTree;
+import com.project.parser.structure.ParserSymbol;
 
 import java.util.ArrayList;
 
-import static com.project.ParseTree.ParseTree.getStringList;
+import static com.project.parser.structure.ParserSymbol.getStringList;
 
 public class MethodModifierWeeder {
-    public static void weed(final ParseTree parseTree) {
-        ArrayList<ParseTree> methodDeclarations = parseTree.getChildrenWithLexeme("METHODHEADER");
-        ArrayList<ParseTree> constructorDeclarations = parseTree.getChildrenWithLexeme("CONSTRUCTORDECLARATION");
+    public static void weed(final ParserSymbol parseTree) {
+        final ArrayList<ParserSymbol> methodDeclarations = parseTree.getChildrenWithLexeme("METHODHEADER");
+        final ArrayList<ParserSymbol> constructorDeclarations = parseTree.getChildrenWithLexeme("CONSTRUCTORDECLARATION");
 
         if (constructorDeclarations.isEmpty()) {
-            ArrayList<ParseTree> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+            final ArrayList<ParserSymbol> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
             if (!classDeclarations.isEmpty()) {
                 System.err.println("Encountered a class with no constructor.");
                 System.exit(42);
             }
         }
 
-        ArrayList<ParseTree> declarations = new ArrayList<>();
+        final ArrayList<ParserSymbol> declarations = new ArrayList<>();
         declarations.addAll(methodDeclarations);
         declarations.addAll(constructorDeclarations);
 
-        for (ParseTree constructor : constructorDeclarations) {
-            ArrayList<ParseTree> modifiers = constructor.getDirectChildrenWithLexeme("MODIFIERS");
+        for (final ParserSymbol constructor : constructorDeclarations) {
+            final ArrayList<ParserSymbol> modifiers = constructor.getDirectChildrenWithLexeme("MODIFIERS");
 
-            ArrayList<ParseTree> methodModifiers = new ArrayList<>();
-            for (ParseTree modifier : modifiers) {
+            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
+            for (final ParserSymbol modifier : modifiers) {
                 methodModifiers.addAll(modifier.getLeafNodes());
             }
 
-            ArrayList<String> stringModifiers = getStringList(methodModifiers);
+            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
 
             if (stringModifiers.contains("static")
                     || stringModifiers.contains("abstract")
@@ -42,15 +42,15 @@ public class MethodModifierWeeder {
             }
         }
 
-        for (ParseTree methodDeclaration : declarations) {
-            ArrayList<ParseTree> modifiers = methodDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
+        for (final ParserSymbol methodDeclaration : declarations) {
+            final ArrayList<ParserSymbol> modifiers = methodDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
 
-            ArrayList<ParseTree> methodModifiers = new ArrayList<>();
-            for (ParseTree modifier : modifiers) {
+            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
+            for (final ParserSymbol modifier : modifiers) {
                 methodModifiers.addAll(modifier.getLeafNodes());
             }
 
-            ArrayList<String> stringModifiers = getStringList(methodModifiers);
+            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
 
             if (stringModifiers.contains("abstract") &&
                     (stringModifiers.contains("final") || stringModifiers.contains("static"))) {
@@ -75,14 +75,14 @@ public class MethodModifierWeeder {
             }
 
             if (stringModifiers.contains("native") || stringModifiers.contains("abstract")) {
-                ArrayList<ParseTree> blocks = methodDeclaration.parent.getChildrenWithLexeme("BLOCK");
+                final ArrayList<ParserSymbol> blocks = methodDeclaration.parent.getChildrenWithLexeme("BLOCK");
                 if (!blocks.isEmpty()) {
                     System.err.println("Encountered native or abstract method with body.");
                     System.exit(42);
                 }
             }
 
-            if (methodDeclaration.parent.getLexeme().equals("ABSTRACTMETHODDECLARATION")
+            if (methodDeclaration.parent.lexeme.equals("ABSTRACTMETHODDECLARATION")
                     && (stringModifiers.contains("native")
                     || stringModifiers.contains("final")
                     || stringModifiers.contains("static"))) {

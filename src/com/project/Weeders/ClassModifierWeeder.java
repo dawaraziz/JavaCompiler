@@ -1,23 +1,23 @@
 package com.project.Weeders;
 
-import com.project.ParseTree.ParseTree;
+import com.project.parser.structure.ParserSymbol;
 
 import java.util.ArrayList;
 
-import static com.project.ParseTree.ParseTree.getStringList;
+import static com.project.parser.structure.ParserSymbol.getStringList;
 
 public class ClassModifierWeeder {
-    public static void weed(final ParseTree parseTree) {
-        ArrayList<ParseTree> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
-        for (ParseTree classDeclaration : classDeclarations) {
-            ArrayList<ParseTree> modifiers = classDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
+    public static void weed(final ParserSymbol parseTree) {
+        final ArrayList<ParserSymbol> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
+        for (final ParserSymbol classDeclaration : classDeclarations) {
+            final ArrayList<ParserSymbol> modifiers = classDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
 
-            ArrayList<ParseTree> classModifiers = new ArrayList<>();
-            for (ParseTree modifier : modifiers) {
+            final ArrayList<ParserSymbol> classModifiers = new ArrayList<>();
+            for (final ParserSymbol modifier : modifiers) {
                 classModifiers.addAll(modifier.getLeafNodes());
             }
 
-            ArrayList<String> stringModifiers = getStringList(classModifiers);
+            final ArrayList<String> stringModifiers = getStringList(classModifiers);
 
             if (stringModifiers.contains("abstract") && stringModifiers.contains("final")) {
                 System.err.println("Encountered an abstract and final class.");

@@ -1,14 +1,14 @@
 package com.project.Weeders;
 
-import com.project.ParseTree.ParseTree;
-import com.project.scanner.Kind;
+import com.project.parser.structure.ParserSymbol;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LiteralWeeder {
 
-    static HashMap<String, String> escapes = new HashMap<>();
+    private static final HashMap<String, String> escapes = new HashMap<>();
 
     static {
         escapes.put("\\b", "\b");
@@ -21,55 +21,55 @@ public class LiteralWeeder {
         escapes.put("\\\\", "\\");
     }
 
-    public static void weed(ArrayList<ParseTree> tokenList) {
+    public static void weed(final ArrayList<ParserSymbol> tokenList) {
         Kind backLookahead2 = Kind.VARIABLE_ID;
         Kind backLookahead1 = Kind.VARIABLE_ID;
 
-        for (ParseTree token : tokenList) {
-            if (token.getKind() == Kind.INTEGER_LITERAL) {
+        for (final ParserSymbol token : tokenList) {
+            if (token.kind == Kind.INTEGER_LITERAL) {
                 try {
-                    long literal = Long.parseLong(token.getLexeme());
+                    final long literal = Long.parseLong(token.lexeme);
                     if (literal > Integer.MAX_VALUE &&
                             !(backLookahead2 != Kind.INTEGER_LITERAL
                                     && backLookahead1 == Kind.MINUS && -literal == Integer.MIN_VALUE)) {
-                        System.err.println("Encountered INTEGER_LITERAL overflow: " + token.getLexeme());
+                        System.err.println("Encountered INTEGER_LITERAL overflow: " + token.lexeme);
                         System.exit(42);
                     }
-                } catch (NumberFormatException x) {
-                    System.err.println("Encountered non-integer INTEGER_LITERAL: " + token.getLexeme());
+                } catch (final NumberFormatException x) {
+                    System.err.println("Encountered non-integer INTEGER_LITERAL: " + token.lexeme);
                     System.exit(42);
                 }
-            } else if (token.getKind() == Kind.CHARACTER_LITERAL) {
-                String literal = token.getLexeme().substring(1, token.getLexeme().length() - 1);
+            } else if (token.kind == Kind.CHARACTER_LITERAL) {
+                final String literal = token.lexeme.substring(1, token.lexeme.length() - 1);
 
                 if (literal.charAt(0) != '\\' && literal.length() != 1) {
-                    System.err.println("Encountered too many character in CHARACTER_LITERAL: " + token.getLexeme());
+                    System.err.println("Encountered too many character in CHARACTER_LITERAL: " + token.lexeme);
                     System.exit(42);
                 } else if (escapes.containsKey(literal)) {
-                    token.setLexeme(escapes.get(literal));
+                    token.lexeme = escapes.get(literal);
                 } else if (isEscapedOctal(literal)) {
-                    token.setLexeme(Integer.toString(getOctalValue(literal)));
+                    token.lexeme = Integer.toString(getOctalValue(literal));
                 } else if (literal.charAt(0) == '\\') {
-                    System.err.println("Encountered invalid character literal: " + token.getLexeme());
+                    System.err.println("Encountered invalid character literal: " + token.lexeme);
                     System.exit(42);
                 }
 
-            } else if (token.getKind() == Kind.STRING_LITERAL) {
-                String literal = token.getLexeme().substring(1, token.getLexeme().length() - 1);
-                StringBuilder escapedString = new StringBuilder();
+            } else if (token.kind == Kind.STRING_LITERAL) {
+                final String literal = token.lexeme.substring(1, token.lexeme.length() - 1);
+                final StringBuilder escapedString = new StringBuilder();
 
                 for (int i = 0; i < literal.length(); ++i) {
 
                     if (literal.charAt(i) == '\\') {
 
-                        String escapedChars = findEscapedChars(literal.substring(i).toCharArray());
+                        final String escapedChars = findEscapedChars(literal.substring(i).toCharArray());
 
                         if (escapes.containsKey(escapedChars)) {
                             escapedString.append(escapes.get(escapedChars));
                         } else if (isEscapedOctal(escapedChars)) {
                             escapedString.append(getOctalValue(escapedChars));
                         } else {
-                            System.err.println("Encountered invalid STRING_LITERAL: " + token.getLexeme());
+                            System.err.println("Encountered invalid STRING_LITERAL: " + token.lexeme);
                             System.exit(42);
                         }
 
@@ -78,11 +78,11 @@ public class LiteralWeeder {
                         escapedString.append(literal.charAt(i));
                     }
                 }
-                token.setLexeme(escapedString.toString());
+                token.lexeme = escapedString.toString();
             }
 
             backLookahead2 = backLookahead1;
-            backLookahead1 = token.getKind();
+            backLookahead1 = token.kind;
         }
     }
 
@@ -96,11 +96,11 @@ public class LiteralWeeder {
                         && isOctal(literal.charAt(1)) && isOctal(literal.charAt(2)));
     }
 
-    private static boolean isOctal(char c) {
+    private static boolean isOctal(final char c) {
         return c >= '0' && c <= '7';
     }
 
-    private static boolean isZeroToThree(char c) {
+    private static boolean isZeroToThree(final char c) {
         return c >= '0' && c <= '3';
     }
 
@@ -119,9 +119,9 @@ public class LiteralWeeder {
         }
     }
 
-    private static String findEscapedChars(char[] literal) {
-        StringBuilder escapedChars = new StringBuilder("\\");
-        int scanLength = Integer.min(literal.length, 4);
+    private static String findEscapedChars(final char[] literal) {
+        final StringBuilder escapedChars = new StringBuilder("\\");
+        final int scanLength = Integer.min(literal.length, 4);
 
         int maxLength = Integer.MAX_VALUE;
         for (int i = 1; i < Integer.min(scanLength, maxLength); ++i) {

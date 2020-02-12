@@ -1,4 +1,4 @@
-package com.project.scanner;
+package com.project.scanner.structure;
 
 @SuppressWarnings("SpellCheckingInspection")
 public enum Kind {

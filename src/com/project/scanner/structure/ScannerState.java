@@ -1,14 +1,14 @@
-package com.project.scanner;
+package com.project.scanner.structure;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.project.scanner.ScannerDFA.ERRSTATE;
+import static com.project.scanner.structure.ScannerDFA.ERRSTATE;
 
-class ScannerState {
+public class ScannerState {
 
-    final boolean accept;
-    final Kind kind;
+    final public boolean accept;
+    final public Kind kind;
 
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String name;
@@ -34,10 +34,10 @@ class ScannerState {
         transitions.add(new StateTrans(input, nextState));
     }
 
-    ScannerState nextState(final char input) {
-        for (StateTrans stateTrans : transitions) {
+    public ScannerState nextState(final char input) {
+        for (final StateTrans stateTrans : transitions) {
             if (stateTrans.input == null) return stateTrans.nextState;
-            for (char c : stateTrans.input.toCharArray()) {
+            for (final char c : stateTrans.input.toCharArray()) {
                 if (input == c) return stateTrans.nextState;
             }
         }

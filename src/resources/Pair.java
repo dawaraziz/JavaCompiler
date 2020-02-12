@@ -1,14 +1,15 @@
-package com.project.Parser;
+package resources;
 
 /** Utility class representing a pair of arbitrary objects. */
+@SuppressWarnings("ALL")
 public class Pair<A,B> {
     public Pair( A o1, B o2 ) { this.o1 = o1; this.o2 = o2; }
     public int hashCode() {
         return o1.hashCode() + o2.hashCode();
     }
     public boolean equals( Object other ) {
-        if( other instanceof com.project.Parser.Pair) {
-            com.project.Parser.Pair p = (com.project.Parser.Pair) other;
+        if( other instanceof Pair) {
+            Pair p = (Pair) other;
             return o1.equals( p.o1 ) && o2.equals( p.o2 );
         } else return false;
     }
