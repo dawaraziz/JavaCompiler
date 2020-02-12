@@ -1,6 +1,7 @@
 package com.project;
 
-import com.project.AST.ASTNode;
+import com.project.AST.ASTHead;
+import com.project.Weeders.AbstractMethodWeeder;
 import com.project.Weeders.ClassModifierWeeder;
 import com.project.Weeders.ClassNameWeeder;
 import com.project.Weeders.FieldModifierWeeder;
@@ -13,8 +14,6 @@ import com.project.scanner.JavaScanner;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import static com.project.AST.ASTHead.trimParseTree;
 
 public class Main {
     public static void main(final String[] args) {
@@ -38,12 +37,13 @@ public class Main {
         }
         parseTree = JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1));
 
-        final ASTNode AST = trimParseTree(parseTree, null);
+        final ASTHead AST = new ASTHead(parseTree);
 
-        ClassModifierWeeder.weed(parseTree);
-        MethodModifierWeeder.weed(parseTree);
-        FieldModifierWeeder.weed(parseTree);
-        ClassNameWeeder.weed(parseTree, args);
+        AbstractMethodWeeder.weed(AST);
+        ClassModifierWeeder.weed(AST);
+        MethodModifierWeeder.weed(AST);
+        FieldModifierWeeder.weed(AST);
+        ClassNameWeeder.weed(AST, args[0]);
 
         System.exit(0);
     }

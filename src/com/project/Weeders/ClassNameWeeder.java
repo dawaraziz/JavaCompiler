@@ -1,37 +1,32 @@
 package com.project.Weeders;
 
-import com.project.parser.structure.ParserSymbol;
+import com.project.AST.ASTHead;
 
-import java.util.ArrayList;
+import java.io.File;
 
 public class ClassNameWeeder {
-    public static void weed(final ParserSymbol parseTree, final String[] args) {
+    public static void weed(final ASTHead astHead, final String filename) {
 
         // Strips the base name from the file argument.
-        final String filename = args[0];
-        final String[] splitFilename = filename.split("[\\\\/]");
-        final String base = splitFilename[splitFilename.length - 1];
-        final String[] splitBase = base.split("\\.");
-        if (splitBase.length != 2) {
+        final File f = new File(filename);
+        final String[] base = f.getName().split("\\.");
+
+        if (base.length != 2) {
             System.err.println("File name is strange; definitely not CLASS_NAME.java.");
             System.exit(42);
         }
-        final String baseFilename = splitBase[0];
-        final String basePostfix = splitBase[1];
 
-        if (!basePostfix.equals("java")) {
+        final String baseFileName = base[0];
+        final String baseExtension = base[1];
+
+        if (!baseExtension.equals("java")) {
             System.err.println("File is not a .java file.");
             System.exit(42);
         }
 
-        final ArrayList<ParserSymbol> declarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
-        declarations.addAll(parseTree.getChildrenWithLexeme("INTERFACEDECLARATION"));
-        for (final ParserSymbol classDeclaration : declarations) {
-            final ArrayList<ParserSymbol> className = classDeclaration.getDirectChildrenWithLexeme(baseFilename);
-            if (className.isEmpty()) {
-                System.err.println("File name does not match class name.");
-                System.exit(42);
-            }
+        if (!baseFileName.equals(astHead.getExpectedFileName())) {
+            System.err.println("File name does not match class name.");
+            System.exit(42);
         }
     }
 }

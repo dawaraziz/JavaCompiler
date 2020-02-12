@@ -1,42 +1,30 @@
 package com.project.Weeders;
 
-import com.project.parser.structure.ParserSymbol;
+import com.project.AST.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.parser.structure.ParserSymbol.getStringList;
+import static com.project.AST.ASTHead.FINAL;
+import static com.project.AST.ASTHead.PROTECTED;
+import static com.project.AST.ASTHead.PUBLIC;
+
 
 public class FieldModifierWeeder {
-    public static void weed(final ParserSymbol parseTree) {
-        final ArrayList<ParserSymbol> propertyDeclarations = parseTree.getChildrenWithLexeme("FIELDDECLARATION");
+    public static void weed(final ASTHead astHead) {
+        final ArrayList<ArrayList<String>> fieldModifiers = astHead.getFieldModifiers();
 
-        for (final ParserSymbol propertyDeclaration : propertyDeclarations) {
-            final ArrayList<ParserSymbol> modifiers = propertyDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
+        // If we're missing a modifier list, it must have no access modifier.
+        if (fieldModifiers.size() != astHead.getFieldCount()) {
+            System.err.println("Encountered package private method.");
+            System.exit(42);
+        }
 
-            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
-            for (final ParserSymbol modifier : modifiers) {
-                methodModifiers.addAll(modifier.getLeafNodes());
-            }
-
-            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
-
-            if (stringModifiers.contains("final")) {
+        for (final ArrayList<String> modifiers : fieldModifiers) {
+            if (modifiers.contains(FINAL)) {
                 System.err.println("Encountered a final field.");
                 System.exit(42);
-            }
-
-            if (stringModifiers.contains("private")) {
-                System.err.println("Encountered a private field.");
-                System.exit(42);
-            }
-
-            if (!(stringModifiers.contains("public") || stringModifiers.contains("protected"))) {
+            } else if (!modifiers.contains(PROTECTED) && !modifiers.contains(PUBLIC)) {
                 System.err.println("Encountered a package-private field.");
-                System.exit(42);
-            }
-
-            if (stringModifiers.contains("public") && stringModifiers.contains("protected")) {
-                System.err.println("Encountered a public and protected field.");
                 System.exit(42);
             }
         }

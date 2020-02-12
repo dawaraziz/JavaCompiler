@@ -1,92 +1,68 @@
 package com.project.Weeders;
 
-import com.project.parser.structure.ParserSymbol;
+import com.project.AST.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.parser.structure.ParserSymbol.getStringList;
+import static com.project.AST.ASTHead.ABSTRACT;
+import static com.project.AST.ASTHead.FINAL;
+import static com.project.AST.ASTHead.NATIVE;
+import static com.project.AST.ASTHead.PROTECTED;
+import static com.project.AST.ASTHead.PUBLIC;
+import static com.project.AST.ASTHead.STATIC;
 
 public class MethodModifierWeeder {
-    public static void weed(final ParserSymbol parseTree) {
-        final ArrayList<ParserSymbol> methodDeclarations = parseTree.getChildrenWithLexeme("METHODHEADER");
-        final ArrayList<ParserSymbol> constructorDeclarations = parseTree.getChildrenWithLexeme("CONSTRUCTORDECLARATION");
+    public static void weed(final ASTHead astHead) {
+        final ArrayList<ArrayList<String>> constructorModifiers = astHead.getConstructorModifiers();
+        final boolean isInterface = astHead.isFileTypeInterface();
 
-        if (constructorDeclarations.isEmpty()) {
-            final ArrayList<ParserSymbol> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
-            if (!classDeclarations.isEmpty()) {
-                System.err.println("Encountered a class with no constructor.");
+        if (astHead.getConstructorModifiers().isEmpty() && !isInterface) {
+            System.err.println("Encountered a class with no constructor.");
+            System.exit(42);
+        }
+
+        for (final ArrayList<String> modifiers : constructorModifiers) {
+            if (modifiers.contains(STATIC) || modifiers.contains(ABSTRACT)
+                    || modifiers.contains(FINAL) || modifiers.contains(NATIVE)) {
+                System.err.println("Encountered invalid constructor modifier.");
+                System.exit(42);
+            } else if (modifiers.contains(PUBLIC) && modifiers.contains(PROTECTED)) {
+                System.err.println("Encountered constructor with two access modifiers.");
+                System.exit(42);
+            } else if (!modifiers.contains(PUBLIC) && !modifiers.contains(PROTECTED)) {
+                System.err.println("Encountered package private constructor.");
                 System.exit(42);
             }
         }
 
-        final ArrayList<ParserSymbol> declarations = new ArrayList<>();
-        declarations.addAll(methodDeclarations);
-        declarations.addAll(constructorDeclarations);
+        final ArrayList<ArrayList<String>> methodModifiers = astHead.getMethodModifiers();
 
-        for (final ParserSymbol constructor : constructorDeclarations) {
-            final ArrayList<ParserSymbol> modifiers = constructor.getDirectChildrenWithLexeme("MODIFIERS");
-
-            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
-            for (final ParserSymbol modifier : modifiers) {
-                methodModifiers.addAll(modifier.getLeafNodes());
-            }
-
-            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
-
-            if (stringModifiers.contains("static")
-                    || stringModifiers.contains("abstract")
-                    || stringModifiers.contains("final")
-                    || stringModifiers.contains("native")) {
-                System.err.println("Encountered abstract/final/native/static constructor.");
-                System.exit(42);
-            }
+        // If we're missing a modifier list, it must have no access modifier.
+        if (methodModifiers.size() != astHead.getMethodCount()) {
+            System.err.println("Encountered package private method.");
+            System.exit(42);
         }
 
-        for (final ParserSymbol methodDeclaration : declarations) {
-            final ArrayList<ParserSymbol> modifiers = methodDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
-
-            final ArrayList<ParserSymbol> methodModifiers = new ArrayList<>();
-            for (final ParserSymbol modifier : modifiers) {
-                methodModifiers.addAll(modifier.getLeafNodes());
-            }
-
-            final ArrayList<String> stringModifiers = getStringList(methodModifiers);
-
-            if (stringModifiers.contains("abstract") &&
-                    (stringModifiers.contains("final") || stringModifiers.contains("static"))) {
+        for (final ArrayList<String> modifiers : methodModifiers) {
+            if (isInterface && (modifiers.contains(NATIVE) || modifiers.contains(FINAL)
+                    || modifiers.contains(STATIC))) {
+                System.err.println("Encountered native, final, or static modifier on interface method.");
+                System.exit(42);
+            } else if (modifiers.contains(ABSTRACT) &&
+                    (modifiers.contains(FINAL) || modifiers.contains(STATIC))) {
                 System.err.println("Encountered an abstract and final/static method.");
                 System.exit(42);
-            } else if (stringModifiers.contains("static") && stringModifiers.contains("final")) {
-                System.err.println("Encountered a static and final method.");
+            } else if (modifiers.contains(STATIC) && modifiers.contains(FINAL)) {
+                System.err.println("Encountered a static final method.");
                 System.exit(42);
-            } else if (stringModifiers.contains("native") && !stringModifiers.contains("static")) {
-                System.err.println("Encountered non-static native method.");
+            } else if (modifiers.contains(NATIVE) && !modifiers.contains(STATIC)) {
+                System.err.println("Encountered a non-static native method.");
                 System.exit(42);
-            }
-
-            if (!(stringModifiers.contains("public") || stringModifiers.contains("protected"))) {
+            } else if (!modifiers.contains(PUBLIC) && !modifiers.contains(PROTECTED)) {
                 System.err.println("Encountered package private method.");
                 System.exit(42);
-            }
-
-            if (stringModifiers.contains("private")) {
-                System.err.println("Encountered a private method.");
-                System.exit(42);
-            }
-
-            if (stringModifiers.contains("native") || stringModifiers.contains("abstract")) {
-                final ArrayList<ParserSymbol> blocks = methodDeclaration.parent.getChildrenWithLexeme("BLOCK");
-                if (!blocks.isEmpty()) {
-                    System.err.println("Encountered native or abstract method with body.");
-                    System.exit(42);
-                }
-            }
-
-            if (methodDeclaration.parent.lexeme.equals("ABSTRACTMETHODDECLARATION")
-                    && (stringModifiers.contains("native")
-                    || stringModifiers.contains("final")
-                    || stringModifiers.contains("static"))) {
-                System.err.println("Encountered final/static/native method in interface body.");
+            } else if (modifiers.contains(PUBLIC) && modifiers.contains(PROTECTED)) {
+                System.err.println("Encountered two access modifiers on method.");
                 System.exit(42);
             }
         }

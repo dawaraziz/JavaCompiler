@@ -1,36 +1,30 @@
 package com.project.Weeders;
 
-import com.project.parser.structure.ParserSymbol;
+import com.project.AST.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.parser.structure.ParserSymbol.getStringList;
+import static com.project.AST.ASTHead.ABSTRACT;
+import static com.project.AST.ASTHead.FINAL;
+import static com.project.AST.ASTHead.NATIVE;
+import static com.project.AST.ASTHead.PROTECTED;
+import static com.project.AST.ASTHead.PUBLIC;
+import static com.project.AST.ASTHead.STATIC;
 
 public class ClassModifierWeeder {
-    public static void weed(final ParserSymbol parseTree) {
-        final ArrayList<ParserSymbol> classDeclarations = parseTree.getChildrenWithLexeme("CLASSDECLARATION");
-        for (final ParserSymbol classDeclaration : classDeclarations) {
-            final ArrayList<ParserSymbol> modifiers = classDeclaration.getDirectChildrenWithLexeme("MODIFIERS");
+    public static void weed(final ASTHead astHead) {
+        final ArrayList<String> classModifiers = astHead.getClassModifiers();
 
-            final ArrayList<ParserSymbol> classModifiers = new ArrayList<>();
-            for (final ParserSymbol modifier : modifiers) {
-                classModifiers.addAll(modifier.getLeafNodes());
-            }
-
-            final ArrayList<String> stringModifiers = getStringList(classModifiers);
-
-            if (stringModifiers.contains("abstract") && stringModifiers.contains("final")) {
-                System.err.println("Encountered an abstract and final class.");
-                System.exit(42);
-            } else if (stringModifiers.contains("static")
-                    || stringModifiers.contains("protected")
-                    || stringModifiers.contains("native")) {
-                System.err.println("Encountered an invalid modifier static/protected/native on a class.");
-                System.exit(42);
-            } else if (!stringModifiers.contains("public")) {
-                System.err.println("Encountered non-public class.");
-                System.exit(42);
-            }
+        if (classModifiers.contains(ABSTRACT) && classModifiers.contains(FINAL)) {
+            System.err.println("Encountered an abstract and final class.");
+            System.exit(42);
+        } else if (classModifiers.contains(STATIC) || classModifiers.contains(PROTECTED)
+                || classModifiers.contains(NATIVE)) {
+            System.err.println("Encountered an invalid modifier on a class.");
+            System.exit(42);
+        } else if (!classModifiers.contains(PUBLIC)) {
+            System.err.println("Encountered non-public class.");
+            System.exit(42);
         }
     }
 }
