@@ -5,9 +5,9 @@ import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
-class ASTNode {
+public class ASTNode {
     final Kind kind;
-    final String lexeme;
+    String lexeme;
     ASTNode parent;
     ArrayList<ASTNode> children = new ArrayList<>();
 
@@ -30,6 +30,22 @@ class ASTNode {
         }
 
         return nodesWithLexeme;
+    }
+
+    ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
+        final ArrayList<ASTNode> nodesWithkind = new ArrayList<>();
+
+        for (final Kind kind : kinds) {
+            if (kind.equals(this.kind)) {
+                nodesWithkind.add(this);
+            }
+        }
+
+        for (final ASTNode child : children) {
+            nodesWithkind.addAll(child.findNodesWithKinds(kinds));
+        }
+
+        return nodesWithkind;
     }
 
     ArrayList<ASTNode> getDirectChildrenWithKinds(final String... kinds) {
@@ -82,5 +98,9 @@ class ASTNode {
         }
 
         return strings;
+    }
+
+    public void setLexeme(final String lexeme) {
+        this.lexeme = lexeme;
     }
 }

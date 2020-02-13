@@ -25,8 +25,6 @@ public class Main {
 
         final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(args[0]);
 
-        LiteralWeeder.weed(tokens);
-
         printTokens(tokens);
 
         final ParserSymbol parseTree;
@@ -39,6 +37,7 @@ public class Main {
 
         final ASTHead AST = new ASTHead(parseTree);
 
+        LiteralWeeder.weed(AST);
         AbstractMethodWeeder.weed(AST);
         ClassModifierWeeder.weed(AST);
         MethodModifierWeeder.weed(AST);

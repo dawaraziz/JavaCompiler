@@ -1,10 +1,17 @@
 package com.project.AST;
 
+import com.project.AST.structure.CharacterLiteralHolder;
+import com.project.AST.structure.IntegerLiteralHolder;
+import com.project.AST.structure.StringLiteralHolder;
 import com.project.parser.structure.ParserSymbol;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static com.project.AST.ASTNode.lexemesToStringList;
+import static com.project.AST.structure.IntegerLiteralHolder.ParentType.OTHER;
+import static com.project.AST.structure.IntegerLiteralHolder.ParentType.UNARY;
 
 public class ASTHead {
 
@@ -19,6 +26,7 @@ public class ASTHead {
     private final static String MODIFIER = "MODIFIER";
     private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
     private final static String BLOCK = "BLOCK";
+    private final static String UNARY_EXPRESSION = "UNARYEXPRESSION";
 
     // MODIFIERS
     public final static String PUBLIC = "public";
@@ -102,6 +110,57 @@ public class ASTHead {
             }
         }
         return false;
+    }
+
+    public ArrayList<IntegerLiteralHolder> getIntegerLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.INTEGER_LITERAL);
+
+        final ArrayList<IntegerLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+
+            final Scanner scanner = new Scanner(literalNode.lexeme);
+
+            if (!scanner.hasNextLong()) {
+                System.err.println("Encountered non-integer INTEGER_LITERAL: " + literalNode.lexeme);
+                System.exit(42);
+            }
+
+            final long literal = scanner.nextLong();
+
+            // Hacky and terrible, but that's compilers!
+            if (literalNode.parent.parent.lexeme.equals(UNARY_EXPRESSION)) {
+                holders.add(new IntegerLiteralHolder(UNARY, literal));
+            } else {
+                holders.add(new IntegerLiteralHolder(OTHER, literal));
+            }
+        }
+
+        return holders;
+    }
+
+    public ArrayList<CharacterLiteralHolder> getCharacterLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.CHARACTER_LITERAL);
+
+        final ArrayList<CharacterLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+            holders.add(new CharacterLiteralHolder(literalNode, literalNode.lexeme));
+        }
+
+        return holders;
+    }
+
+    public ArrayList<StringLiteralHolder> getStringLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.STRING_LITERAL);
+
+        final ArrayList<StringLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+            holders.add(new StringLiteralHolder(literalNode, literalNode.lexeme));
+        }
+
+        return holders;
     }
 
     // This method is effectively the constructor.
