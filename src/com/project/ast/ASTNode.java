@@ -1,5 +1,6 @@
-package com.project.AST;
+package com.project.ast;
 
+import com.project.environments.structure.Type;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 

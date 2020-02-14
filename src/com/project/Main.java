@@ -1,16 +1,18 @@
 package com.project;
 
-import com.project.AST.ASTHead;
-import com.project.Weeders.AbstractMethodWeeder;
-import com.project.Weeders.ClassModifierWeeder;
-import com.project.Weeders.ClassNameWeeder;
-import com.project.Weeders.FieldModifierWeeder;
-import com.project.Weeders.LiteralWeeder;
-import com.project.Weeders.MethodModifierWeeder;
+import com.project.ast.ASTHead;
+import com.project.environments.JoosClassScope;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
+import com.project.weeders.AbstractMethodWeeder;
+import com.project.weeders.ClassModifierWeeder;
+import com.project.weeders.ClassNameWeeder;
+import com.project.weeders.FieldModifierWeeder;
+import com.project.weeders.LiteralWeeder;
+import com.project.weeders.MethodModifierWeeder;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,36 +25,48 @@ public class Main {
             System.exit(42);
         }
 
-        final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(args[0]);
+        final ArrayList<JoosClassScope> classTable = new ArrayList<>();
+        for (final String fileName : args) {
+            System.out.println("Scanning " + fileName + ".");
 
-        printTokens(tokens);
+            // Scanning step.
+            final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(fileName);
 
-        final ParserSymbol parseTree;
+            InputStream inputStreamJLR1 = Main.class.getResourceAsStream("/output.jlr1");
+            if (inputStreamJLR1 == null) {
+                inputStreamJLR1 = Main.class.getResourceAsStream("./output.jlr1");
+            }
 
-        InputStream inputStreamJLR1 = Main.class.getResourceAsStream("/output.jlr1");
-        if (inputStreamJLR1 == null) {
-            inputStreamJLR1 = Main.class.getResourceAsStream("./output.jlr1");
+            System.out.println("Parsing " + fileName + ".");
+
+            // Parsing step.
+            final ASTHead AST = new ASTHead(JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1)));
+
+            System.out.println("Weeding " + fileName + ".");
+
+            LiteralWeeder.weed(AST);
+            AbstractMethodWeeder.weed(AST);
+            ClassModifierWeeder.weed(AST);
+            MethodModifierWeeder.weed(AST);
+            FieldModifierWeeder.weed(AST);
+            ClassNameWeeder.weed(AST, fileName);
+
+            // Associates the AST with the class name.
+            classTable.add(new JoosClassScope(new File(fileName).getName().split("\\.")[0], AST));
         }
-        parseTree = JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1));
 
-        final ASTHead AST = new ASTHead(parseTree);
-
-        LiteralWeeder.weed(AST);
-        AbstractMethodWeeder.weed(AST);
-        ClassModifierWeeder.weed(AST);
-        MethodModifierWeeder.weed(AST);
-        FieldModifierWeeder.weed(AST);
-        ClassNameWeeder.weed(AST, args[0]);
+        // Checks for duplicate classes.
+        for (int i = 0; i < classTable.size(); ++i) {
+            for (int j = i + 1; j < classTable.size(); ++j) {
+                if (classTable.get(i).packageName.equals(classTable.get(j).packageName)
+                    && classTable.get(i).name.equals(classTable.get(j).name)) {
+                    System.err.println("Found duplicate class in same package.");
+                    System.exit(42);
+                }
+            }
+        }
 
         System.exit(0);
-    }
-
-    private static void printTokens(final ArrayList<ParserSymbol> tokens) {
-        System.out.println("Scanned Symbols:");
-        for (final ParserSymbol token : tokens) {
-            System.out.println(token.kind + ": " + token.lexeme);
-        }
-        System.out.println("-----------------------------------");
     }
 }
 

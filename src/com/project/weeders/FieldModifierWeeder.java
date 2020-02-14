@@ -1,12 +1,12 @@
-package com.project.Weeders;
+package com.project.weeders;
 
-import com.project.AST.ASTHead;
+import com.project.ast.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.AST.ASTHead.FINAL;
-import static com.project.AST.ASTHead.PROTECTED;
-import static com.project.AST.ASTHead.PUBLIC;
+import static com.project.ast.ASTHead.FINAL;
+import static com.project.ast.ASTHead.PROTECTED;
+import static com.project.ast.ASTHead.PUBLIC;
 
 
 public class FieldModifierWeeder {
@@ -15,7 +15,7 @@ public class FieldModifierWeeder {
 
         // If we're missing a modifier list, it must have no access modifier.
         if (fieldModifiers.size() != astHead.getFieldCount()) {
-            System.err.println("Encountered package private method.");
+            System.err.println("Encountered package private field.");
             System.exit(42);
         }
 

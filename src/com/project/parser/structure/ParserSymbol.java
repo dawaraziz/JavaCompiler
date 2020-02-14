@@ -30,4 +30,8 @@ public class ParserSymbol {
     public String toString() {
         return kind != null ? kind.toString() : lexeme;
     }
+
+    public boolean isTerminal() {
+        return children.isEmpty();
+    }
 }

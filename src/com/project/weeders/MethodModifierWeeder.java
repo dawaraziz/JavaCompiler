@@ -1,15 +1,15 @@
-package com.project.Weeders;
+package com.project.weeders;
 
-import com.project.AST.ASTHead;
+import com.project.ast.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.AST.ASTHead.ABSTRACT;
-import static com.project.AST.ASTHead.FINAL;
-import static com.project.AST.ASTHead.NATIVE;
-import static com.project.AST.ASTHead.PROTECTED;
-import static com.project.AST.ASTHead.PUBLIC;
-import static com.project.AST.ASTHead.STATIC;
+import static com.project.ast.ASTHead.ABSTRACT;
+import static com.project.ast.ASTHead.FINAL;
+import static com.project.ast.ASTHead.NATIVE;
+import static com.project.ast.ASTHead.PROTECTED;
+import static com.project.ast.ASTHead.PUBLIC;
+import static com.project.ast.ASTHead.STATIC;
 
 public class MethodModifierWeeder {
     public static void weed(final ASTHead astHead) {

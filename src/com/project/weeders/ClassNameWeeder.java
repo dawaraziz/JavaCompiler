@@ -1,6 +1,6 @@
-package com.project.Weeders;
+package com.project.weeders;
 
-import com.project.AST.ASTHead;
+import com.project.ast.ASTHead;
 
 import java.io.File;
 
