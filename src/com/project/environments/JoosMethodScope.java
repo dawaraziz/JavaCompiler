@@ -1,6 +1,7 @@
 package com.project.environments;
 
 import com.project.ast.ASTHead;
+import com.project.ast.ASTNode;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
@@ -16,6 +17,8 @@ public class JoosMethodScope extends Scope {
     public final ArrayList<Parameter> parameters;
     public final ASTHead bodyBlock;
 
+    public final Scope startScope;
+
     JoosMethodScope(final ASTHead method, final JoosClassScope joosClassScope) {
         bodyBlock = method.getMethodBlock();
         modifiers = method.getMethodModifiers().get(0);
@@ -25,5 +28,11 @@ public class JoosMethodScope extends Scope {
         type = method.getMethodReturnType();
         name = method.getMethodName();
         ast = method;
+
+        if (bodyBlock != null) {
+            startScope = bodyBlock.generateMethodScopes(this);
+        } else {
+            startScope = null;
+        }
     }
 }

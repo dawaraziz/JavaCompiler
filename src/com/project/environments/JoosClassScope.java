@@ -14,11 +14,15 @@ public class JoosClassScope extends Scope {
     public final String name;
     public final ASTHead ast;
     public final CLASS_TYPE type;
-    public final ArrayList<String> modifiers;
     public final Name packageName;
+
+    public final ArrayList<String> modifiers;
     public final ArrayList<JoosImportScope> imports;
     public final ArrayList<JoosMethodScope> methodTable;
     public final ArrayList<JoosFieldScope> fieldTable;
+
+    public final ArrayList<Name> implementsTable;
+    public final Name extendsName;
 
     public JoosClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -30,6 +34,9 @@ public class JoosClassScope extends Scope {
         final ASTHead classDeclaration = ast.getClassDeclaration();
 
         this.type = classDeclaration.getClassType();
+
+        implementsTable = classDeclaration.getClassInterfaces();
+        extendsName  = classDeclaration.getClassSuperClass();
 
         fieldTable = new ArrayList<>();
         generateFieldTable();

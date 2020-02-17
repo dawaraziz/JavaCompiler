@@ -3,8 +3,11 @@ package com.project.ast;
 import com.project.ast.structure.CharacterLiteralHolder;
 import com.project.ast.structure.IntegerLiteralHolder;
 import com.project.ast.structure.StringLiteralHolder;
+import com.project.environments.BlockScope;
+import com.project.environments.DefinitionScope;
 import com.project.environments.JoosClassScope;
 import com.project.environments.JoosImportScope;
+import com.project.environments.Scope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
@@ -33,11 +36,14 @@ public class ASTHead {
     private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
     private final static String BLOCK = "BLOCK";
     private final static String UNARY_EXPRESSION = "UNARYEXPRESSION";
-    private final static String FORMAL_PARAMETER_LIST = "FORMALPARAMETERLIST";
     private final static String FORMAL_PARAMETER = "FORMALPARAMETER";
     private final static String METHOD_DECLARATOR = "METHODDECLARATOR";
+    private final static String INTERFACES = "INTERFACES";
+    private final static String INTERFACE_TYPE_LIST = "INTERFACETYPELIST";
+    private final static String BLOCK_STATEMENTS = "BLOCKSTATEMENTS";
+    private final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
 
-    private final static String SEMICOLON = ";";
+    private final static String SUPER = "SUPER";
 
     // PACKAGES
     private final static String PACKAGE_DECLARATION = "PACKAGEDECLARATION";
@@ -101,7 +107,7 @@ public class ASTHead {
         return nameNodes.get(0).children.get(0).lexeme;
     }
 
-    static ASTNode getNameNode(final ASTNode startNode) {
+    private static ASTNode getNameNode(final ASTNode startNode) {
         ArrayList<ASTNode> nameNodes = startNode
                 .getDirectChildrenWithLexemes(QUALIFIED_NAME, SIMPLE_NAME);
 
@@ -449,5 +455,91 @@ public class ASTHead {
         } else {
             return nameNodes.get(0).children.get(3).lexeme;
         }
+    }
+
+    public ArrayList<Name> getClassInterfaces() {
+        final ArrayList<ASTNode> nodes = headNode.getDirectChildrenWithLexemes(INTERFACES);
+
+        if (nodes.size() == 0) {
+            return null;
+        }
+
+        final ASTNode interfaceNode = nodes.get(0).children.get(0);
+
+        final ArrayList<Name> names = new ArrayList<>();
+        if (interfaceNode.lexeme.equals(INTERFACE_TYPE_LIST)) {
+            for (final ASTNode child : interfaceNode.children) {
+                if (child.kind != Kind.COMMA) {
+                    names.add(new Name(lexemesToStringList(child.getLeafNodes())));
+                }
+            }
+        } else {
+            names.add(new Name(lexemesToStringList(interfaceNode.getLeafNodes())));
+        }
+
+
+        return names;
+    }
+
+    public Name getClassSuperClass() {
+        final ArrayList<ASTNode> nodes = headNode.getDirectChildrenWithLexemes(SUPER);
+
+        if (nodes.size() == 0) {
+            return null;
+        }
+
+        return new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes()));
+    }
+
+    public Scope generateMethodScopes(final Scope parentScope) {
+        if (headNode.lexeme.equals(BLOCK)) {
+            final ASTNode blockBody = headNode.children.get(1);
+
+            final BlockScope scope = new BlockScope(new ASTHead(blockBody), parentScope);
+
+            if (blockBody.lexeme.equals(BLOCK_STATEMENTS)) {
+                for (int i = blockBody.children.size() - 1; i >= 0; --i) {
+                    final ASTHead statement = new ASTHead(blockBody.children.get(i));
+
+                    final Scope statementScope = statement.generateMethodScopes(scope);
+
+                    if (statementScope == null) {
+                        scope.statements.add(statement);
+                    } else {
+                        scope.childScopes.add(statementScope);
+                        if (statementScope instanceof DefinitionScope) {
+                            break;
+                        }
+                    }
+                }
+            } else if (blockBody.kind == null) {
+                final ASTHead statement = new ASTHead(blockBody);
+                final Scope statementScope = statement.generateMethodScopes(scope);
+
+                if (statementScope == null) {
+                    scope.statements.add(statement);
+                } else {
+                    scope.childScopes.add(statementScope);
+                }
+            }
+
+            return scope;
+        } else if (headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
+            final ASTNode declaration = headNode.children.get(1);
+
+            final Type type = new Type(lexemesToStringList(declaration.children.get(1).getLeafNodes()));
+            final String name = declaration.findNodesWithLexeme(VARIABLE_DECLARATOR_ID).get(0).children.get(0).lexeme;
+            ASTHead initialization = null;
+            if (declaration.children.get(0).children.size() == 3) {
+                initialization = new ASTHead(declaration.children.get(0).children.get(0));
+            }
+
+            final DefinitionScope scope = new DefinitionScope(new ASTHead(declaration),
+                    parentScope, type, name, initialization);
+
+            return scope;
+        }
+
+        return null;
     }
 }
