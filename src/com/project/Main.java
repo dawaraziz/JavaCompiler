@@ -1,7 +1,7 @@
 package com.project;
 
-import com.project.ast.ASTHead;
-import com.project.environments.JoosClassScope;
+import com.project.environments.ast.ASTHead;
+import com.project.environments.ClassScope;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
@@ -25,7 +25,7 @@ public class Main {
             System.exit(42);
         }
 
-        final ArrayList<JoosClassScope> classTable = new ArrayList<>();
+        final ArrayList<ClassScope> classTable = new ArrayList<>();
         for (final String fileName : args) {
             System.out.println("Scanning " + fileName + ".");
 
@@ -52,7 +52,7 @@ public class Main {
             ClassNameWeeder.weed(AST, fileName);
 
             // Associates the AST with the class name.
-            classTable.add(new JoosClassScope(new File(fileName).getName().split("\\.")[0], AST));
+            classTable.add(new ClassScope(new File(fileName).getName().split("\\.")[0], AST));
         }
 
         // Checks for duplicate classes.

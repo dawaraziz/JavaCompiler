@@ -1,13 +1,10 @@
-package com.project.ast;
+package com.project.environments.ast;
 
-import com.project.ast.structure.CharacterLiteralHolder;
-import com.project.ast.structure.IntegerLiteralHolder;
-import com.project.ast.structure.StringLiteralHolder;
-import com.project.environments.BlockScope;
-import com.project.environments.DefinitionScope;
-import com.project.environments.JoosClassScope;
-import com.project.environments.JoosImportScope;
-import com.project.environments.Scope;
+import com.project.environments.ClassScope;
+import com.project.environments.ImportScope;
+import com.project.environments.ast.structure.CharacterLiteralHolder;
+import com.project.environments.ast.structure.IntegerLiteralHolder;
+import com.project.environments.ast.structure.StringLiteralHolder;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
@@ -17,12 +14,12 @@ import com.project.scanner.structure.Kind;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.project.ast.ASTNode.lexemesToStringList;
-import static com.project.ast.structure.IntegerLiteralHolder.ParentType.OTHER;
-import static com.project.ast.structure.IntegerLiteralHolder.ParentType.UNARY;
-import static com.project.environments.JoosClassScope.CLASS_TYPE;
-import static com.project.environments.JoosImportScope.IMPORT_TYPE.ON_DEMAND;
-import static com.project.environments.JoosImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.environments.ClassScope.CLASS_TYPE;
+import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
+import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.environments.ast.ASTNode.lexemesToStringList;
+import static com.project.environments.ast.structure.IntegerLiteralHolder.ParentType.OTHER;
+import static com.project.environments.ast.structure.IntegerLiteralHolder.ParentType.UNARY;
 
 public class ASTHead {
 
@@ -40,8 +37,8 @@ public class ASTHead {
     private final static String METHOD_DECLARATOR = "METHODDECLARATOR";
     private final static String INTERFACES = "INTERFACES";
     private final static String INTERFACE_TYPE_LIST = "INTERFACETYPELIST";
-    private final static String BLOCK_STATEMENTS = "BLOCKSTATEMENTS";
-    private final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
+
+    public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
 
     private final static String CAST_EXPRESSION = "CASTEXPRESSION";
     private final static String EXPRESSION = "EXPRESSION";
@@ -51,6 +48,17 @@ public class ASTHead {
     private final static String PACKAGE_DECLARATION = "PACKAGEDECLARATION";
     private final static String QUALIFIED_NAME = "QUALIFIEDNAME";
     private final static String SIMPLE_NAME = "SIMPLENAME";
+
+    private final static String IF_THEN_STATEMENT = "IFTHENSTATEMENT";
+    private final static String IF_THEN_ELSE_STATEMENT = "IFTHENELSESTATEMENT";
+    private final static String IF_THEN_ELSE_STATEMENT_NO_SHORT_IF = "IFTHENELSESTATEMENTNOSHORTIF";
+
+    private final static String WHILE_STATEMENT = "WHILESTATEMENT";
+    private final static String WHILE_STATEMENT_NO_SHORT_IF = "WHILESTATEMENTNOSHORTIF";
+
+    private final static String FOR_STATEMENT = "FORSTATEMENT";
+    private final static String FOR_STATEMENT_NO_SHORT_IF = "FORSTATEMENTNOSHORTIF";
+
 
     // IMPORTS
     private final static String TYPE_IMPORT_ON_DEMAND_DECLARATION = "TYPEIMPORTONDEMANDDECLARATION";
@@ -66,7 +74,7 @@ public class ASTHead {
 
     // FIELDS
     private final static String FIELD_DECLARATION = "FIELDDECLARATION";
-    private final static String VARIABLE_DECLARATOR_ID = "VARIABLEDECLARATORID";
+    public final static String VARIABLE_DECLARATOR_ID = "VARIABLEDECLARATORID";
     private final static String VARIABLE_DECLARATOR = "VARIABLEDECLARATOR";
 
     private final static ArrayList<String> safeCull = new ArrayList<>();
@@ -81,7 +89,7 @@ public class ASTHead {
         headNode = trimParseTree(parseTree, null);
     }
 
-    private ASTHead(final ASTNode head) {
+    public ASTHead(final ASTNode head) {
         headNode = head;
     }
 
@@ -354,8 +362,8 @@ public class ASTHead {
         return modifiers;
     }
 
-    public ArrayList<JoosImportScope> getImports(final JoosClassScope parentClass) {
-        final ArrayList<JoosImportScope> imports = new ArrayList<>();
+    public ArrayList<ImportScope> getImports(final ClassScope parentClass) {
+        final ArrayList<ImportScope> imports = new ArrayList<>();
 
         final ArrayList<ASTNode> onDemandImports = headNode.findNodesWithLexeme(TYPE_IMPORT_ON_DEMAND_DECLARATION);
 
@@ -363,9 +371,9 @@ public class ASTHead {
             final ASTNode name = getNameNode(onDemandImport);
 
             if (name.kind == Kind.VARIABLE_ID) {
-                imports.add(new JoosImportScope(ON_DEMAND, name.lexeme, parentClass));
+                imports.add(new ImportScope(ON_DEMAND, name.lexeme, parentClass));
             } else {
-                imports.add(new JoosImportScope(ON_DEMAND, lexemesToStringList(name.children), parentClass));
+                imports.add(new ImportScope(ON_DEMAND, lexemesToStringList(name.children), parentClass));
             }
         }
 
@@ -375,9 +383,9 @@ public class ASTHead {
             final ASTNode name = getNameNode(singleImport);
 
             if (name.kind == Kind.VARIABLE_ID) {
-                imports.add(new JoosImportScope(SINGLE, name.lexeme, parentClass));
+                imports.add(new ImportScope(SINGLE, name.lexeme, parentClass));
             } else {
-                imports.add(new JoosImportScope(SINGLE, lexemesToStringList(name.children), parentClass));
+                imports.add(new ImportScope(SINGLE, lexemesToStringList(name.children), parentClass));
             }
         }
 
@@ -500,55 +508,31 @@ public class ASTHead {
         return new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes()));
     }
 
-    public Scope generateMethodScopes(final Scope parentScope) {
-        if (headNode.lexeme.equals(BLOCK)) {
-            final ASTNode blockBody = headNode.children.get(1);
+    public ASTNode unsafeGetHeadNode() {
+        return headNode;
+    }
 
-            final BlockScope scope = new BlockScope(new ASTHead(blockBody), parentScope);
+    public boolean isBlock() {
+        return headNode.lexeme.equals(BLOCK);
+    }
 
-            if (blockBody.lexeme.equals(BLOCK_STATEMENTS)) {
-                for (int i = blockBody.children.size() - 1; i >= 0; --i) {
-                    final ASTHead statement = new ASTHead(blockBody.children.get(i));
+    public boolean isDefinition() {
+        return headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION_STATEMENT);
+    }
 
-                    final Scope statementScope = statement.generateMethodScopes(scope);
+    public boolean isIfStatement() {
+        return headNode.lexeme.equals(IF_THEN_STATEMENT)
+                || headNode.lexeme.equals(IF_THEN_ELSE_STATEMENT)
+                || headNode.lexeme.equals(IF_THEN_ELSE_STATEMENT_NO_SHORT_IF);
+    }
 
-                    if (statementScope == null) {
-                        scope.statements.add(statement);
-                    } else {
-                        scope.childScopes.add(statementScope);
-                        if (statementScope instanceof DefinitionScope) {
-                            break;
-                        }
-                    }
-                }
-            } else if (blockBody.kind == null) {
-                final ASTHead statement = new ASTHead(blockBody);
-                final Scope statementScope = statement.generateMethodScopes(scope);
+    public boolean isWhileStatement() {
+        return headNode.lexeme.equals(WHILE_STATEMENT)
+                || headNode.lexeme.equals(WHILE_STATEMENT_NO_SHORT_IF);
+    }
 
-                if (statementScope == null) {
-                    scope.statements.add(statement);
-                } else {
-                    scope.childScopes.add(statementScope);
-                }
-            }
-
-            return scope;
-        } else if (headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION_STATEMENT)) {
-            final ASTNode declaration = headNode.children.get(1);
-
-            final Type type = new Type(lexemesToStringList(declaration.children.get(1).getLeafNodes()));
-            final String name = declaration.findNodesWithLexeme(VARIABLE_DECLARATOR_ID).get(0).children.get(0).lexeme;
-            ASTHead initialization = null;
-            if (declaration.children.get(0).children.size() == 3) {
-                initialization = new ASTHead(declaration.children.get(0).children.get(0));
-            }
-
-            final DefinitionScope scope = new DefinitionScope(new ASTHead(declaration),
-                    parentScope, type, name, initialization);
-
-            return scope;
-        }
-
-        return null;
+    public boolean isForStatement() {
+        return headNode.lexeme.equals(FOR_STATEMENT)
+                || headNode.lexeme.equals(FOR_STATEMENT_NO_SHORT_IF);
     }
 }

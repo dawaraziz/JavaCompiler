@@ -1,12 +1,12 @@
 package com.project.weeders;
 
-import com.project.ast.ASTHead;
+import com.project.environments.ast.ASTHead;
 
 import java.util.ArrayList;
 
-import static com.project.ast.ASTHead.FINAL;
-import static com.project.ast.ASTHead.PROTECTED;
-import static com.project.ast.ASTHead.PUBLIC;
+import static com.project.environments.ast.ASTHead.FINAL;
+import static com.project.environments.ast.ASTHead.PROTECTED;
+import static com.project.environments.ast.ASTHead.PUBLIC;
 
 
 public class FieldModifierWeeder {

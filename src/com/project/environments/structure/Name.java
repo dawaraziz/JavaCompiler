@@ -21,4 +21,8 @@ public class Name {
         fullyQualifiedName = new ArrayList<>();
         fullyQualifiedName.add(name);
     }
+
+    public String getSimpleName() {
+        return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
+    }
 }

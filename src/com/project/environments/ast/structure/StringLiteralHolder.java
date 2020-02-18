@@ -1,12 +1,12 @@
-package com.project.ast.structure;
+package com.project.environments.ast.structure;
 
-import com.project.ast.ASTNode;
+import com.project.environments.ast.ASTNode;
 
-public class CharacterLiteralHolder {
+public class StringLiteralHolder {
     private final ASTNode node;
     public String value;
 
-    public CharacterLiteralHolder(final ASTNode node, final String value) {
+    public StringLiteralHolder(final ASTNode node, final String value) {
         this.node = node;
         this.value = value;
     }

@@ -1,6 +1,6 @@
 package com.project.weeders;
 
-import com.project.ast.ASTHead;
+import com.project.environments.ast.ASTHead;
 
 public class AbstractMethodWeeder {
     public static void weed(final ASTHead astHead) {

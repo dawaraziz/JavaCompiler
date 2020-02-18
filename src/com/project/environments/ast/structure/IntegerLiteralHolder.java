@@ -1,4 +1,4 @@
-package com.project.ast.structure;
+package com.project.environments.ast.structure;
 
 public class IntegerLiteralHolder {
     public enum ParentType {

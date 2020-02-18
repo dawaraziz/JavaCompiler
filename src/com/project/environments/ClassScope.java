@@ -1,11 +1,11 @@
 package com.project.environments;
 
-import com.project.ast.ASTHead;
+import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
 
-public class JoosClassScope extends Scope {
+public class ClassScope extends Scope {
     public enum CLASS_TYPE {
         INTERFACE,
         CLASS
@@ -17,14 +17,14 @@ public class JoosClassScope extends Scope {
     public final Name packageName;
 
     public final ArrayList<String> modifiers;
-    public final ArrayList<JoosImportScope> imports;
-    public final ArrayList<JoosMethodScope> methodTable;
-    public final ArrayList<JoosFieldScope> fieldTable;
+    public final ArrayList<ImportScope> imports;
+    public final ArrayList<MethodScope> methodTable;
+    public final ArrayList<FieldScope> fieldTable;
 
     public final ArrayList<Name> implementsTable;
     public final Name extendsName;
 
-    public JoosClassScope(final String name, final ASTHead ast) {
+    public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
         this.ast = ast;
         this.packageName = ast.getPackageName();
@@ -57,14 +57,19 @@ public class JoosClassScope extends Scope {
     private void generateFieldTable() {
         final ArrayList<ASTHead> fields = ast.getFieldNodes();
         for (final ASTHead field : fields) {
-            fieldTable.add(new JoosFieldScope(field, this));
+            fieldTable.add(new FieldScope(field, this));
         }
     }
 
     private void generateMethodTable() {
         final ArrayList<ASTHead> methods = ast.getMethodNodes();
         for (final ASTHead method : methods) {
-            methodTable.add(new JoosMethodScope(method, this));
+            methodTable.add(new MethodScope(method, this));
         }
+    }
+
+    @Override
+    boolean isInitCheck(final String variableName) {
+        return false;
     }
 }

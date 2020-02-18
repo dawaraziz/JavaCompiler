@@ -1,23 +1,22 @@
-package com.project.ast;
+package com.project.environments.ast;
 
-import com.project.environments.structure.Type;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
 public class ASTNode {
-    final Kind kind;
-    String lexeme;
-    ASTNode parent;
-    ArrayList<ASTNode> children = new ArrayList<>();
+    public final Kind kind;
+    public String lexeme;
+    public ASTNode parent;
+    public ArrayList<ASTNode> children = new ArrayList<>();
 
     ASTNode(final ParserSymbol symbol) {
         this.kind = symbol.kind;
         this.lexeme = symbol.lexeme;
     }
 
-    ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {
+    public ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {
         final ArrayList<ASTNode> nodesWithLexeme = new ArrayList<>();
 
         for (final String lexeme : lexemes) {
@@ -63,7 +62,7 @@ public class ASTNode {
         return childrenWithKind;
     }
 
-    ArrayList<ASTNode> getDirectChildrenWithLexemes(final String... lexemes) {
+    public ArrayList<ASTNode> getDirectChildrenWithLexemes(final String... lexemes) {
         final ArrayList<ASTNode> childrenWithLexemes = new ArrayList<>();
 
         for (final ASTNode child : children) {
@@ -77,7 +76,7 @@ public class ASTNode {
         return childrenWithLexemes;
     }
 
-    ArrayList<ASTNode> getLeafNodes() {
+    public ArrayList<ASTNode> getLeafNodes() {
         final ArrayList<ASTNode> leafNodes = new ArrayList<>();
 
         if (children.isEmpty()) {
@@ -91,7 +90,7 @@ public class ASTNode {
         return leafNodes;
     }
 
-    static ArrayList<String> lexemesToStringList(final ArrayList<ASTNode> nodes) {
+    public static ArrayList<String> lexemesToStringList(final ArrayList<ASTNode> nodes) {
         final ArrayList<String> strings = new ArrayList<>();
 
         for (final ASTNode node : nodes) {

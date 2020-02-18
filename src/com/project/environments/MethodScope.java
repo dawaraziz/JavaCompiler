@@ -1,13 +1,12 @@
 package com.project.environments;
 
-import com.project.ast.ASTHead;
-import com.project.ast.ASTNode;
+import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 
-public class JoosMethodScope extends Scope {
+public class MethodScope extends Scope {
     public final String name;
     public final ASTHead ast;
 
@@ -17,22 +16,32 @@ public class JoosMethodScope extends Scope {
     public final ArrayList<Parameter> parameters;
     public final ASTHead bodyBlock;
 
-    public final Scope startScope;
+    public final BlockScope startScope;
 
-    JoosMethodScope(final ASTHead method, final JoosClassScope joosClassScope) {
+    MethodScope(final ASTHead method, final ClassScope classScope) {
         bodyBlock = method.getMethodBlock();
         modifiers = method.getMethodModifiers().get(0);
         parameters = method.getMethodParameters();
-        parentScope = joosClassScope;
+        parentScope = classScope;
 
         type = method.getMethodReturnType();
         name = method.getMethodName();
         ast = method;
 
         if (bodyBlock != null) {
-            startScope = bodyBlock.generateMethodScopes(this);
+            startScope = new BlockScope(bodyBlock, this);
         } else {
             startScope = null;
         }
+    }
+
+    @Override
+    boolean isInitCheck(final String variableName) {
+        for (final Parameter parameter : parameters) {
+            if (parameter.name.getSimpleName().equals(variableName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

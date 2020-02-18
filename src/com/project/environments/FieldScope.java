@@ -1,11 +1,11 @@
 package com.project.environments;
 
-import com.project.ast.ASTHead;
+import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 
-public class JoosFieldScope extends Scope {
+public class FieldScope extends Scope {
     public final String name;
     public final ASTHead ast;
 
@@ -14,7 +14,7 @@ public class JoosFieldScope extends Scope {
     public final ArrayList<String> modifiers;
     public final ASTHead initializer;
 
-    public JoosFieldScope(final ASTHead head, final JoosClassScope parentScope) {
+    public FieldScope(final ASTHead head, final ClassScope parentScope) {
         this.ast = head;
 
         final ArrayList<ArrayList<String>> modifiers = head.getFieldModifiers();
@@ -31,5 +31,10 @@ public class JoosFieldScope extends Scope {
 
         this.type = ast.getFieldType();
         this.parentScope = parentScope;
+    }
+
+    @Override
+    boolean isInitCheck(final String variableName) {
+        return false;
     }
 }

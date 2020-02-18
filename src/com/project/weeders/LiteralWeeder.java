@@ -1,14 +1,14 @@
 package com.project.weeders;
 
-import com.project.ast.ASTHead;
-import com.project.ast.structure.CharacterLiteralHolder;
-import com.project.ast.structure.IntegerLiteralHolder;
-import com.project.ast.structure.StringLiteralHolder;
+import com.project.environments.ast.ASTHead;
+import com.project.environments.ast.structure.CharacterLiteralHolder;
+import com.project.environments.ast.structure.IntegerLiteralHolder;
+import com.project.environments.ast.structure.StringLiteralHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.project.ast.structure.IntegerLiteralHolder.ParentType.UNARY;
+import static com.project.environments.ast.structure.IntegerLiteralHolder.ParentType.UNARY;
 
 public class LiteralWeeder {
 
