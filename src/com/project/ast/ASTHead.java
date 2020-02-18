@@ -43,6 +43,8 @@ public class ASTHead {
     private final static String BLOCK_STATEMENTS = "BLOCKSTATEMENTS";
     private final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
 
+    private final static String CAST_EXPRESSION = "CASTEXPRESSION";
+    private final static String EXPRESSION = "EXPRESSION";
     private final static String SUPER = "SUPER";
 
     // PACKAGES
@@ -317,6 +319,13 @@ public class ASTHead {
     }
 
     private static ParserSymbol cullTransitionalNodes(final ParserSymbol parseTree) {
+        if (parseTree.lexeme.equals(CAST_EXPRESSION)
+                && parseTree.children.get(2).lexeme.equals(EXPRESSION)
+                && !parseTree.children.get(2).isVariableCullTree(Kind.VARIABLE_ID)) {
+            System.err.println("Code has invalid cast statement.");
+            System.exit(42);
+        }
+
         if (parseTree.children.size() == 1) {
             final ParserSymbol child = parseTree.children.get(0);
 

@@ -34,4 +34,14 @@ public class ParserSymbol {
     public boolean isTerminal() {
         return children.isEmpty();
     }
+
+    public boolean isVariableCullTree(final Kind kind) {
+        if (children.size() == 0 && this.kind == kind) {
+            return true;
+        } else if (children.size() == 1) {
+            return children.get(0).isVariableCullTree(kind);
+        } else {
+            return false;
+        }
+    }
 }
