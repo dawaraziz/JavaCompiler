@@ -2,6 +2,7 @@ package com.project;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
+import com.project.heirarchy_checker.HeirarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
@@ -64,6 +65,15 @@ public class Main {
                 }
             }
         }
+        HeirarchyChecker hCheck = new HeirarchyChecker(classTable);
+
+        if (hCheck.classExtendsInterface()) {
+            System.exit(42);
+        }
+        else {
+            System.exit(0);
+        }
+
 
         System.exit(0);
     }

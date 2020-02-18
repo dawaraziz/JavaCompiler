@@ -22,6 +22,14 @@ public class Name {
         fullyQualifiedName.add(name);
     }
 
+    public String getQualifiedName() {
+        String name = "";
+        for (String n : fullyQualifiedName) {
+            name += n + ".";
+        }
+        return name.substring(0, name.length() - 1);
+    }
+
     public String getSimpleName() {
         return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
     }
