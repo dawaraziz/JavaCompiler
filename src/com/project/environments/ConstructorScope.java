@@ -33,6 +33,8 @@ public class ConstructorScope extends Scope {
 
     @Override
     boolean isInitCheck(final String variableName) {
+        if (parameters == null) return false;
+
         for (final Parameter parameter : parameters) {
             if (parameter.name.getSimpleName().equals(variableName)) {
                 return true;
