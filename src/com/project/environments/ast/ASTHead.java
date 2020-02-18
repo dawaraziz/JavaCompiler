@@ -13,6 +13,7 @@ import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static com.project.environments.ClassScope.CLASS_TYPE;
 import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
@@ -23,31 +24,49 @@ import static com.project.environments.ast.structure.IntegerLiteralHolder.Parent
 
 public class ASTHead {
 
-    private final static String CLASS_DECLARATION = "CLASSDECLARATION";
-    private final static String CONSTRUCTOR_DECLARATION = "CONSTRUCTORDECLARATION";
-    private final static String METHOD_DECLARATION = "METHODDECLARATION";
-    private final static String METHOD_HEADER = "METHODHEADER";
-    private final static String VARIABLE_ID = "VARIABLE_ID";
-    private final static String MODIFIERS = "MODIFIERS";
-    private final static String MODIFIER = "MODIFIER";
-    private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
+    // GENERAL LEXEMES
     private final static String BLOCK = "BLOCK";
-    private final static String UNARY_EXPRESSION = "UNARYEXPRESSION";
-    private final static String FORMAL_PARAMETER = "FORMALPARAMETER";
-    private final static String METHOD_DECLARATOR = "METHODDECLARATOR";
-    private final static String INTERFACES = "INTERFACES";
-    private final static String INTERFACE_TYPE_LIST = "INTERFACETYPELIST";
-
-    public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
-
-    private final static String CAST_EXPRESSION = "CASTEXPRESSION";
-    private final static String EXPRESSION = "EXPRESSION";
-    private final static String SUPER = "SUPER";
-
-    // PACKAGES
-    private final static String PACKAGE_DECLARATION = "PACKAGEDECLARATION";
+    private final static String VARIABLE_ID = "VARIABLE_ID";
     private final static String QUALIFIED_NAME = "QUALIFIEDNAME";
     private final static String SIMPLE_NAME = "SIMPLENAME";
+
+    // MODIFIERS
+    private final static String MODIFIERS = "MODIFIERS";
+    private final static String MODIFIER = "MODIFIER";
+    public final static String PUBLIC = "public";
+    public final static String PROTECTED = "protected";
+    public final static String STATIC = "static";
+    public final static String ABSTRACT = "abstract";
+    public final static String FINAL = "final";
+    public final static String NATIVE = "native";
+
+    // CLASS LEXEMES
+    private final static String CLASS_DECLARATION = "CLASSDECLARATION";
+    private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
+    private final static String INTERFACES = "INTERFACES";
+    private final static String INTERFACE_TYPE_LIST = "INTERFACETYPELIST";
+    private final static String SUPER = "SUPER";
+
+    // METHOD LEXEMES
+    private final static String CONSTRUCTOR_DECLARATION = "CONSTRUCTORDECLARATION";
+    private final static String CONSTRUCTOR_DECLARATOR = "CONSTRUCTORDECLARATOR";
+    private final static String METHOD_DECLARATION = "METHODDECLARATION";
+    private final static String METHOD_DECLARATOR = "METHODDECLARATOR";
+    private final static String METHOD_HEADER = "METHODHEADER";
+    private final static String FORMAL_PARAMETER = "FORMALPARAMETER";
+
+    // FIELDS
+    private final static String FIELD_DECLARATION = "FIELDDECLARATION";
+    public final static String VARIABLE_DECLARATOR_ID = "VARIABLEDECLARATORID";
+    private final static String VARIABLE_DECLARATOR = "VARIABLEDECLARATOR";
+
+    // EXPRESSION LEXEMES
+    private final static String UNARY_EXPRESSION = "UNARYEXPRESSION";
+    private final static String CAST_EXPRESSION = "CASTEXPRESSION";
+    private final static String EXPRESSION = "EXPRESSION";
+
+    // STATEMENT LEXEMES
+    public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
 
     private final static String IF_THEN_STATEMENT = "IFTHENSTATEMENT";
     private final static String IF_THEN_ELSE_STATEMENT = "IFTHENELSESTATEMENT";
@@ -59,32 +78,24 @@ public class ASTHead {
     private final static String FOR_STATEMENT = "FORSTATEMENT";
     private final static String FOR_STATEMENT_NO_SHORT_IF = "FORSTATEMENTNOSHORTIF";
 
+    // PACKAGE LEXEMES
+    private final static String PACKAGE_DECLARATION = "PACKAGEDECLARATION";
 
     // IMPORTS
     private final static String TYPE_IMPORT_ON_DEMAND_DECLARATION = "TYPEIMPORTONDEMANDDECLARATION";
     private final static String SINGLE_TYPE_IMPORT_DECLARATION = "SINGLETYPEIMPORTDECLARATION";
 
-    // MODIFIERS
-    public final static String PUBLIC = "public";
-    public final static String PROTECTED = "protected";
-    public final static String STATIC = "static";
-    public final static String ABSTRACT = "abstract";
-    public final static String FINAL = "final";
-    public final static String NATIVE = "native";
-
-    // FIELDS
-    private final static String FIELD_DECLARATION = "FIELDDECLARATION";
-    public final static String VARIABLE_DECLARATOR_ID = "VARIABLEDECLARATORID";
-    private final static String VARIABLE_DECLARATOR = "VARIABLEDECLARATOR";
-
-    private final static ArrayList<String> safeCull = new ArrayList<>();
+    private final static ArrayList<String> safeCull;
 
     static {
+        safeCull = new ArrayList<>();
         safeCull.add(SIMPLE_NAME);
     }
 
     private final ASTNode headNode;
 
+
+    // CONSTRUCTORS
     public ASTHead(final ParserSymbol parseTree) {
         headNode = trimParseTree(parseTree, null);
     }
@@ -93,192 +104,6 @@ public class ASTHead {
         headNode = head;
     }
 
-    public Name getPackageName() {
-        final ArrayList<ASTNode> packageNodes = headNode.findNodesWithLexeme(PACKAGE_DECLARATION);
-
-        if (packageNodes.size() == 0) {
-            return null;
-        } else if (packageNodes.size() > 1) {
-            System.err.println("Somehow identified more than one package in a class; aborting!");
-            System.exit(42);
-        }
-
-        return new Name(lexemesToStringList(getNameNode(packageNodes.get(0)).getLeafNodes()));
-    }
-
-    public String getFieldName() {
-        final ArrayList<ASTNode> nameNodes = headNode.findNodesWithLexeme(VARIABLE_DECLARATOR_ID);
-
-        if (nameNodes.size() != 1) {
-            System.err.println("Identified field with incorrect name; aborting!");
-            System.exit(42);
-        }
-
-        return nameNodes.get(0).children.get(0).lexeme;
-    }
-
-    private static ASTNode getNameNode(final ASTNode startNode) {
-        ArrayList<ASTNode> nameNodes = startNode
-                .getDirectChildrenWithLexemes(QUALIFIED_NAME, SIMPLE_NAME);
-
-        if (nameNodes.size() != 1) {
-            nameNodes = startNode.getDirectChildrenWithKinds(VARIABLE_ID);
-
-            if (nameNodes.size() != 1) {
-                System.err.println("Identified badly formatted name in a class; aborting!");
-                System.exit(42);
-            }
-        }
-        return nameNodes.get(0);
-    }
-
-    public String getExpectedFileName() {
-        final ArrayList<ASTNode> declarations =
-                headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
-
-        if (declarations.size() > 1) {
-            System.err.println("File has more than one class; aborting!");
-            System.exit(42);
-        }
-
-        final ArrayList<ASTNode> names = declarations.get(0).getDirectChildrenWithKinds(VARIABLE_ID);
-
-        if (names.size() > 1) {
-            System.err.println("File has more than one class; aborting!");
-            System.exit(42);
-        }
-
-        return names.get(0).lexeme;
-    }
-
-    public ASTHead getClassDeclaration() {
-        final ArrayList<ASTNode> declarations = headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
-
-        if (declarations.size() > 1) {
-            System.err.println("File has more than one class; aborting!");
-            System.exit(42);
-        }
-
-        return new ASTHead(declarations.get(0));
-    }
-
-    public ArrayList<String> getClassModifiers() {
-        final ArrayList<ASTNode> declarations =
-                headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
-
-        if (declarations.size() > 1) {
-            System.err.println("File has more than one class; aborting!");
-            System.exit(42);
-        }
-
-        final ArrayList<ASTNode> modifiers = declarations.get(0)
-                .getDirectChildrenWithLexemes(MODIFIERS, MODIFIER);
-
-        return lexemesToStringList(modifiers.get(0).getLeafNodes());
-    }
-
-    public ArrayList<ArrayList<String>> getFieldModifiers() {
-        return getModifiers(headNode.findNodesWithLexeme(FIELD_DECLARATION));
-    }
-
-    public ArrayList<ArrayList<String>> getMethodModifiers() {
-        return getModifiers(headNode.findNodesWithLexeme(METHOD_HEADER));
-    }
-
-    public int getMethodCount() {
-        return headNode.findNodesWithLexeme(METHOD_HEADER).size();
-    }
-
-    public int getFieldCount() {
-        return headNode.findNodesWithLexeme(FIELD_DECLARATION).size();
-    }
-
-    public ArrayList<ArrayList<String>> getConstructorModifiers() {
-        return getModifiers(headNode.findNodesWithLexeme(CONSTRUCTOR_DECLARATION));
-    }
-
-    public boolean isFileTypeInterface() {
-        return !headNode.findNodesWithLexeme(INTERFACE_DECLARATION).isEmpty();
-    }
-
-    public boolean isAbstractMethodInitialized() {
-        final ArrayList<ASTNode> declarations = headNode.findNodesWithLexeme(METHOD_DECLARATION);
-
-        for (final ASTNode declaration : declarations) {
-            if (!declaration.findNodesWithLexeme(ABSTRACT).isEmpty()
-                    && !declaration.findNodesWithLexeme(BLOCK).isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public ArrayList<IntegerLiteralHolder> getIntegerLiterals() {
-        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.INTEGER_LITERAL);
-
-        final ArrayList<IntegerLiteralHolder> holders = new ArrayList<>();
-
-        for (final ASTNode literalNode : literalNodes) {
-
-            final Scanner scanner = new Scanner(literalNode.lexeme);
-
-            if (!scanner.hasNextLong()) {
-                System.err.println("Encountered non-integer INTEGER_LITERAL: " + literalNode.lexeme);
-                System.exit(42);
-            }
-
-            final long literal = scanner.nextLong();
-
-            // Hacky and terrible, but that's compilers!
-            if (literalNode.parent.parent.lexeme.equals(UNARY_EXPRESSION)) {
-                holders.add(new IntegerLiteralHolder(UNARY, literal));
-            } else {
-                holders.add(new IntegerLiteralHolder(OTHER, literal));
-            }
-        }
-
-        return holders;
-    }
-
-    public CLASS_TYPE getClassType() {
-        if (headNode.lexeme.equals(INTERFACE_DECLARATION)) {
-            return CLASS_TYPE.INTERFACE;
-        } else if (headNode.lexeme.equals(CLASS_DECLARATION)) {
-            return CLASS_TYPE.CLASS;
-        } else {
-            System.err.println("Expected class type, found " + headNode.lexeme + "Aborting!");
-            System.exit(42);
-        }
-        return null;
-    }
-
-    public ArrayList<CharacterLiteralHolder> getCharacterLiterals() {
-        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.CHARACTER_LITERAL);
-
-        final ArrayList<CharacterLiteralHolder> holders = new ArrayList<>();
-
-        for (final ASTNode literalNode : literalNodes) {
-            holders.add(new CharacterLiteralHolder(literalNode, literalNode.lexeme));
-        }
-
-        return holders;
-    }
-
-    public ArrayList<StringLiteralHolder> getStringLiterals() {
-        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.STRING_LITERAL);
-
-        final ArrayList<StringLiteralHolder> holders = new ArrayList<>();
-
-        for (final ASTNode literalNode : literalNodes) {
-            holders.add(new StringLiteralHolder(literalNode, literalNode.lexeme));
-        }
-
-        return holders;
-    }
-
-    // This method is effectively the constructor.
-    // However, since we can't really recurse on the
-    // constructor, we have to make this separate method.
     private static ASTNode trimParseTree(ParserSymbol parseTree, final ASTNode parent) {
         if (parseTree.kind == null && parseTree.children.isEmpty()) {
             System.err.println("Got a terminal symbol with no children; aborting!");
@@ -349,19 +174,7 @@ public class ASTHead {
         return newParseTree;
     }
 
-    private ArrayList<ArrayList<String>> getModifiers(final ArrayList<ASTNode> declarations) {
-        final ArrayList<ArrayList<String>> modifiers = new ArrayList<>();
-        for (final ASTNode field : declarations) {
-            final ArrayList<ASTNode> modifierNodes = field.getDirectChildrenWithLexemes(MODIFIERS, MODIFIER);
-            for (final ASTNode modifierNode : modifierNodes) {
-                final ArrayList<ASTNode> modifierTerminals = modifierNode.getLeafNodes();
-                modifiers.add(lexemesToStringList(modifierTerminals));
-            }
-        }
-
-        return modifiers;
-    }
-
+    // FILE FUNCTIONS
     public ArrayList<ImportScope> getImports(final ClassScope parentClass) {
         final ArrayList<ImportScope> imports = new ArrayList<>();
 
@@ -392,86 +205,68 @@ public class ASTHead {
         return imports;
     }
 
-    public ArrayList<ASTHead> getFieldNodes() {
-        final ArrayList<ASTNode> fields = headNode.findNodesWithLexeme(FIELD_DECLARATION);
-        final ArrayList<ASTHead> fieldHeads = new ArrayList<>();
+    public String getExpectedFileName() {
+        final ArrayList<ASTNode> declarations =
+                headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
 
-        for (final ASTNode field : fields) {
-            fieldHeads.add(new ASTHead(field));
-        }
-
-        return fieldHeads;
-    }
-
-    public ArrayList<ASTHead> getMethodNodes() {
-        final ArrayList<ASTNode> methods = headNode.findNodesWithLexeme(METHOD_DECLARATION);
-        final ArrayList<ASTHead> methodHeads = new ArrayList<>();
-
-        for (final ASTNode method : methods) {
-            methodHeads.add(new ASTHead(method));
-        }
-
-        return methodHeads;
-    }
-
-    public ASTHead getFieldInitializer() {
-        final ArrayList<ASTNode> initializers = headNode.findNodesWithLexeme(VARIABLE_DECLARATOR);
-
-        if (initializers.size() > 1) {
-            System.err.println("Found more than one field initializer; aborting!");
-            System.exit(42);
-        } else if (initializers.size() == 0) {
-            return null;
-        }
-
-        return new ASTHead(initializers.get(0));
-    }
-
-    public Type getFieldType() {
-        return new Type(lexemesToStringList(headNode.children.get(2).getLeafNodes()));
-    }
-
-    public ASTHead getMethodBlock() {
-        final ASTNode head = headNode.children.get(0);
-
-        if (head.lexeme.equals(BLOCK)) {
-            return new ASTHead(head);
-        } else if (head.children.get(0).lexeme.equals(";")) {
-            return null;
-        } else {
-            System.err.println("Couldn't find method body; aborting!");
+        if (declarations.size() > 1) {
+            System.err.println("File has more than one class; aborting!");
             System.exit(42);
         }
-        return null;
-    }
 
+        final ArrayList<ASTNode> names = declarations.get(0).getDirectChildrenWithKinds(VARIABLE_ID);
 
-    public ArrayList<Parameter> getMethodParameters() {
-        final ArrayList<Parameter> parameterList = new ArrayList<>();
-
-        final ArrayList<ASTNode> parameters = headNode.findNodesWithLexeme(FORMAL_PARAMETER);
-
-        for (final ASTNode parameter : parameters) {
-            final Name name = new Name(lexemesToStringList(parameter.children.get(0).getLeafNodes()));
-            final Type type = new Type(lexemesToStringList(parameter.children.get(1).getLeafNodes()));
-            parameterList.add(new Parameter(type, name));
+        if (names.size() > 1) {
+            System.err.println("File has more than one class; aborting!");
+            System.exit(42);
         }
 
-        return parameterList;
+        return names.get(0).lexeme;
     }
 
-    public Type getMethodReturnType() {
-        final ASTNode header = headNode.findNodesWithLexeme(METHOD_HEADER).get(0);
-        return new Type(lexemesToStringList(header.children.get(1).getLeafNodes()));
+    public boolean isFileTypeInterface() {
+        return !headNode.findNodesWithLexeme(INTERFACE_DECLARATION).isEmpty();
     }
 
-    public String getMethodName() {
-        final ArrayList<ASTNode> nameNodes = headNode.findNodesWithLexeme(METHOD_DECLARATOR);
-        if (nameNodes.get(0).children.size() == 3) {
-            return nameNodes.get(0).children.get(2).lexeme;
-        } else {
-            return nameNodes.get(0).children.get(3).lexeme;
+
+    // CLASS FUNCTIONS
+    public ASTHead getClassDeclaration() {
+        final ArrayList<ASTNode> declarations = headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
+
+        if (declarations.size() > 1) {
+            System.err.println("File has more than one class; aborting!");
+            System.exit(42);
         }
+
+        return new ASTHead(declarations.get(0));
+    }
+
+    public Name getPackageName() {
+        final ArrayList<ASTNode> packageNodes = headNode.findNodesWithLexeme(PACKAGE_DECLARATION);
+
+        if (packageNodes.size() == 0) {
+            return null;
+        } else if (packageNodes.size() > 1) {
+            System.err.println("Somehow identified more than one package in a class; aborting!");
+            System.exit(42);
+        }
+
+        return new Name(lexemesToStringList(getNameNode(packageNodes.get(0)).getLeafNodes()));
+    }
+
+    public ArrayList<String> getClassModifiers() {
+        final ArrayList<ASTNode> declarations =
+                headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
+
+        if (declarations.size() > 1) {
+            System.err.println("File has more than one class; aborting!");
+            System.exit(42);
+        }
+
+        final ArrayList<ASTNode> modifiers = declarations.get(0)
+                .getDirectChildrenWithLexemes(MODIFIERS, MODIFIER);
+
+        return lexemesToStringList(modifiers.get(0).getLeafNodes());
     }
 
     public ArrayList<Name> getClassInterfaces() {
@@ -508,10 +303,254 @@ public class ASTHead {
         return new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes()));
     }
 
+    public CLASS_TYPE getClassType() {
+        if (headNode.lexeme.equals(INTERFACE_DECLARATION)) {
+            return CLASS_TYPE.INTERFACE;
+        } else if (headNode.lexeme.equals(CLASS_DECLARATION)) {
+            return CLASS_TYPE.CLASS;
+        } else {
+            System.err.println("Expected class type, found " + headNode.lexeme + "Aborting!");
+            System.exit(42);
+        }
+        return null;
+    }
+
+
+    // FIELD FUNCTIONS
+    public String getFieldName() {
+        final ArrayList<ASTNode> nameNodes = headNode.findNodesWithLexeme(VARIABLE_DECLARATOR_ID);
+
+        if (nameNodes.size() != 1) {
+            System.err.println("Identified field with incorrect name; aborting!");
+            System.exit(42);
+        }
+
+        return nameNodes.get(0).children.get(0).lexeme;
+    }
+
+    public ArrayList<ArrayList<String>> getFieldModifiers() {
+        return getModifiers(headNode.findNodesWithLexeme(FIELD_DECLARATION));
+    }
+
+    public int getFieldCount() {
+        return headNode.findNodesWithLexeme(FIELD_DECLARATION).size();
+    }
+
+    public ArrayList<ASTHead> getFieldNodes() {
+        final ArrayList<ASTNode> fields = headNode.findNodesWithLexeme(FIELD_DECLARATION);
+        final ArrayList<ASTHead> fieldHeads = new ArrayList<>();
+
+        for (final ASTNode field : fields) {
+            fieldHeads.add(new ASTHead(field));
+        }
+
+        return fieldHeads;
+    }
+
+    public ASTHead getFieldInitializer() {
+        final ArrayList<ASTNode> initializers = headNode.findNodesWithLexeme(VARIABLE_DECLARATOR);
+
+        if (initializers.size() > 1) {
+            System.err.println("Found more than one field initializer; aborting!");
+            System.exit(42);
+        } else if (initializers.size() == 0) {
+            return null;
+        }
+
+        return new ASTHead(initializers.get(0));
+    }
+
+    public Type getFieldType() {
+        return new Type(lexemesToStringList(headNode.children.get(2).getLeafNodes()));
+    }
+
+
+    // METHOD FUNCTIONS
+    public ArrayList<ArrayList<String>> getMethodModifiers() {
+        return getModifiers(headNode.findNodesWithLexeme(METHOD_HEADER));
+    }
+
+    public int getMethodCount() {
+        return headNode.findNodesWithLexeme(METHOD_HEADER).size();
+    }
+
+    public boolean isAbstractMethodInitialized() {
+        final ArrayList<ASTNode> declarations = headNode.findNodesWithLexeme(METHOD_DECLARATION);
+
+        for (final ASTNode declaration : declarations) {
+            if (!declaration.findNodesWithLexeme(ABSTRACT).isEmpty()
+                    && !declaration.findNodesWithLexeme(BLOCK).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ASTHead getConstructorBlock() {
+        return new ASTHead(headNode.children.get(0));
+    }
+
+    public ArrayList<ArrayList<String>> getConstructorModifiers() {
+        return getModifiers(headNode.findNodesWithLexeme(CONSTRUCTOR_DECLARATION));
+    }
+
+    public ArrayList<ASTHead> getMethodNodes() {
+        final ArrayList<ASTNode> methods = headNode.findNodesWithLexeme(METHOD_DECLARATION);
+        final ArrayList<ASTHead> methodHeads = new ArrayList<>();
+
+        for (final ASTNode method : methods) {
+            methodHeads.add(new ASTHead(method));
+        }
+
+        return methodHeads;
+    }
+
+    public ASTHead getMethodBlock() {
+        final ASTNode head = headNode.children.get(0);
+
+        if (head.lexeme.equals(BLOCK)) {
+            return new ASTHead(head);
+        } else if (head.children.get(0).lexeme.equals(";")) {
+            return null;
+        } else {
+            System.err.println("Couldn't find method body; aborting!");
+            System.exit(42);
+        }
+        return null;
+    }
+
+    public ArrayList<Parameter> getMethodParameters() {
+        final ArrayList<Parameter> parameterList = new ArrayList<>();
+
+        final ArrayList<ASTNode> parameters = headNode.findNodesWithLexeme(FORMAL_PARAMETER);
+
+        if (parameters.size() == 0) return null;
+
+        for (final ASTNode parameter : parameters) {
+            final Name name = new Name(lexemesToStringList(parameter.children.get(0).getLeafNodes()));
+            final Type type = new Type(lexemesToStringList(parameter.children.get(1).getLeafNodes()));
+            parameterList.add(new Parameter(type, name));
+        }
+
+        return parameterList;
+    }
+
+    public Type getMethodReturnType() {
+        final ASTNode header = headNode.findNodesWithLexeme(METHOD_HEADER).get(0);
+        return new Type(lexemesToStringList(header.children.get(1).getLeafNodes()));
+    }
+
+    public String getMethodName() {
+        final ArrayList<ASTNode> nameNodes = headNode.findNodesWithLexeme(METHOD_DECLARATOR);
+        if (nameNodes.get(0).children.size() == 3) {
+            return nameNodes.get(0).children.get(2).lexeme;
+        } else {
+            return nameNodes.get(0).children.get(3).lexeme;
+        }
+    }
+
+    public String getConstructorName() {
+        final ArrayList<ASTNode> nameNodes = headNode.findNodesWithLexeme(CONSTRUCTOR_DECLARATOR);
+        if (nameNodes.get(0).children.size() == 3) {
+            return nameNodes.get(0).children.get(2).lexeme;
+        } else {
+            return nameNodes.get(0).children.get(3).lexeme;
+        }
+    }
+
+    public ArrayList<ASTHead> getConstructorNodes() {
+        return headNode.findNodesWithLexeme(CONSTRUCTOR_DECLARATION)
+                .stream()
+                .map(ASTHead::new)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
+    // HELPER FUNCTIONS
+    private static ASTNode getNameNode(final ASTNode startNode) {
+        ArrayList<ASTNode> nameNodes = startNode
+                .getDirectChildrenWithLexemes(QUALIFIED_NAME, SIMPLE_NAME);
+
+        if (nameNodes.size() != 1) {
+            nameNodes = startNode.getDirectChildrenWithKinds(VARIABLE_ID);
+
+            if (nameNodes.size() != 1) {
+                System.err.println("Identified badly formatted name in a class; aborting!");
+                System.exit(42);
+            }
+        }
+        return nameNodes.get(0);
+    }
+
+    public ArrayList<IntegerLiteralHolder> getIntegerLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.INTEGER_LITERAL);
+
+        final ArrayList<IntegerLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+
+            final Scanner scanner = new Scanner(literalNode.lexeme);
+
+            if (!scanner.hasNextLong()) {
+                System.err.println("Encountered non-integer INTEGER_LITERAL: " + literalNode.lexeme);
+                System.exit(42);
+            }
+
+            final long literal = scanner.nextLong();
+
+            // Hacky and terrible, but that's compilers!
+            if (literalNode.parent.parent.lexeme.equals(UNARY_EXPRESSION)) {
+                holders.add(new IntegerLiteralHolder(UNARY, literal));
+            } else {
+                holders.add(new IntegerLiteralHolder(OTHER, literal));
+            }
+        }
+
+        return holders;
+    }
+
+    public ArrayList<CharacterLiteralHolder> getCharacterLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.CHARACTER_LITERAL);
+
+        final ArrayList<CharacterLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+            holders.add(new CharacterLiteralHolder(literalNode, literalNode.lexeme));
+        }
+
+        return holders;
+    }
+
+    public ArrayList<StringLiteralHolder> getStringLiterals() {
+        final ArrayList<ASTNode> literalNodes = headNode.findNodesWithKinds(Kind.STRING_LITERAL);
+
+        final ArrayList<StringLiteralHolder> holders = new ArrayList<>();
+
+        for (final ASTNode literalNode : literalNodes) {
+            holders.add(new StringLiteralHolder(literalNode, literalNode.lexeme));
+        }
+
+        return holders;
+    }
+
+    private ArrayList<ArrayList<String>> getModifiers(final ArrayList<ASTNode> declarations) {
+        final ArrayList<ArrayList<String>> modifiers = new ArrayList<>();
+        for (final ASTNode field : declarations) {
+            final ArrayList<ASTNode> modifierNodes = field.getDirectChildrenWithLexemes(MODIFIERS, MODIFIER);
+            for (final ASTNode modifierNode : modifierNodes) {
+                final ArrayList<ASTNode> modifierTerminals = modifierNode.getLeafNodes();
+                modifiers.add(lexemesToStringList(modifierTerminals));
+            }
+        }
+
+        return modifiers;
+    }
+
     public ASTNode unsafeGetHeadNode() {
         return headNode;
     }
 
+    // SCOPE FUNCTIONS
     public boolean isBlock() {
         return headNode.lexeme.equals(BLOCK);
     }

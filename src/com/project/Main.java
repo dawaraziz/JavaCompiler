@@ -1,7 +1,7 @@
 package com.project;
 
-import com.project.environments.ast.ASTHead;
 import com.project.environments.ClassScope;
+import com.project.environments.ast.ASTHead;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
@@ -58,8 +58,7 @@ public class Main {
         // Checks for duplicate classes.
         for (int i = 0; i < classTable.size(); ++i) {
             for (int j = i + 1; j < classTable.size(); ++j) {
-                if (classTable.get(i).packageName.equals(classTable.get(j).packageName)
-                    && classTable.get(i).name.equals(classTable.get(j).name)) {
+                if (classTable.get(i).equals(classTable.get(j))) {
                     System.err.println("Found duplicate class in same package.");
                     System.exit(42);
                 }

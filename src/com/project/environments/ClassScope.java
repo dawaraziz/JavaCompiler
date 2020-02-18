@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ClassScope extends Scope {
     public enum CLASS_TYPE {
@@ -18,11 +19,14 @@ public class ClassScope extends Scope {
 
     public final ArrayList<String> modifiers;
     public final ArrayList<ImportScope> imports;
-    public final ArrayList<MethodScope> methodTable;
-    public final ArrayList<FieldScope> fieldTable;
 
     public final ArrayList<Name> implementsTable;
     public final Name extendsName;
+
+    public final ArrayList<MethodScope> methodTable;
+    public final ArrayList<ConstructorScope> constructorTable;
+    public final ArrayList<FieldScope> fieldTable;
+
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -36,22 +40,24 @@ public class ClassScope extends Scope {
         this.type = classDeclaration.getClassType();
 
         implementsTable = classDeclaration.getClassInterfaces();
-        extendsName  = classDeclaration.getClassSuperClass();
+        extendsName = classDeclaration.getClassSuperClass();
 
         fieldTable = new ArrayList<>();
         generateFieldTable();
-
-        for (int i = 0; i < fieldTable.size(); ++i) {
-            for (int j = i + 1; j < fieldTable.size(); ++j) {
-                if (fieldTable.get(i).name.equals(fieldTable.get(j).name)) {
-                    System.err.println("Found duplicate field in same class.");
-                    System.exit(42);
-                }
-            }
-        }
+        checkDuplicateFields();
 
         methodTable = new ArrayList<>();
         generateMethodTable();
+
+        constructorTable = new ArrayList<>();
+        generateConstructorTable();
+    }
+
+    private void generateConstructorTable() {
+        final ArrayList<ASTHead> constructors = ast.getConstructorNodes();
+        for (final ASTHead constructor : constructors) {
+            constructorTable.add(new ConstructorScope(constructor, this));
+        }
     }
 
     private void generateFieldTable() {
@@ -66,6 +72,26 @@ public class ClassScope extends Scope {
         for (final ASTHead method : methods) {
             methodTable.add(new MethodScope(method, this));
         }
+    }
+
+    private void checkDuplicateFields() {
+        for (int i = 0; i < fieldTable.size(); ++i) {
+            for (int j = i + 1; j < fieldTable.size(); ++j) {
+                if (fieldTable.get(i).name.equals(fieldTable.get(j).name)) {
+                    System.err.println("Found duplicate field in same class.");
+                    System.exit(42);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ClassScope that = (ClassScope) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(packageName, that.packageName);
     }
 
     @Override
