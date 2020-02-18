@@ -25,4 +25,16 @@ public class Name {
     public String getSimpleName() {
         return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Name) {
+            final Name other = (Name) obj;
+
+            return fullyQualifiedName.containsAll(other.fullyQualifiedName)
+                    && other.fullyQualifiedName.containsAll(fullyQualifiedName);
+        } else {
+            return false;
+        }
+    }
 }
