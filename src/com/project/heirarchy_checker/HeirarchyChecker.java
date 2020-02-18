@@ -19,12 +19,21 @@ public class HeirarchyChecker {
 
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
-                interfacesSeen.add((javaClass.name));
+                String name = "";
+                if (javaClass.packageName == null) {
+                    name = javaClass.name;
+                }
+                else {
+                    name = javaClass.packageName + "." + javaClass.name;
+                }
+                interfacesSeen.add((name));
             }
         }
 
+        System.out.println(interfacesSeen);
+
         for (ClassScope javaClass: classTable) {
-            if (interfacesSeen.contains(javaClass.extendsName)) {
+            if (interfacesSeen.contains(javaClass.extendsName.getQualifiedName())) {
                 return true;
             }
         }
