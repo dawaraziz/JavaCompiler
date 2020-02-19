@@ -16,6 +16,7 @@ import com.project.weeders.MethodModifierWeeder;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
@@ -65,9 +66,20 @@ public class Main {
                 }
             }
         }
-        HierarchyChecker hCheck = new HierarchyChecker(classTable);
 
-        if (hCheck.followsClassHierarchyRules()) {
+        HashMap<String, ClassScope> classMap = new HashMap<>();
+
+        for (ClassScope javaClass: classTable) {
+            String name = "";
+            if (javaClass.packageName == null) name = javaClass.name;
+            else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+            classMap.put(name, javaClass);
+        }
+
+        HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
+
+
+        if (hCheck.followsClassHierarchyRules() && !hCheck.cycleDetected()) {
             System.exit(0);
         }
         else {
