@@ -17,10 +17,10 @@ public class HierarchyChecker {
     public boolean noClassExtendsInterfaceOrImplementsClass() {
         ArrayList<String> interfacesSeen = new ArrayList<>();
         ArrayList<String> classesSeen = new ArrayList<>();
+        ArrayList<String> extendedClasses = new ArrayList<>();
 
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
-                System.out.println(javaClass.name);
                 if (javaClass.extendsName != null) {
                     return false;
                 }
@@ -35,6 +35,10 @@ public class HierarchyChecker {
             }
 
             else {
+                if (javaClass.extendsName != null) {
+                    extendedClasses.add(javaClass.extendsName.getSimpleName());
+                }
+
                 String name = "";
                 if (javaClass.packageName == null) {
                     name = javaClass.name;
@@ -46,8 +50,13 @@ public class HierarchyChecker {
             }
         }
 
-
         for (ClassScope javaClass: classTable) {
+
+            if (extendedClasses.contains(javaClass.name) && javaClass.modifiers.contains("final")) {
+                System.out.println("Class extending a final class");
+                return false;
+            }
+
             String extendsName = "";
             if (javaClass.extendsName == null) {
                 extendsName = null;
