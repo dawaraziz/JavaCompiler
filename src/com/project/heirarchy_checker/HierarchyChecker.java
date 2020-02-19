@@ -14,7 +14,7 @@ public class HierarchyChecker {
         this.classTable = classTable;
     }
 
-    public boolean noClassExtendsInterfaceOrImplementsClass() {
+    public boolean followsClassHierarchyRules() {
         ArrayList<String> interfacesSeen = new ArrayList<>();
         ArrayList<String> classesSeen = new ArrayList<>();
         ArrayList<String> extendedClasses = new ArrayList<>();

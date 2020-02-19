@@ -67,7 +67,7 @@ public class Main {
         }
         HierarchyChecker hCheck = new HierarchyChecker(classTable);
 
-        if (hCheck.noClassExtendsInterfaceOrImplementsClass()) {
+        if (hCheck.followsClassHierarchyRules()) {
             System.exit(0);
         }
         else {
