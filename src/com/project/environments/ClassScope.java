@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class ClassScope extends Scope {
@@ -50,11 +51,17 @@ public class ClassScope extends Scope {
         if (extendsTable != null) {
             for (int i = 0; i < extendsTable.size(); ++i) {
                 for (final ImportScope importName : imports) {
+
                     final Name newName = importName.generateFullName(extendsTable.get(i));
                     if (newName != null) {
                         extendsTable.set(i, newName);
                     }
                 }
+            }
+
+            if (new HashSet<Name>(extendsTable).size() < extendsTable.size()) {
+                System.err.println("Found duplicate implements in same interface.");
+                System.exit(42);
             }
         }
 
@@ -67,7 +74,13 @@ public class ClassScope extends Scope {
                     }
                 }
             }
+
+            if (new HashSet<Name>(implementsTable).size() < implementsTable.size()) {
+                System.err.println("Found duplicate implements in same class.");
+                System.exit(42);
+            }
         }
+
 
         fieldTable = new ArrayList<>();
         generateFieldTable();
