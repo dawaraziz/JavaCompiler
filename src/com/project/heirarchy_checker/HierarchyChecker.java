@@ -20,6 +20,10 @@ public class HierarchyChecker {
 
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
+                System.out.println(javaClass.name);
+                if (javaClass.extendsName != null) {
+                    return false;
+                }
                 String name = "";
                 if (javaClass.packageName == null) {
                     name = javaClass.name;

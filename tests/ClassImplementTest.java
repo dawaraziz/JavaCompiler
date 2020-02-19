@@ -1,5 +1,3 @@
-public class ClassImplementTest implements Arrays {
-    public ClassImplementTest() {
+public interface ClassImplementTest extends Arrays {
 
-    }
 }
