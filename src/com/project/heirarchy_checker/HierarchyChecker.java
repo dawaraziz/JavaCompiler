@@ -22,6 +22,7 @@ public class HierarchyChecker {
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
                 if (javaClass.extendsName != null) {
+                    System.out.println("Interface extending class");
                     return false;
                 }
                 String name = "";
@@ -78,6 +79,13 @@ public class HierarchyChecker {
                 }
             }
         }
+
+        return true;
+    }
+
+
+    public boolean followsMethodHierarchyRules() {
+
 
         return true;
     }
