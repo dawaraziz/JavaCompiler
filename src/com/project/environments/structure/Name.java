@@ -45,4 +45,14 @@ public class Name {
             return false;
         }
     }
+
+    public boolean containsSuffixName(final Name name) {
+        if (name.fullyQualifiedName.size() > this.fullyQualifiedName.size()) return false;
+
+        for (int i = 0; i < name.fullyQualifiedName.size(); ++i) {
+            if (!name.fullyQualifiedName.get(i).equals(this.fullyQualifiedName.get(i))) return false;
+        }
+
+        return true;
+    }
 }

@@ -11,6 +11,7 @@ import com.project.environments.structure.Type;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ public class ASTHead {
     private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
     private final static String INTERFACES = "INTERFACES";
     private final static String INTERFACE_TYPE_LIST = "INTERFACETYPELIST";
+    private final static String EXTENDS_INTERFACES = "EXTENDSINTERFACES";
     private final static String SUPER = "SUPER";
 
     // METHOD LEXEMES
@@ -293,14 +295,32 @@ public class ASTHead {
         return names;
     }
 
-    public Name getClassSuperClass() {
+    public ArrayList<Name> getClassSuperClass() {
         final ArrayList<ASTNode> nodes = headNode.getDirectChildrenWithLexemes(SUPER);
 
         if (nodes.size() == 0) {
             return null;
         }
 
-        return new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes()));
+        ArrayList<Name> extendsName = new ArrayList<>();
+        extendsName.add(new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes())));
+        return extendsName;
+    }
+
+    public ArrayList<Name> getInterfaceSuperInterfaces() {
+        final ArrayList<ASTNode> nodes = headNode.getDirectChildrenWithLexemes(EXTENDS_INTERFACES);
+
+        if (nodes.size() == 0) {
+            return null;
+        }
+
+        ArrayList<Name> extendsName = new ArrayList<>();
+        for (ASTNode node : nodes.get(0).children) {
+            if (node.kind == null || node.kind == Kind.VARIABLE_ID) {
+                extendsName.add(new Name(lexemesToStringList(node.getLeafNodes())));
+            }
+        }
+        return extendsName;
     }
 
     public CLASS_TYPE getClassType() {

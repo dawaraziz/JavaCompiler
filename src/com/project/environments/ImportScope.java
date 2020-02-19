@@ -29,4 +29,14 @@ public class ImportScope extends Scope {
     boolean isInitCheck(final String variableName) {
         return false;
     }
+
+    public Name generateFullName(final Name name) {
+        if (type == IMPORT_TYPE.ON_DEMAND) return null;
+
+        if (this.name.containsSuffixName(name)) {
+            return this.name;
+        } else {
+            return null;
+        }
+    }
 }

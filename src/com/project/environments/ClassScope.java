@@ -21,7 +21,7 @@ public class ClassScope extends Scope {
     public final ArrayList<ImportScope> imports;
 
     public final ArrayList<Name> implementsTable;
-    public final Name extendsName;
+    public final ArrayList<Name> extendsTable;
 
     public final ArrayList<MethodScope> methodTable;
     public final ArrayList<ConstructorScope> constructorTable;
@@ -40,7 +40,34 @@ public class ClassScope extends Scope {
         this.type = classDeclaration.getClassType();
 
         implementsTable = classDeclaration.getClassInterfaces();
-        extendsName = classDeclaration.getClassSuperClass();
+
+        if (this.type == CLASS_TYPE.INTERFACE) {
+            extendsTable = classDeclaration.getInterfaceSuperInterfaces();
+        } else {
+            extendsTable = classDeclaration.getClassSuperClass();
+        }
+
+        if (extendsTable != null) {
+            for (int i = 0; i < extendsTable.size(); ++i) {
+                for (final ImportScope importName : imports) {
+                    final Name newName = importName.generateFullName(extendsTable.get(i));
+                    if (newName != null) {
+                        extendsTable.set(i, newName);
+                    }
+                }
+            }
+        }
+
+        if (implementsTable != null) {
+            for (int i = 0; i < implementsTable.size(); ++i) {
+                for (final ImportScope importName : imports) {
+                    final Name newName = importName.generateFullName(implementsTable.get(i));
+                    if (newName != null) {
+                        implementsTable.set(i, newName);
+                    }
+                }
+            }
+        }
 
         fieldTable = new ArrayList<>();
         generateFieldTable();
