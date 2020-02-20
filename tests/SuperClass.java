@@ -3,7 +3,7 @@ public class SuperClass {
 
     }
 
-    public final int move(int a, int b) {
+    public static int move(int a, int b) {
         return true;
     }
 }

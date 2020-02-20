@@ -9,6 +9,7 @@ import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class HierarchyChecker {
 
@@ -134,49 +135,125 @@ public class HierarchyChecker {
 
         if (checkForDuplicateMethods()) return false;
 
-        if (checkForSameSignatureDifferentReturnType()) return false;
+        if (followsMethodHierarchyRulesHelper()) return false;
 
-        if (checkForModifiers()) return false;
 
         return true;
     }
 
-    private boolean checkForModifiers() {
-        for (ClassScope javaClass: classTable) {
-            if (javaClass.methodTable != null) {
-                if (foundMethodViolatingRules(javaClass, javaClass.methodTable)) return true;
+    private boolean followsMethodHierarchyRulesHelper() {
 
+        for (ClassScope javaClass: classTable) {
+            ArrayList<MethodScope> inheritedMethods = getInhertiedMethodsList(javaClass);
+
+
+            if (javaClass.methodTable != null) {
+                for (MethodScope subMethod : javaClass.methodTable) {
+                    for (MethodScope method : inheritedMethods) {
+                        System.out.println(subMethod);
+                        System.out.println(method);
+                        if (subMethod.sameSignature(method)) {
+                            if (!subMethod.type.equals(method.type)) {
+                                System.out.println("Same signature with different return types");
+                                return true;
+                            }
+                            if (!subMethod.modifiers.contains("static") && method.modifiers.contains("static")) {
+                                System.out.println("Non static method replacing static");
+                                return true;
+                            }
+                            if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
+                                System.out.println("Protected method replacing public");
+                                return true;
+                            }
+                            if (method.modifiers.contains("final")) {
+                                System.out.println("Method replacing final method");
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
+
         }
+
 
         return false;
     }
 
-    private boolean foundMethodViolatingRules(ClassScope javaClass, ArrayList<MethodScope> methodTable) {
+    private ArrayList<MethodScope> getInhertiedMethodsList(ClassScope javaClass) {
+        ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+        Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
             for (Name extendName : javaClass.extendsTable) {
                 ClassScope extendClass = classMap.get(extendName.getQualifiedName());
                 if (extendClass != null) {
+                    classes.push(extendClass);
                     if (extendClass.methodTable != null) {
-                        for (MethodScope method : extendClass.methodTable) {
-                            for (MethodScope subMethod : methodTable) {
-                                if (subMethod.sameSignature(method)) {
-                                    if (!subMethod.modifiers.contains("static") && method.modifiers.contains("static")) {
-                                        System.out.println("Non static method replacing static");
-                                        return true;
-                                    }
-                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
-                                        System.out.println("Protected method replacing public");
-                                        return true;
-                                    }
-                                    if (method.modifiers.contains("final")) {
-                                        System.out.println("Method replacing final method");
-                                        return true;
-                                    }
-                                }
+                        for (MethodScope method: extendClass.methodTable) {
+                            inheritedMethods.add(method);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (javaClass.implementsTable != null) {
+            for (Name extendName : javaClass.implementsTable) {
+                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+                if (extendClass != null) {
+                    classes.push(extendClass);
+                    if (extendClass.methodTable != null) {
+                        for (MethodScope method: extendClass.methodTable) {
+                            inheritedMethods.add(method);
+                        }
+                    }
+                }
+            }
+        }
+
+        while (!classes.empty()) {
+            System.out.println("Hello");
+            ClassScope currClass = classes.pop();
+            if (currClass.extendsTable != null) {
+                for (Name extendName : javaClass.extendsTable) {
+                    ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+                    if (extendClass != null) {
+                        classes.push(extendClass);
+                        if (extendClass.methodTable != null) {
+                            for (MethodScope method: extendClass.methodTable) {
+                                inheritedMethods.add(method);
                             }
                         }
-                        return foundMethodViolatingRules(extendClass, methodTable);
+                    }
+                }
+            }
+            if (currClass.implementsTable != null) {
+                for (Name extendName : javaClass.implementsTable) {
+                    ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+                    if (extendClass != null) {
+                        classes.push(extendClass);
+                        if (extendClass.methodTable != null) {
+                            for (MethodScope method: extendClass.methodTable) {
+                                inheritedMethods.add(method);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return inheritedMethods;
+    }
+
+
+
+    private boolean abstractMethodCheck() {
+        for (ClassScope javaClass: classTable) {
+            if (javaClass.methodTable != null) {
+                for (MethodScope method : javaClass.methodTable) {
+                    if (method.modifiers.contains("abstract") && !javaClass.modifiers.contains("abstract")) {
+                        System.out.println("Non abstract class with abstract method");
+                        return true;
                     }
                 }
             }
@@ -184,37 +261,29 @@ public class HierarchyChecker {
         return false;
     }
 
-    private boolean checkForSameSignatureDifferentReturnType() {
-        for (ClassScope javaClass: classTable) {
-            if (javaClass.methodTable != null) {
-                return compareMethodSignatures(javaClass, javaClass.methodTable);
-            }
-        }
+    private boolean foundAbstractMethod (ClassScope javaClass) {
 
-        return false;
-    }
-
-    private boolean compareMethodSignatures(ClassScope javaClass, ArrayList<MethodScope> methodTable) {
         if (javaClass.extendsTable != null) {
-            for (Name extendName : javaClass.extendsTable) {
-                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+            for (Name extendClassName : javaClass.extendsTable) {
+                String name = extendClassName.getQualifiedName();
+                ClassScope extendClass = classMap.get(name);
+
                 if (extendClass != null) {
                     if (extendClass.methodTable != null) {
                         for (MethodScope method : extendClass.methodTable) {
-                            for (MethodScope subMethod : methodTable) {
-                                if (subMethod.sameSignature(method) && !subMethod.type.equals(method.type)) {
-                                    System.out.println("Same signature with different return types");
-                                    return true;
-                                }
+                            if (method.modifiers.contains("abstract")) {
+                                return true;
                             }
                         }
-                        return compareMethodSignatures(extendClass, methodTable);
                     }
+                    if (foundAbstractMethod(extendClass)) return true;
                 }
             }
         }
+
         return false;
     }
+
 
     private boolean checkForDuplicateMethods() {
         for (ClassScope javaClass: classTable) {
@@ -244,47 +313,6 @@ public class HierarchyChecker {
         return false;
     }
 
-    private boolean abstractMethodCheck() {
-        for (ClassScope javaClass: classTable) {
-            if (javaClass.methodTable != null) {
-                for (MethodScope method : javaClass.methodTable) {
-                    if (method.modifiers.contains("abstract") && !javaClass.modifiers.contains("abstract")) {
-                        System.out.println("Non abstract class with abstract method");
-                        return true;
-                    }
-                }
-            }
-            /* Gotta figure out how to check for abstract methods that are inherited and implemented*/
-//            if (foundAbstractMethod(javaClass) && !javaClass.modifiers.contains("abstract")) {
-//                System.out.println("Non abstract class with abstract method");
-//                return true;
-//            }
-        }
-        return false;
-    }
-
-    private boolean foundAbstractMethod (ClassScope javaClass) {
-
-        if (javaClass.extendsTable != null) {
-            for (Name extendClassName : javaClass.extendsTable) {
-                String name = extendClassName.getQualifiedName();
-                ClassScope extendClass = classMap.get(name);
-
-                if (extendClass != null) {
-                    if (extendClass.methodTable != null) {
-                        for (MethodScope method : extendClass.methodTable) {
-                            if (method.modifiers.contains("abstract")) {
-                                return true;
-                            }
-                        }
-                    }
-                    if (foundAbstractMethod(extendClass)) return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     private boolean noDuplicateConstructors() {
         for (ClassScope javaClass: classTable) {
