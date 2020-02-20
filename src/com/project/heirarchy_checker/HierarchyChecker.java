@@ -2,6 +2,7 @@ package com.project.heirarchy_checker;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ConstructorScope;
+import com.project.environments.MethodScope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 
@@ -35,7 +36,7 @@ public class HierarchyChecker {
         return false;
     }
 
-    public boolean cycleCheck(ClassScope javaClass, ArrayList<String> namesSeen) {
+    private boolean cycleCheck(ClassScope javaClass, ArrayList<String> namesSeen) {
         if (javaClass.extendsTable != null) {
             for (Name extendsName : javaClass.extendsTable) {
                 if (namesSeen.contains(extendsName.getQualifiedName())) return true;
@@ -126,6 +127,86 @@ public class HierarchyChecker {
 
     public boolean followsMethodHierarchyRules() {
 
+        if (!noDuplicateConstructors()) return false;
+
+        if (abstractMethodCheck()) return false;
+
+        if (checkForDuplicateMethods()) return false;
+
+        return true;
+    }
+
+    private boolean checkForDuplicateMethods() {
+        for (ClassScope javaClass: classTable) {
+            if (javaClass.methodTable != null) {
+                HashMap<String, ArrayList<Parameter>> methodSignatures = new HashMap();
+                for (MethodScope method: javaClass.methodTable) {
+                    if (methodSignatures.containsKey(method.name)) {
+                        ArrayList<Parameter> params = methodSignatures.get(method.name);
+                        if (params == null && method.parameters == null) {
+                            System.out.println("Duplicate method signatures");
+                            return true;
+                        }
+                        else if (params != null && method.parameters != null) {
+                            if (params.size() == method.parameters.size() && params.containsAll(method.parameters) && method.parameters.containsAll(params)) {
+                                System.out.println("Duplicate method signatures");
+                                return true;
+                            }
+                        }
+                    }
+                    else {
+                        methodSignatures.put(method.name, method.parameters);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean abstractMethodCheck() {
+        for (ClassScope javaClass: classTable) {
+            if (javaClass.methodTable != null) {
+                for (MethodScope method : javaClass.methodTable) {
+                    if (method.modifiers.contains("abstract") && !javaClass.modifiers.contains("abstract")) {
+                        System.out.println("Non abstract class with abstract method");
+                        return true;
+                    }
+                }
+            }
+            /* Gotta figure out how to check for abstract methods that are inherited and implemented*/
+//            if (foundAbstractMethod(javaClass) && !javaClass.modifiers.contains("abstract")) {
+//                System.out.println("Non abstract class with abstract method");
+//                return true;
+//            }
+        }
+        return false;
+    }
+
+    private boolean foundAbstractMethod (ClassScope javaClass) {
+
+        if (javaClass.extendsTable != null) {
+            for (Name extendClassName : javaClass.extendsTable) {
+                String name = extendClassName.getQualifiedName();
+                ClassScope extendClass = classMap.get(name);
+
+                if (extendClass != null) {
+                    if (extendClass.methodTable != null) {
+                        for (MethodScope method : extendClass.methodTable) {
+                            if (method.modifiers.contains("abstract")) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (foundAbstractMethod(extendClass)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean noDuplicateConstructors() {
         for (ClassScope javaClass: classTable) {
             ArrayList<ArrayList<Parameter>> paramsList = new ArrayList<>();
             if (javaClass.constructorTable.size() > 1) {
@@ -157,7 +238,6 @@ public class HierarchyChecker {
                 }
             }
         }
-
         return true;
     }
 }
