@@ -87,6 +87,9 @@ public class Main {
             System.exit(42);
         }
 
+        if (!hCheck.followsMethodHierarchyRules()) {
+            System.exit(42);
+        }
 
         System.exit(0);
     }

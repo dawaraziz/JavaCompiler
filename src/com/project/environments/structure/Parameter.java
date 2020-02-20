@@ -8,4 +8,20 @@ public class Parameter {
         this.type = type;
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        Parameter other = (Parameter) obj;
+
+        if (this.type.equals(other.type)) return true;
+        else return false;
+    }
 }

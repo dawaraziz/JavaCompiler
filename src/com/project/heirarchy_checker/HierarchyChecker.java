@@ -1,7 +1,9 @@
 package com.project.heirarchy_checker;
 
 import com.project.environments.ClassScope;
+import com.project.environments.ConstructorScope;
 import com.project.environments.structure.Name;
+import com.project.environments.structure.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,12 +36,16 @@ public class HierarchyChecker {
     }
 
     public boolean cycleCheck(ClassScope javaClass, ArrayList<String> namesSeen) {
-
         if (javaClass.extendsTable != null) {
             for (Name extendsName : javaClass.extendsTable) {
                 if (namesSeen.contains(extendsName.getQualifiedName())) return true;
                 else namesSeen.add(extendsName.getQualifiedName());
-                if (cycleCheck(classMap.get(extendsName.getQualifiedName()), namesSeen)) return true;
+                ClassScope classScope = classMap.get(extendsName.getQualifiedName());
+                if (classScope == null) {
+                    int a = 1;
+                }
+                if (classScope == null) return false;
+                if (cycleCheck(classScope, namesSeen)) return true;
             }
         }
 
@@ -54,10 +60,6 @@ public class HierarchyChecker {
 
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
-//                if (javaClass.extendsTable != null) {
-//                    System.out.println("Interface extending class");
-//                    return false;
-//                }
                 String name = "";
                 if (javaClass.packageName == null) {
                     name = javaClass.name;
@@ -124,6 +126,37 @@ public class HierarchyChecker {
 
     public boolean followsMethodHierarchyRules() {
 
+        for (ClassScope javaClass: classTable) {
+            ArrayList<ArrayList<Parameter>> paramsList = new ArrayList<>();
+            if (javaClass.constructorTable.size() > 1) {
+                for (ConstructorScope constructor : javaClass.constructorTable) {
+                    paramsList.add(constructor.parameters);
+                }
+                int i = 0;
+                while (i < paramsList.size()) {
+                    int j = 0;
+                    while (j < paramsList.size()) {
+                        if (i != j) {
+                            if (paramsList.get(i) == null && paramsList.get(j) == null) {
+                                System.out.println("Constructors with same parameter types");
+                                return false;
+                            }
+
+                            else if (paramsList.get(i) != null && paramsList.get(j) != null) {
+                                if (paramsList.get(i).size() == paramsList.get(j).size()) {
+                                    if (paramsList.get(i).containsAll(paramsList.get(j)) && paramsList.get(j).containsAll(paramsList.get(i))) {
+                                        System.out.println("Constructors with same parameter types");
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+            }
+        }
 
         return true;
     }
