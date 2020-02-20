@@ -5,6 +5,7 @@ import com.project.environments.ConstructorScope;
 import com.project.environments.MethodScope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
+import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +134,41 @@ public class HierarchyChecker {
 
         if (checkForDuplicateMethods()) return false;
 
+        if (checkForSameSignatureDifferentReturnType()) return false;
+
         return true;
+    }
+
+    private boolean checkForSameSignatureDifferentReturnType() {
+        for (ClassScope javaClass: classTable) {
+            if (javaClass.methodTable != null) {
+                return compareMethodSignatures(javaClass, javaClass.methodTable);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean compareMethodSignatures(ClassScope javaClass, ArrayList<MethodScope> methodTable) {
+        if (javaClass.extendsTable != null) {
+            for (Name extendName : javaClass.extendsTable) {
+                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+                if (extendClass != null) {
+                    if (extendClass.methodTable != null) {
+                        for (MethodScope method : extendClass.methodTable) {
+                            for (MethodScope subMethod : methodTable) {
+                                if (subMethod.sameSignature(method) && !subMethod.type.equals(method.type)) {
+                                    System.out.println("Same signature with different return types");
+                                    return true;
+                                }
+                            }
+                        }
+                        return compareMethodSignatures(extendClass, methodTable);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean checkForDuplicateMethods() {

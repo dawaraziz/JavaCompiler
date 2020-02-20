@@ -35,6 +35,12 @@ public class MethodScope extends Scope {
         }
     }
 
+    public boolean sameSignature(MethodScope otherMethod) {
+        return (this.name.equals(otherMethod.name) && this.parameters.size() == otherMethod.parameters.size()
+                && this.parameters.containsAll(otherMethod.parameters)
+                && otherMethod.parameters.containsAll(this.parameters));
+    }
+
     @Override
     boolean isInitCheck(final String variableName) {
         if (parameters == null) return false;
