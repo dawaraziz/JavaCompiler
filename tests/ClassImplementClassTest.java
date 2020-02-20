@@ -1,4 +1,4 @@
-public class ClassImplementClassTest implements Arrays {
+public class ClassImplementClassTest implements QuickTest {
     public ClassImplementTest() {
 
     }

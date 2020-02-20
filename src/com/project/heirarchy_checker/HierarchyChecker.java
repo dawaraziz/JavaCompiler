@@ -24,7 +24,10 @@ public class HierarchyChecker {
             if (javaClass.packageName == null) name = javaClass.name;
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             namesSeen.add(name);
-            if (cycleCheck(javaClass, namesSeen)) return true;
+            if (cycleCheck(javaClass, namesSeen)) {
+                System.out.println("Detected a cycle");
+                return true;
+            }
         }
 
         return false;
@@ -37,14 +40,6 @@ public class HierarchyChecker {
                 if (namesSeen.contains(extendsName.getQualifiedName())) return true;
                 else namesSeen.add(extendsName.getQualifiedName());
                 if (cycleCheck(classMap.get(extendsName.getQualifiedName()), namesSeen)) return true;
-            }
-        }
-
-        if (javaClass.implementsTable != null) {
-            for (Name implementsName : javaClass.implementsTable) {
-                if (namesSeen.contains(implementsName.getQualifiedName())) return true;
-                else namesSeen.add(implementsName.getQualifiedName());
-                if (cycleCheck(classMap.get(implementsName.getQualifiedName()), namesSeen)) return true;
             }
         }
 

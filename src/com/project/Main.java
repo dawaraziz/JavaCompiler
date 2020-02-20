@@ -79,17 +79,11 @@ public class Main {
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
-        if (hCheck.followsClassHierarchyRules()) {
-            System.exit(0);
-        }
-        else {
+        if (!hCheck.followsClassHierarchyRules()) {
             System.exit(42);
         }
 
-        if (!hCheck.cycleDetected()) {
-            System.exit(0);
-        }
-        else {
+        if (hCheck.cycleDetected()) {
             System.exit(42);
         }
 

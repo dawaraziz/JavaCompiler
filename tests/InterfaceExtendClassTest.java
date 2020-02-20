@@ -1,3 +1,3 @@
-public interface InterfaceExtendClassTest extends Arrays {
+public interface InterfaceExtendClassTest extends QuickTest {
 
 }
