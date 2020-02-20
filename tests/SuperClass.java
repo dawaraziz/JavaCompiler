@@ -3,7 +3,7 @@ public class SuperClass {
 
     }
 
-    public boolean move(int a, int b) {
+    public final int move(int a, int b) {
         return true;
     }
 }

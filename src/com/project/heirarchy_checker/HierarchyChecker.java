@@ -136,7 +136,52 @@ public class HierarchyChecker {
 
         if (checkForSameSignatureDifferentReturnType()) return false;
 
+        if (checkForModifiers()) return false;
+
         return true;
+    }
+
+    private boolean checkForModifiers() {
+        for (ClassScope javaClass: classTable) {
+            if (javaClass.methodTable != null) {
+                if (foundMethodViolatingRules(javaClass, javaClass.methodTable)) return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    private boolean foundMethodViolatingRules(ClassScope javaClass, ArrayList<MethodScope> methodTable) {
+        if (javaClass.extendsTable != null) {
+            for (Name extendName : javaClass.extendsTable) {
+                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
+                if (extendClass != null) {
+                    if (extendClass.methodTable != null) {
+                        for (MethodScope method : extendClass.methodTable) {
+                            for (MethodScope subMethod : methodTable) {
+                                if (subMethod.sameSignature(method)) {
+                                    if (!subMethod.modifiers.contains("static") && method.modifiers.contains("static")) {
+                                        System.out.println("Non static method replacing static");
+                                        return true;
+                                    }
+                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
+                                        System.out.println("Protected method replacing public");
+                                        return true;
+                                    }
+                                    if (method.modifiers.contains("final")) {
+                                        System.out.println("Method replacing final method");
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        return foundMethodViolatingRules(extendClass, methodTable);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean checkForSameSignatureDifferentReturnType() {
