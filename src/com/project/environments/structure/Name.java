@@ -30,6 +30,7 @@ public class Name {
         return name.substring(0, name.length() - 1);
     }
 
+
     public String getSimpleName() {
         return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
     }
