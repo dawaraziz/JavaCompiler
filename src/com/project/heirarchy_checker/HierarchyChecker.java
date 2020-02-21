@@ -144,7 +144,7 @@ public class HierarchyChecker {
     private boolean followsMethodHierarchyRulesHelper() {
 
         for (ClassScope javaClass: classTable) {
-            ArrayList<MethodScope> inheritedMethods = getInhertiedMethodsList(javaClass);
+            ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
 
 
             if (javaClass.methodTable != null) {
@@ -180,7 +180,7 @@ public class HierarchyChecker {
         return false;
     }
 
-    private ArrayList<MethodScope> getInhertiedMethodsList(ClassScope javaClass) {
+    private ArrayList<MethodScope> getInheritedMethodsList(ClassScope javaClass) {
         ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
         Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
