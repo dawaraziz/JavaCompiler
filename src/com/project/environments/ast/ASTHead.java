@@ -30,6 +30,7 @@ public class ASTHead {
     private final static String VARIABLE_ID = "VARIABLE_ID";
     private final static String QUALIFIED_NAME = "QUALIFIEDNAME";
     private final static String SIMPLE_NAME = "SIMPLENAME";
+    private final static String SEMICOLON = ";";
 
     // MODIFIERS
     private final static String MODIFIERS = "MODIFIERS";
@@ -53,6 +54,7 @@ public class ASTHead {
     private final static String CONSTRUCTOR_DECLARATION = "CONSTRUCTORDECLARATION";
     private final static String CONSTRUCTOR_DECLARATOR = "CONSTRUCTORDECLARATOR";
     private final static String METHOD_DECLARATION = "METHODDECLARATION";
+    private final static String ABSTRACT_METHOD_DECLARATION = "ABSTRACTMETHODDECLARATION";
     private final static String METHOD_DECLARATOR = "METHODDECLARATOR";
     private final static String METHOD_HEADER = "METHODHEADER";
     private final static String FORMAL_PARAMETER = "FORMALPARAMETER";
@@ -415,7 +417,7 @@ public class ASTHead {
     }
 
     public ArrayList<ASTHead> getMethodNodes() {
-        final ArrayList<ASTNode> methods = headNode.findNodesWithLexeme(METHOD_DECLARATION);
+        final ArrayList<ASTNode> methods = headNode.findNodesWithLexeme(METHOD_DECLARATION, ABSTRACT_METHOD_DECLARATION);
         final ArrayList<ASTHead> methodHeads = new ArrayList<>();
 
         for (final ASTNode method : methods) {
@@ -430,7 +432,7 @@ public class ASTHead {
 
         if (head.lexeme.equals(BLOCK)) {
             return new ASTHead(head);
-        } else if (head.children.get(0).lexeme.equals(";")) {
+        } else if (head.lexeme.equals(SEMICOLON) || head.children.get(0).lexeme.equals(SEMICOLON)) {
             return null;
         } else {
             System.err.println("Couldn't find method body; aborting!");
