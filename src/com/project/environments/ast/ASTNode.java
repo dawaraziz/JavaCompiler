@@ -6,7 +6,7 @@ import com.project.scanner.structure.Kind;
 import java.util.ArrayList;
 
 public class ASTNode {
-    public final Kind kind;
+    public Kind kind;
     public String lexeme;
     public ASTNode parent;
     public ArrayList<ASTNode> children = new ArrayList<>();
@@ -14,6 +14,10 @@ public class ASTNode {
     ASTNode(final ParserSymbol symbol) {
         this.kind = symbol.kind;
         this.lexeme = symbol.lexeme;
+    }
+
+    public String toString() {
+        return kind != null ? kind.toString() : lexeme;
     }
 
     public ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {
@@ -32,7 +36,7 @@ public class ASTNode {
         return nodesWithLexeme;
     }
 
-    ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
+    public ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
         final ArrayList<ASTNode> nodesWithkind = new ArrayList<>();
 
         for (final Kind kind : kinds) {

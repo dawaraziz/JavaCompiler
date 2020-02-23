@@ -34,6 +34,10 @@ public class Name {
         return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
     }
 
+    public String getClassName() {
+        return fullyQualifiedName.get(0);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Name) {

@@ -1,6 +1,6 @@
 package com.project.parser.structure;
 
-public class ProductionInput {
+public final class ProductionInput {
     private final Integer state;
     private final String lookahead;
 

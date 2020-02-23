@@ -10,10 +10,12 @@ import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
+import resources.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static com.project.environments.ClassScope.CLASS_TYPE;
@@ -104,6 +106,22 @@ public class ASTHead {
 
     public ASTHead(final ASTNode head) {
         headNode = head;
+    }
+
+    public void printAST(){
+        ASTNode node = headNode;
+        final Stack<Pair<ASTNode, Integer>> stack = new Stack<>();
+        stack.add(new Pair(node, 0));
+        while(!stack.empty()) {
+            Pair<ASTNode, Integer> pair = stack.pop();
+            ASTNode curr = pair.getO1();
+            int level = pair.getO2();
+            for(int i = 0; i < level; i++){ System.out.print("\t"); }
+            System.out.println(curr.lexeme + " : " + curr.kind + " : " + level);
+            for (ASTNode child : curr.children) {
+                stack.add(new Pair(child, level+1));
+            }
+        }
     }
 
     private static ASTNode trimParseTree(ParserSymbol parseTree, final ASTNode parent) {

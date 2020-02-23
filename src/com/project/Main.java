@@ -6,6 +6,7 @@ import com.project.heirarchy_checker.HierarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
+import com.project.type_linker.TypeLinker;
 import com.project.weeders.AbstractMethodWeeder;
 import com.project.weeders.ClassModifierWeeder;
 import com.project.weeders.ClassNameWeeder;
@@ -53,12 +54,17 @@ public class Main {
             FieldModifierWeeder.weed(AST);
             ClassNameWeeder.weed(AST, fileName);
 
+            AST.printAST();
+            TypeLinker.disambiguate(AST);
+            AST.printAST();
+
             // Associates the AST with the class name.
             classTable.add(new ClassScope(new File(fileName).getName().split("\\.")[0], AST));
         }
 
         // Checks for duplicate classes.
         for (int i = 0; i < classTable.size(); ++i) {
+            System.out.println("Class: " + classTable.get(i).name);
             for (int j = i + 1; j < classTable.size(); ++j) {
                 if (classTable.get(i).equals(classTable.get(j))) {
                     System.err.println("Found duplicate class in same package.");
@@ -76,6 +82,7 @@ public class Main {
             classMap.put(name, javaClass);
         }
 
+        TypeLinker.link(classTable, classMap);
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
