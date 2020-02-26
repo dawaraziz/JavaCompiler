@@ -71,4 +71,27 @@ public class Type {
             name = new Name(typeLexemes);
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        Type other = (Type) obj;
+
+        if (this.name != null) {
+            if (this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name))
+                return true;
+            else return false;
+        }
+        else {
+            if (this.prim_type == other.prim_type && this.isArray == other.isArray && this.name == other.name) return true;
+            else return false;
+        }
+    }
 }
