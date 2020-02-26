@@ -30,7 +30,7 @@ def main():
                 path = os.path.join(test_dir, folder)
 
                 for test in os.listdir(path):
-                    print(test)
+                    print("{1}{0}{1}".format(test, "\033[39m"))
 
                     # For every test file in the directory that isn't a sub directory just compile the file
                     if os.path.isfile(os.path.join(path, test)):
