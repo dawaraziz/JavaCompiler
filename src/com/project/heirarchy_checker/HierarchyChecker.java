@@ -287,43 +287,6 @@ public class HierarchyChecker {
 
     private boolean checkForDuplicateMethods() {
         for (ClassScope javaClass: classTable) {
-//            ArrayList<MethodScope> inheritedExtendedMethods = new ArrayList<>();
-//            ArrayList<MethodScope> inheritedImplementedMethods = new ArrayList<>();
-//            if (javaClass.extendsTable != null) {
-//                for (Name extendClassName : javaClass.extendsTable) {
-//                    String name = extendClassName.getQualifiedName();
-//                    ClassScope extendClass = classMap.get(name);
-//
-//                    if (extendClass != null) {
-//                        inheritedExtendedMethods.addAll(getInheritedMethodsList(extendClass));
-//                    }
-//                }
-//
-//            }
-//
-//            if (javaClass.implementsTable != null) {
-//                for (Name implClassName : javaClass.implementsTable) {
-//                    String name = implClassName.getQualifiedName();
-//                    ClassScope implClass = classMap.get(name);
-//
-//                    if (implClass != null) {
-//                        inheritedImplementedMethods.addAll(getInheritedMethodsList(implClass));
-//                    }
-//                }
-//
-//            }
-//
-//            for (MethodScope implMethod : inheritedImplementedMethods) {
-//
-//                for (MethodScope extMethod : inheritedExtendedMethods) {
-//
-//                }
-//
-//            }
-//
-
-
-
 
             if (javaClass.methodTable != null) {
                 HashMap<String, ArrayList<Parameter>> methodSignatures = new HashMap();
