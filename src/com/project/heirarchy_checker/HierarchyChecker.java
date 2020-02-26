@@ -153,7 +153,7 @@ public class HierarchyChecker {
                         System.out.println(subMethod);
                         System.out.println(method);
                         if (subMethod.sameSignature(method)) {
-                            if (!subMethod.modifiers.contains("static") && method.modifiers.contains("static")) {
+                            if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
                                 System.out.println("Non static method replacing static");
                                 return true;
                             }
