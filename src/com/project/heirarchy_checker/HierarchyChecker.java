@@ -153,12 +153,12 @@ public class HierarchyChecker {
                         System.out.println(subMethod);
                         System.out.println(method);
                         if (subMethod.sameSignature(method)) {
-                            if (!subMethod.type.equals(method.type)) {
-                                System.out.println("Same signature with different return types");
-                                return true;
-                            }
                             if (!subMethod.modifiers.contains("static") && method.modifiers.contains("static")) {
                                 System.out.println("Non static method replacing static");
+                                return true;
+                            }
+                            if (!subMethod.type.equals(method.type)) {
+                                System.out.println("Same signature with different return types");
                                 return true;
                             }
                             if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
