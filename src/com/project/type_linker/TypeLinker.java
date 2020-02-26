@@ -7,6 +7,7 @@ import com.project.environments.ast.ASTNode;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,8 +17,12 @@ public class TypeLinker {
         // PackageName, TypeName, ExpressionName, MethodName, PackageOrTypeName, or AmbiguousName
         ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.VARIABLE_ID);
         for (ASTNode node : nameNodes){
+            // Default all variable_id to typeName on first pass
+            defaultToTypeName(node);
+        }
+        for (ASTNode node : nameNodes){
             // Check if TypeName
-            changeIfTypeName(node);
+//            changeIfTypeName(node);
             changeIfExpressionName(node);
             changeIfMethodName(node);
         }
@@ -35,6 +40,10 @@ public class TypeLinker {
             return true;
         }
         return false;
+    }
+
+    public static void defaultToTypeName(ASTNode node){
+        node.kind = Kind.TYPENAME;
     }
 
     public static void changeIfTypeName(ASTNode node){
@@ -92,16 +101,13 @@ public class TypeLinker {
             node.kind = Kind.TYPENAME;
         }
 
-        // As the type of an exception that can be thrown by a method or constructor - IRRELEVANT TO JOOS
-
         // As the type of a local variable (§14.4)
         if (parentIsLexeme(node, "LOCALVARIABLEDECLARATION")){
             node.kind = Kind.TYPENAME;
         }
 
-        // As the type of an exception parameter in a catch clause of a try statement (§14.19) - IRRELEVANT TO JOOS
 
-        // As the type in a class literal (§15.8.2) - A class literal is an expression consisting of the name
+        // TODO: As the type in a class literal (§15.8.2) - A class literal is an expression consisting of the name
         // of a class, interface, array, or primitive type followed by a `.' and the token class
         // ArrayList.add() not sure how to do this one, i need to know ArrayList is one of these
 
@@ -118,12 +124,26 @@ public class TypeLinker {
 
         // As the direct superclass or direct superinterface of an anonymous class (§15.9.5) which is to be instantiated in an unqualified class instance creation expression (§15.9)
         // As the element type of an array to be created in an array creation expression (§15.10)
-        // As the qualifying type of field access using the keyword super (§15.11.2)
-        // As the qualifying type of a method invocation using the keyword super (§15.12)
-        // As the type mentioned in the cast operator of a cast expression (§15.16)
+        // ex. int[] posty = new TestClass[5];
+        if (parentIsLexeme(node, "ARRAYCREATIONEXPRESSION")){
+            node.kind = Kind.TYPENAME;
+        }
 
+        // As the type mentioned in the cast operator of a cast expression (§15.16)
+        if (parentIsLexeme(node, "CASTEXPRESSION")){
+            node.kind = Kind.TYPENAME;
+        }
 
         // As the type that follows the instanceof relational operator (§15.20.2)
+        // I account for all relational expressions here
+        if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
+            node.kind = Kind.TYPENAME;
+        }
+
+        //
+        if (parentIsLexeme(node, "ARRAYTYPE")){
+            node.kind = Kind.TYPENAME;
+        }
 
     }
 
@@ -136,7 +156,7 @@ public class TypeLinker {
 
         // As a PostfixExpression (§15.14) - IRRELEVANT TO JOOS
 
-        if (node.kind.equals(Kind.VARIABLE_ID)) {
+        if (node.kind.equals(Kind.TYPENAME)) {
 
             // As the array reference expression in an array access expression (§15.13)
             if (parentIsLexeme(node, "ARRAYACCESS")){
@@ -147,14 +167,46 @@ public class TypeLinker {
             else if (parentIsLexeme(node, "VARIABLEDECLARATORID")){
                 node.kind = Kind.EXPRESSIONNAME;
             }
+
+            //If it is in a RELATIONALEXPRESSION and not after instanceof
+            if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+                //if it comes after an instanceof though, it is a TypeName still
+                //we must check the children of the parent to figure this out
+                ArrayList<ASTNode> children = node.parent.children;
+                for (ASTNode child: children){
+                    if (child.kind == Kind.INSTANCEOF){
+                        int idx = children.indexOf(child);
+                        if (children.get(idx-1) == node){
+                            node.kind = Kind.TYPENAME;
+                        }
+                    }
+                }
+            }
+
+            // After Cast (Point)e;
+            if (parentIsLexeme(node, "CASTEXPRESSION")){
+                //if it comes after the closing bracket in a cast expression
+                ArrayList<ASTNode> children = node.parent.children;
+                for (ASTNode child: children){
+                    System.out.println("Here:" + child.lexeme + " : " + child.kind);
+                    if (child.kind == Kind.PAREN_CLOSE){
+                        int idx = children.indexOf(child);
+                        if (children.get(idx-1) == node){
+                            node.kind = Kind.EXPRESSIONNAME;
+                        }
+                    }
+                }
+            }
+
         }
     }
 
     public static void changeIfMethodName(ASTNode node) {
         // Before the "(" in a method invocation expression
-        if (node.kind.equals(Kind.VARIABLE_ID)) {
+        if (node.kind.equals(Kind.TYPENAME)) {
             if (parentIsLexeme(node, "METHODINVOCATION")){
-                node.kind = Kind.EXPRESSIONNAME;
+                node.kind = Kind.METHODNAME;
             }
             if (node.parent.parent != null && node.parent.parent.lexeme.equals("METHODINVOCATION")) {
                 if (node.parent != null && (node.parent.lexeme.equals("QUALIFIEDNAME"))) {
@@ -168,7 +220,11 @@ public class TypeLinker {
 
             // CHECK - Before the "(" in a method declarator - I added this one not in spec but has to be right?
             if (parentIsLexeme(node, "METHODDECLARATOR")){
-                node.kind = Kind.EXPRESSIONNAME;
+                node.kind = Kind.METHODNAME;
+            }
+
+            if (parentIsLexeme(node, "CONSTRUCTORDECLARATOR")){
+                node.kind = Kind.METHODNAME;
             }
         }
     }
@@ -220,10 +276,23 @@ public class TypeLinker {
             }
 
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
-
-
-
+            // Get all typeNames from the AST
+            ASTHead astHead = javaClass.ast;
+            ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
+            // for each typeName see if it is a key in the classMap
+            for (ASTNode node : nameNodes){
+                String name = node.lexeme;
+                System.out.println(name);
+                if (!classMap.containsKey(name)){
+                    System.err.println("ClassMap does not contain "+name);
+                    System.exit(42);
+                }
+            }
         }
         return;
     }
 }
+
+
+
+
