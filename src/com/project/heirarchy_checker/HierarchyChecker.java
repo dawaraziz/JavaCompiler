@@ -212,10 +212,10 @@ public class HierarchyChecker {
         }
 
         while (!classes.empty()) {
-            System.out.println("Hello");
+            System.out.println("Hello 55");
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
-                for (Name extendName : javaClass.extendsTable) {
+                for (Name extendName : currClass.extendsTable) {
                     ClassScope extendClass = classMap.get(extendName.getQualifiedName());
                     if (extendClass != null) {
                         classes.push(extendClass);
@@ -228,7 +228,7 @@ public class HierarchyChecker {
                 }
             }
             if (currClass.implementsTable != null) {
-                for (Name extendName : javaClass.implementsTable) {
+                for (Name extendName : currClass.implementsTable) {
                     ClassScope extendClass = classMap.get(extendName.getQualifiedName());
                     if (extendClass != null) {
                         classes.push(extendClass);
