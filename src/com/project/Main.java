@@ -81,7 +81,7 @@ public class Main {
             classMap.put(name, javaClass);
         }
 
-        TypeLinker.link(classTable, classMap);
+//        TypeLinker.link(classTable, classMap);
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
