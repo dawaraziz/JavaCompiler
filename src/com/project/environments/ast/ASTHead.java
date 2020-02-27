@@ -338,7 +338,7 @@ public class ASTHead {
 
         ArrayList<Name> extendsName = new ArrayList<>();
         for (ASTNode node : nodes.get(0).children) {
-            if (node.kind == null || node.kind == Kind.VARIABLE_ID) {
+            if (node.kind == null || node.kind == Kind.TYPENAME) {
                 extendsName.add(new Name(lexemesToStringList(node.getLeafNodes())));
             }
         }
