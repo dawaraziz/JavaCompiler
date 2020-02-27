@@ -19,6 +19,8 @@ def main():
 
     test_dir = "tests"
 
+    stdLib = getStandardLibraryPaths()
+
     Failed = 0
     Passed = 0
 
@@ -35,13 +37,14 @@ def main():
                     # For every test file in the directory that isn't a sub directory just compile the file
                     if os.path.isfile(os.path.join(path, test)):
                         file_path = "{}/{}/{}".format(test_dir, folder, test)
-                        result = subprocess.run(['java', '-jar', 'build/jar/joosc.jar', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                        result = subprocess.run(['java', '-jar', 'build/jar/joosc.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
+#                         print(result.stdout)
 
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
-                        compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths
+                        compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths + stdlib
                         result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
@@ -49,6 +52,17 @@ def main():
     print("\033[0mTOTAL PASSED TESTS: {}".format(Passed))
     print("\033[0mTOTAL FAILED TESTS: {}".format(Failed))
 
+
+def getStandardLibraryPaths():
+    pwd = os.getcwd()
+    io = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/io")]
+    lang = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/lang")]
+    util = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/util")]
+#     io = allFilesInDirAndSubdir("JavaStdLib/2.0/java/io")
+#     lang = allFilesInDirAndSubdir("JavaStdLib/2.0/java/lang")
+#     util = allFilesInDirAndSubdir("JavaStdLib/2.0/java/util")
+    stdLib = io + lang + util
+    return stdLib
 
 def allFilesInDirAndSubdir(path):
     files = []

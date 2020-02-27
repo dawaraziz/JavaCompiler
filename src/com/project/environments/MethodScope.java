@@ -35,7 +35,19 @@ public class MethodScope extends Scope {
         }
     }
 
-    public boolean sameSignature(MethodScope otherMethod) {
+    MethodScope(final String name, final Type type, final ArrayList<String> modifiers,
+                final ArrayList<Parameter> parameters) {
+        this.name = name;
+        this.type = type;
+        this.modifiers = modifiers;
+        this.parameters = parameters;
+
+        ast = null;
+        bodyBlock = null;
+        startScope = null;
+    }
+
+    public boolean sameSignature(final MethodScope otherMethod) {
         if (this.parameters != null && otherMethod.parameters != null) {
             return (this.name.equals(otherMethod.name) && this.parameters.size() == otherMethod.parameters.size()
                     && this.parameters.containsAll(otherMethod.parameters)

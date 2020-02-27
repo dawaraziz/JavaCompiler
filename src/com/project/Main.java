@@ -2,6 +2,7 @@ package com.project;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
+import com.project.environments.structure.Name;
 import com.project.heirarchy_checker.HierarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
@@ -72,6 +73,27 @@ public class Main {
             }
         }
 
+        // Find the Object class.
+        ClassScope objectScope = null;
+        for (final ClassScope scope : classTable) {
+            if (scope.name.equals("Object")
+                    && scope.packageName.equals(Name.generateJavaLangPackageName())) {
+                objectScope = scope;
+                break;
+            }
+        }
+
+        if (objectScope == null) {
+            System.err.println("Could not identify java.lang.Object. Aborting!");
+            System.exit(42);
+        }
+
+        for (final ClassScope classScope : classTable) {
+            if (classScope.type == ClassScope.CLASS_TYPE.INTERFACE) {
+                classScope.generateObjectMethods(objectScope.methodTable);
+            }
+        }
+
         HashMap<String, ClassScope> classMap = new HashMap<>();
 
         for (ClassScope javaClass: classTable) {
@@ -79,6 +101,7 @@ public class Main {
             if (javaClass.packageName == null) name = javaClass.name;
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             classMap.put(name, javaClass);
+            System.out.println("Name: " + name);
         }
 
 //        TypeLinker.link(classTable, classMap);
