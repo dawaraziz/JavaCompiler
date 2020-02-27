@@ -206,7 +206,7 @@ public class ASTHead {
         for (final ASTNode onDemandImport : onDemandImports) {
             final ASTNode name = getNameNode(onDemandImport);
 
-            if (name.kind == Kind.PACKAGEORTYPENAME) {
+            if (name.kind == Kind.PACKAGEORTYPENAME || name.kind == Kind.TYPENAME) {
                 imports.add(new ImportScope(ON_DEMAND, name.lexeme, parentClass));
             } else {
                 imports.add(new ImportScope(ON_DEMAND, lexemesToStringList(name.children), parentClass));

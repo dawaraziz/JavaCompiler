@@ -69,7 +69,7 @@ public class ClassScope extends Scope {
             if (extendsTable == null) {
                 extendsTable = new ArrayList<>();
             }
-            if (!extendsTable.contains(Name.generateObjectExtendsName())){
+            if (!extendsTable.contains(Name.generateObjectExtendsName())) {
                 extendsTable.add(Name.generateObjectExtendsName());
             }
         }
@@ -132,6 +132,45 @@ public class ClassScope extends Scope {
                 }
             }
         }
+    }
+
+    public void generateObjectMethods(final ArrayList<MethodScope> objectMethods) {
+        if (extendsTable != null && extendsTable.size() > 1) return;
+
+        for (final MethodScope objectMethod : objectMethods) {
+            final Boolean check = containsMethod(objectMethod);
+
+            if (check == null) {
+                System.err.println("Found interface with object method with bad return type.");
+                System.exit(42);
+            }
+
+            ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
+            newMods.add("abstract");
+
+            if (!check) {
+                methodTable.add(new MethodScope(
+                        objectMethod.name,
+                        objectMethod.type,
+                        newMods,
+                        objectMethod.parameters
+                ));
+            }
+        }
+    }
+
+    private Boolean containsMethod(final MethodScope methodScope) {
+        for (final MethodScope method : methodTable) {
+            final boolean signatureMatch = method.sameSignature(methodScope);
+            final boolean returnsMatch = method.type.equals(methodScope.type);
+
+            if (signatureMatch && !returnsMatch) {
+                return null;    // Same signature, different return type. BAD.
+            } else if (signatureMatch) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
