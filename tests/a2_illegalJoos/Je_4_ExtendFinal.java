@@ -12,7 +12,7 @@ public class Je_4_ExtendFinal extends Integer {
     public Je_4_ExtendFinal() {}
 
     public static int test() {
-	return 123;
+        return 123;
     }
 
 }

@@ -24,6 +24,24 @@ public class HierarchyChecker {
     public boolean cycleDetected() {
 
         for (ClassScope javaClass : classTable) {
+            if (javaClass.extendsTable != null) {
+                System.out.println(javaClass.name);
+                System.out.println("---------------------------------------");
+                for (Name extendClassName : javaClass.extendsTable) {
+                    String fqn = extendClassName.getQualifiedName();
+                    String name = "";
+                    System.out.println(fqn);
+                    if (javaClass.packageName == null) name = javaClass.name;
+                    else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                    System.out.println(name);
+                    if (fqn.equals(name)) {
+                        System.out.println("Detected a cycle");
+                        return true;
+                    }
+                }
+            }
+
+
             ArrayList<String> namesSeen = new ArrayList<>();
             String name = "";
             if (javaClass.packageName == null) name = javaClass.name;
@@ -227,6 +245,7 @@ public class HierarchyChecker {
                     }
                 }
             }
+
             if (currClass.implementsTable != null) {
                 for (Name extendName : currClass.implementsTable) {
                     ClassScope extendClass = classMap.get(extendName.getQualifiedName());
