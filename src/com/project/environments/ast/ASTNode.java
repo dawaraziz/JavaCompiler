@@ -57,6 +57,7 @@ public class ASTNode {
 
         for (final ASTNode child : children) {
             for (final String kind : kinds) {
+                System.out.println(kind + " equals " + child.kind);
                 if (child.kind != null && kind != null && kind.equals(child.kind.toString())) {
                     childrenWithKind.add(child);
                 }

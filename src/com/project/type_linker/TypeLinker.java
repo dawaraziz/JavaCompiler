@@ -6,7 +6,6 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
-import com.sun.corba.se.spi.ior.IdentifiableFactory;
 import resources.Pair;
 
 import java.lang.reflect.Array;
