@@ -551,6 +551,7 @@ public class ScannerDFA {
         SUP.addTransition("e", SUPE);
         SUPE.addTransition("r", SUPER);
         SUPER.addTransition(variable_chars, VARSTATE);
+        T.addTransition("r", TR);
         T.addTransition("h", TH);
         TH.addTransition("i", THI);
         THI.addTransition("s", THIS);
