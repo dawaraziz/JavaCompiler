@@ -10,8 +10,10 @@ import resources.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class TypeLinker {
     public static void disambiguate(final ASTHead astHead){
@@ -23,8 +25,6 @@ public class TypeLinker {
             defaultToTypeName(node);
         }
         for (ASTNode node : nameNodes){
-            // Check if TypeName
-//            changeIfTypeName(node);
             changeIfExpressionName(node);
             changeIfMethodName(node);
         }
@@ -44,6 +44,7 @@ public class TypeLinker {
         return false;
     }
 
+    // If any upper scope of node is lex than return True
     public static boolean within(ASTNode node, String lex){
         while (node.parent != null){
             if (node.parent.lexeme.equals(lex)){
@@ -146,6 +147,9 @@ public class TypeLinker {
             node.kind = Kind.TYPENAME;
         }
 
+
+
+
         // As the type that follows the instanceof relational operator (§15.20.2)
         // I account for all relational expressions here
         if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
@@ -200,6 +204,9 @@ public class TypeLinker {
             if (parentIsLexeme(node, "EQUALITYEXPRESSION")){
                 node.kind = Kind.EXPRESSIONNAME;
             }
+            if (parentIsLexeme(node, "IFTHENSTATEMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
             if (parentIsLexeme(node, "IFTHENELSESTATEMENT")){
                 node.kind = Kind.EXPRESSIONNAME;
             }
@@ -222,6 +229,24 @@ public class TypeLinker {
             if (parentIsLexeme(node, "UNARYEXPRESSION")){
                 node.kind = Kind.EXPRESSIONNAME;
             }
+            if (parentIsLexeme(node, "WHILESTATEMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "FORSTATEMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "FORSTATEMENTNOSHORTIF")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "WHILESTATEMENTNOSHORTIF")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+
+            //TODO: I don't think you can declare anything in an argument list
+            if (parentIsLexeme(node, "ARGUMENTLIST")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
 
 
             //TODO: NOT SURE IF THIS IS CORRECT
@@ -237,6 +262,27 @@ public class TypeLinker {
             }
             if (parentIsLexeme(node, "PRIMARYNONEWARRAY")){
                 node.kind = Kind.EXPRESSIONNAME;
+            }
+
+            // ex. j in char[] ret2 = new char[j];
+            if (parentIsLexeme(node, "DIMEXPR")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+
+            // In the arguments of a class instance creation expression i.e after the (
+            // CLASSINSTANCECREATIONEXPRESSION
+            if (parentIsLexeme(node, "CLASSINSTANCECREATIONEXPRESSION")){
+                ArrayList<ASTNode> children = node.parent.children;
+                for (ASTNode child: children){
+                    if (child.kind == Kind.PAREN_OPEN){
+                        int paren_idx = children.indexOf(child);
+                        int node_idx = children.indexOf(node);
+                        if (node_idx < paren_idx){
+                            node.kind = Kind.EXPRESSIONNAME;
+                        }
+                    }
+                }
             }
 
 
@@ -263,7 +309,6 @@ public class TypeLinker {
                 //if it comes after the closing bracket in a cast expression
                 ArrayList<ASTNode> children = node.parent.children;
                 for (ASTNode child: children){
-                    System.out.println("Here:" + child.lexeme + " : " + child.kind);
                     if (child.kind == Kind.PAREN_CLOSE){
                         int idx = children.indexOf(child);
                         if (children.get(idx-1) == node){
@@ -411,16 +456,25 @@ public class TypeLinker {
             }
 
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
-            // Get all typeNames from the AST
-
+            // Get all typeNames from the AST - ignore any whose parent is a package declaration
             ASTHead astHead = javaClass.ast;
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
-            // for each typeName see if it is a key in the classMap
+            nameNodes = nameNodes.stream().filter(n -> !within(n, "PACKAGEDECLARATION")).collect(Collectors.toCollection(ArrayList::new));
+
+
+            // for each typeName see if it is an object in our classTable
             for (ASTNode node : nameNodes){
                 String name = node.lexeme;
-                System.out.println(name);
-                if (!classMap.containsKey(name)){
-                    System.err.println("ClassMap does not contain "+name);
+                System.out.println("Does it contain " + name);
+                boolean found = false;
+                for (int i = 0; i < classTable.size(); ++i){
+                    System.out.println("Checking " + classTable.get(i).name);
+                    if (classTable.get(i).name.equals(name)) {
+                        found = true;
+                    }
+                }
+                if (!found){
+                    System.err.println("Class Table does not contain "+name);
                     System.exit(42);
                 }
             }

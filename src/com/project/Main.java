@@ -81,6 +81,7 @@ System.out.println(Main.class.getCanonicalName());
             if (javaClass.packageName == null) name = javaClass.name;
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             classMap.put(name, javaClass);
+            System.out.println("Name: " + name);
         }
 
         TypeLinker.link(classTable, classMap);
