@@ -22,6 +22,25 @@ public class Name {
         fullyQualifiedName.add(name);
     }
 
+    private Name(){
+        fullyQualifiedName = new ArrayList<>();
+    }
+
+    public static Name generateLangImportName() {
+        final Name name = new Name();
+        name.fullyQualifiedName.add("lang");
+        name.fullyQualifiedName.add("java");
+        return name;
+    }
+
+    public static Name generateObjectExtendsName() {
+        final Name name = new Name();
+        name.fullyQualifiedName.add("Object");
+        name.fullyQualifiedName.add("lang");
+        name.fullyQualifiedName.add("java");
+        return name;
+    }
+
     public String getQualifiedName() {
         String name = "";
         for (String n : fullyQualifiedName) {

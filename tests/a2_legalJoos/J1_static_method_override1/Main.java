@@ -11,7 +11,11 @@ public class Main extends foo{
     }
 
     public static int test(){
-
+    int i = 5;
+    int x = 2;
+    i = i/x;
+    x = x * i;
+    x = x % 5;
 	Main m = new Main();
 	return m.bar("Hello World!");
     }

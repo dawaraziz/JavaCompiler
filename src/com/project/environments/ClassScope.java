@@ -22,7 +22,7 @@ public class ClassScope extends Scope {
     public final ArrayList<ImportScope> imports;
 
     public final ArrayList<Name> implementsTable;
-    public final ArrayList<Name> extendsTable;
+    public ArrayList<Name> extendsTable;
 
     public final ArrayList<MethodScope> methodTable;
     public final ArrayList<ConstructorScope> constructorTable;
@@ -59,9 +59,17 @@ public class ClassScope extends Scope {
                 }
             }
 
-            if (new HashSet<Name>(extendsTable).size() < extendsTable.size()) {
+            if (new HashSet<>(extendsTable).size() < extendsTable.size()) {
                 System.err.println("Found duplicate implements in same interface.");
                 System.exit(42);
+            }
+        }
+
+        if (this.type == CLASS_TYPE.CLASS) {
+            if (extendsTable == null) {
+                extendsTable = new ArrayList<>();
+            } else if (!extendsTable.contains(Name.generateObjectExtendsName())){
+                extendsTable.add(Name.generateObjectExtendsName());
             }
         }
 

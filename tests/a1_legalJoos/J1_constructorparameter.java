@@ -7,7 +7,11 @@ public class J1_constructorparameter {
 	this.i = i;
     }
 
-    public static int test() {
+    public static int test(int i) {
+        {
+            int r = 7;
+        }
+
         return new J1_constructorparameter(123).i;
     }
 
