@@ -352,8 +352,10 @@ public class TypeLinker {
                     ImportScope import2 = javaClass.imports.get(j);
                     System.out.println(import1.name.getClassName() + " = " + import2.name.getClassName());
                     if (import1.name.getClassName().equals(import2.name.getClassName())) {
-                        System.err.println("Two single-type imports clashed");
-                        System.exit(42);
+                        if (!import1.name.getQualifiedName().equals(import2.name.getQualifiedName())) {
+                            System.err.println("Two single-type imports clashed");
+                            System.exit(42);
+                        }
                     }
                 }
             }
