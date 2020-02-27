@@ -68,7 +68,8 @@ public class ClassScope extends Scope {
         if (this.type == CLASS_TYPE.CLASS) {
             if (extendsTable == null) {
                 extendsTable = new ArrayList<>();
-            } else if (!extendsTable.contains(Name.generateObjectExtendsName())){
+            }
+            if (!extendsTable.contains(Name.generateObjectExtendsName())){
                 extendsTable.add(Name.generateObjectExtendsName());
             }
         }
