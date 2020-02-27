@@ -6,6 +6,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
+import com.sun.corba.se.spi.ior.IdentifiableFactory;
 import resources.Pair;
 
 import java.lang.reflect.Array;
@@ -27,6 +28,7 @@ public class TypeLinker {
         for (ASTNode node : nameNodes){
             changeIfExpressionName(node);
             changeIfMethodName(node);
+            changeIfDeclOnDemand(node);
         }
 
         ArrayList<ASTNode> qualifiedNodes = astHead.unsafeGetHeadNode().findNodesWithLexeme("QUALIFIEDNAME");
@@ -59,108 +61,10 @@ public class TypeLinker {
         node.kind = Kind.TYPENAME;
     }
 
-    public static void changeIfTypeName(ASTNode node){
-
-        // In a single-type-import declaration (§7.5.1)
-        if (node.parent.parent != null && node.parent.parent.lexeme.equals("SINGLETYPEIMPORTDECLARATION")) {
-            if (node.parent != null && (node.parent.lexeme.equals("QUALIFIEDNAME"))) {
-                // If it's the end of the qualified name it is a methodname
-                ASTNode last = node.parent.children.get(0);
-                if (node == last) {
-                    node.kind = Kind.TYPENAME;
-                }
-            }
+    public static void changeIfDeclOnDemand(ASTNode node){
+        if (parentIsLexeme(node, "TYPEIMPORTONDEMANDDECLARATION")){
+            node.kind = Kind.PACKAGEORTYPENAME;
         }
-
-        if (parentIsLexeme(node, "SINGLETYPEIMPORTDECLARATION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // In an extends clause in a class declaration (§8.1.3)
-        if (parentIsLexeme(node, "SUPER")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // In an implements clause in a class declaration (§8.1.4)
-        if (parentIsLexeme(node, "INTERFACES")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // In an extends clause in an interface declaration (§9.1.2)
-        if (parentIsLexeme(node, "EXTENDSINTERFACES")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        if (parentIsLexeme(node, "INTERFACEDECLARATION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // In a field declaration
-        if (parentIsLexeme(node, "FIELDDECLARATION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // As the result type of a method
-        if (parentIsLexeme(node, "METHODHEADER")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // As the type of a formal parameter of a method or constructor
-        if (parentIsLexeme(node, "FORMALPARAMETER")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        if (parentIsLexeme(node, "CONSTRUCTORDECLARATOR")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // As the type of a local variable (§14.4)
-        if (parentIsLexeme(node, "LOCALVARIABLEDECLARATION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-
-        // TODO: As the type in a class literal (§15.8.2) - A class literal is an expression consisting of the name
-        // of a class, interface, array, or primitive type followed by a `.' and the token class
-        // ArrayList.add() not sure how to do this one, i need to know ArrayList is one of these
-
-
-        // As the qualifying type of a qualified this expression (§15.8.4). - idk what this means
-
-
-        // As the class type which is to be instantiated in an unqualified class instance creation expression (§15.9)
-        // i.e new Arraylist()
-        if (parentIsLexeme(node, "CLASSINSTANCECREATIONEXPRESSION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-
-        // As the direct superclass or direct superinterface of an anonymous class (§15.9.5) which is to be instantiated in an unqualified class instance creation expression (§15.9)
-        // As the element type of an array to be created in an array creation expression (§15.10)
-        // ex. int[] posty = new TestClass[5];
-        if (parentIsLexeme(node, "ARRAYCREATIONEXPRESSION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        // As the type mentioned in the cast operator of a cast expression (§15.16)
-        if (parentIsLexeme(node, "CASTEXPRESSION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-
-
-
-        // As the type that follows the instanceof relational operator (§15.20.2)
-        // I account for all relational expressions here
-        if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
-            node.kind = Kind.TYPENAME;
-        }
-
-        //
-        if (parentIsLexeme(node, "ARRAYTYPE")){
-            node.kind = Kind.TYPENAME;
-        }
-
     }
 
     public static void changeIfExpressionName(ASTNode node) {
@@ -366,7 +270,6 @@ public class TypeLinker {
             }
         }
 
-        // In a type-import-on-demand declaration (§7.5.2)
     }
 
     // Go through AST checking scopes of variables by using a stack of lists of variables

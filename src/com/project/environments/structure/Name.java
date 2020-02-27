@@ -54,8 +54,9 @@ public class Name {
         return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
     }
 
+    //TODO: Just returning null string rn but should this ever need to occur?
     public String getClassName() {
-        return fullyQualifiedName.get(0);
+        return fullyQualifiedName.size() > 0 ? fullyQualifiedName.get(0) : "null";
     }
 
     @Override

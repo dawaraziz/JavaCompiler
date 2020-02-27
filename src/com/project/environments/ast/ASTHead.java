@@ -515,7 +515,7 @@ public class ASTHead {
 
         // After I change the type from Variable_ID this will break
         if (nameNodes.size() != 1) {
-            nameNodes = startNode.getDirectChildrenWithKinds("TYPENAME");
+            nameNodes = startNode.getDirectChildrenWithKinds("AMBIGUOUSNAME");
 
             if (nameNodes.size() != 1) {
                 System.err.println("Identified badly formatted name in a class; aborting!");
