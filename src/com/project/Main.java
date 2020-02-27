@@ -43,6 +43,8 @@ public class Main {
             System.out.println("Parsing " + fileName + ".");
 
             // Parsing step.
+System.out.println(inputStreamJLR1);
+System.out.println(Main.class.getCanonicalName());
             final ASTHead AST = new ASTHead(JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1)));
 
             System.out.println("Weeding " + fileName + ".");
