@@ -45,8 +45,6 @@ public class MethodScope extends Scope {
         ast = null;
         bodyBlock = null;
         startScope = null;
-
-        this.modifiers.add("abstract");
     }
 
     public boolean sameSignature(final MethodScope otherMethod) {

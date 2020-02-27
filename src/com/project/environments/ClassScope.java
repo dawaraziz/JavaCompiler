@@ -134,22 +134,25 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void generateObjectMethods(ArrayList<MethodScope> objectMethods) {
+    public void generateObjectMethods(final ArrayList<MethodScope> objectMethods) {
         if (extendsTable != null && extendsTable.size() > 1) return;
 
-        for (MethodScope objectMethod : objectMethods) {
-            Boolean check = containsMethod(objectMethod);
+        for (final MethodScope objectMethod : objectMethods) {
+            final Boolean check = containsMethod(objectMethod);
 
             if (check == null) {
                 System.err.println("Found interface with object method with bad return type.");
                 System.exit(42);
             }
 
+            ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
+            newMods.add("abstract");
+
             if (!check) {
                 methodTable.add(new MethodScope(
                         objectMethod.name,
                         objectMethod.type,
-                        objectMethod.modifiers,
+                        newMods,
                         objectMethod.parameters
                 ));
             }

@@ -249,7 +249,7 @@ public class HierarchyChecker {
 
     private boolean abstractMethodCheck() {
         for (ClassScope javaClass: classTable) {
-            if (javaClass.methodTable != null) {
+            if (javaClass.methodTable != null && javaClass.type != ClassScope.CLASS_TYPE.INTERFACE) {
                 for (MethodScope method : javaClass.methodTable) {
                     if (method.modifiers.contains("abstract") && !javaClass.modifiers.contains("abstract")) {
                         System.out.println("Non abstract class with abstract method");
