@@ -41,6 +41,7 @@ def main():
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
+                        print(file_paths)
                         compilation_unit = ['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar'] + file_paths
                         result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)

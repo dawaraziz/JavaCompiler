@@ -258,21 +258,21 @@ public class HierarchyChecker {
                 }
 
 
-                ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
-                inheritedMethods.addAll(javaClass.methodTable);
-
-                int i = 0;
-                while (i < inheritedMethods.size()) {
-                    int j = 0;
-                    MethodScope method1 = inheritedMethods.get(i);
-
-                    ArrayList<MethodScope> abstractMethods = new ArrayList<>();
-
-                    if (method1.modifiers.contains("abstract")) {
-                        abstractMethods.add(method1);
-                    }
-                    i++;
-                }
+//                ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
+//                inheritedMethods.addAll(javaClass.methodTable);
+//
+//                int i = 0;
+//                while (i < inheritedMethods.size()) {
+//                    int j = 0;
+//                    MethodScope method1 = inheritedMethods.get(i);
+//
+//                    ArrayList<MethodScope> abstractMethods = new ArrayList<>();
+//
+//                    if (method1.modifiers.contains("abstract")) {
+//                        abstractMethods.add(method1);
+//                    }
+//                    i++;
+//                }
 //
 //                    while (j < inheritedMethods.size()) {
 //                        if (i != j) {
