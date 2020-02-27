@@ -52,7 +52,7 @@ public class ASTNode {
         return nodesWithkind;
     }
 
-    ArrayList<ASTNode> getDirectChildrenWithKinds(final String... kinds) {
+    public ArrayList<ASTNode> getDirectChildrenWithKinds(final String... kinds) {
         final ArrayList<ASTNode> childrenWithKind = new ArrayList<>();
 
         for (final ASTNode child : children) {

@@ -54,7 +54,6 @@ public class Main {
             FieldModifierWeeder.weed(AST);
             ClassNameWeeder.weed(AST, fileName);
 
-            AST.printAST();
             TypeLinker.disambiguate(AST);
             AST.printAST();
 
@@ -82,7 +81,7 @@ public class Main {
             classMap.put(name, javaClass);
         }
 
-//        TypeLinker.link(classTable, classMap);
+        TypeLinker.link(classTable, classMap);
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 

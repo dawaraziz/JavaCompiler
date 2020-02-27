@@ -6,10 +6,12 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
+import resources.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class TypeLinker {
     public static void disambiguate(final ASTHead astHead){
@@ -38,6 +40,16 @@ public class TypeLinker {
     public static boolean parentIsLexeme(ASTNode node, String lex){
         if (node.parent != null && node.parent.lexeme.equals(lex)){
             return true;
+        }
+        return false;
+    }
+
+    public static boolean within(ASTNode node, String lex){
+        while (node.parent != null){
+            if (node.parent.lexeme.equals(lex)){
+                return true;
+            }
+            node = node.parent;
         }
         return false;
     }
@@ -168,6 +180,68 @@ public class TypeLinker {
                 node.kind = Kind.EXPRESSIONNAME;
             }
 
+            // in an assignment ex. r = 5;
+            else if (parentIsLexeme(node, "ASSIGNMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+            // in a return ex. return r;
+            else if (parentIsLexeme(node, "RETURNSTATEMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+            // Expression names are in EXPRESSIONS!
+            if (parentIsLexeme(node, "ADDITIVEEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "MULTIPLICATIVEEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "EQUALITYEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "IFTHENELSESTATEMENT")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "CONDITIONALANDEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "CONDITIONALOREXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "UNARYEXPRESSIONNOTPLUSMINUS")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+            if (parentIsLexeme(node, "ANDEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "EXCLUSIVEOREXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "UNARYEXPRESSION")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+
+            //TODO: NOT SURE IF THIS IS CORRECT
+            if (parentIsLexeme(node, "QUALIFIEDNAME")) {
+                if (within(node, "CLASSBODY")){
+                    node.kind = Kind.EXPRESSIONNAME;
+                }
+            }
+
+            // Field access is Expression
+            if (parentIsLexeme(node, "FIELDACCESS")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+            if (parentIsLexeme(node, "PRIMARYNONEWARRAY")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
+
+
+
+
             //If it is in a RELATIONALEXPRESSION and not after instanceof
             if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
                 node.kind = Kind.EXPRESSIONNAME;
@@ -250,6 +324,67 @@ public class TypeLinker {
         // In a type-import-on-demand declaration (§7.5.2)
     }
 
+    // Go through AST checking scopes of variables by using a stack of lists of variables
+    // Every time we see open bracket add a new scope and every time we see a close pop one off
+    public static void checkVariableDeclarationScopes(ASTHead astHead){
+        Stack<Stack<ArrayList<String>>> scopesStack = new Stack<>();
+        Stack<ArrayList<String>> topScopeStack = new Stack<>();
+        scopesStack.add(topScopeStack);
+        ASTNode node = astHead.unsafeGetHeadNode();
+
+        final Stack<ASTNode> stack = new Stack<>();
+        stack.add(node);
+        while(!stack.empty()) {
+            ASTNode curr = stack.pop();
+            Stack<ArrayList<String>> currentScope = scopesStack.peek();
+            // If we're in a new method/Constructor it's a new scope
+            if (curr.lexeme.equals("CONSTRUCTORDECLARATOR") || curr.lexeme.equals("METHODDECLARATION")) {
+                scopesStack.add(new Stack<>());
+                scopesStack.peek().push(new ArrayList<>());
+//                System.out.println("New Constructor or method Scope");
+            }
+            // New Scope add a new array to scope stack
+            else if (curr.kind == Kind.CURLY_BRACKET_OPEN) {
+                currentScope.push(new ArrayList<>());
+//                System.out.println("Push Scope");
+            }
+            // Moved up a scope pop off scopeStack
+            else if (curr.kind == Kind.CURLY_BRACKET_CLOSE){
+                if (curr.parent.lexeme.equals("CONSTRUCTORBODY") || curr.parent.parent.lexeme.equals("METHODDECLARATION")){
+                    scopesStack.pop();
+//                    System.out.println("Pop Method or Constructor Scope");
+                }
+                else {
+                    currentScope.pop();
+//                    System.out.println("Pop Scope");
+                }
+            }
+            else if (curr.lexeme.equals("VARIABLEDECLARATORID")){
+                ArrayList<ASTNode> variables = curr.getDirectChildrenWithKinds("EXPRESSIONNAME");
+                for (ASTNode n : variables){
+                    String newVar = n.lexeme;
+                    // Check name is not within upper scope
+                    for (ArrayList<String> vars : currentScope){
+                        for (String oldVar : vars){
+                            if (newVar.equals(oldVar)){
+                                System.err.println("Redeclaration of variable: "+newVar);
+                                System.exit(42);
+                            }
+                        }
+                    }
+                    // If not add it to the latest scope
+                    if (currentScope.size() < 1){
+                        System.exit(42);
+                    }
+                    currentScope.peek().add(newVar);
+                }
+            }
+            for (ASTNode child : curr.children) {
+                stack.add(child);
+            }
+        }
+    }
+
     public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap){
         for (ClassScope javaClass : classTable) {
 
@@ -277,6 +412,7 @@ public class TypeLinker {
 
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
             // Get all typeNames from the AST
+
             ASTHead astHead = javaClass.ast;
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
             // for each typeName see if it is a key in the classMap
@@ -288,6 +424,17 @@ public class TypeLinker {
                     System.exit(42);
                 }
             }
+
+            // All simple type names must resolve to a unique class or interface.
+
+
+            // Deal with variable redeclaration within scopes
+            checkVariableDeclarationScopes(astHead);
+
+
+
+
+
         }
         return;
     }
