@@ -12,7 +12,6 @@ import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 import resources.Pair;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
@@ -110,18 +109,20 @@ public class ASTHead {
         headNode = head;
     }
 
-    public void printAST(){
+    public void printAST() {
         ASTNode node = headNode;
         final Stack<Pair<ASTNode, Integer>> stack = new Stack<>();
         stack.add(new Pair(node, 0));
-        while(!stack.empty()) {
+        while (!stack.empty()) {
             Pair<ASTNode, Integer> pair = stack.pop();
             ASTNode curr = pair.getO1();
             int level = pair.getO2();
-            for(int i = 0; i < level; i++){ System.out.print("\t"); }
+            for (int i = 0; i < level; i++) {
+                System.out.print("\t");
+            }
             System.out.println(curr.lexeme + " : " + curr.kind + " : " + level);
             for (ASTNode child : curr.children) {
-                stack.add(new Pair(child, level+1));
+                stack.add(new Pair(child, level + 1));
             }
         }
     }
@@ -224,6 +225,7 @@ public class ASTHead {
             }
         }
 
+        imports.add(new ImportScope(ON_DEMAND, Name.generateLangImportName(), parentClass));
         return imports;
     }
 

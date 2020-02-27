@@ -25,6 +25,12 @@ public class ImportScope extends Scope {
         this.parentScope = parentScope;
     }
 
+    public ImportScope(final IMPORT_TYPE type, final Name name, final ClassScope parentScope) {
+        this.type = type;
+        this.name = name;
+        this.parentScope = parentScope;
+    }
+
     @Override
     boolean isInitCheck(final String variableName) {
         return false;
