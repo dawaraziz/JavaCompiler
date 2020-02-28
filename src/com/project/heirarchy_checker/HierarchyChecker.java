@@ -357,7 +357,13 @@ public class HierarchyChecker {
                 if (checkSuperAbstractMethods(javaClass, seenMethods, false)) return true;
             }
             else {
-                if (checkSuperAbstractMethods(javaClass, seenMethods, true)) return true;
+                if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
+                    if (checkSuperAbstractMethods(javaClass, seenMethods, false)) return true;
+                } else {
+
+                    if (checkSuperAbstractMethods(javaClass, seenMethods, true)) return true;
+
+                }
             }
 
         }
@@ -440,51 +446,92 @@ public class HierarchyChecker {
     }
 
     private boolean checkSuperAbstractMethods(ClassScope javaClass,ArrayList<MethodScope> seenMethods, boolean hasRealChild) {
+        if (javaClass.name.equals("foo")) {
+            int a =1;
+        }
         if (javaClass.methodTable != null) {
             seenMethods.addAll(javaClass.methodTable);
+            if (javaClass.name.equals("foo")) {
+                int a =1;
+            }
             if (javaClass.extendsTable!=null) {
                 if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
-                    
-                }
+                    for (Name superName : javaClass.extendsTable) {
+                        ClassScope superClass = classMap.get(superName.getQualifiedName());
+                        if (superClass != null) {
+                            if (superClass.methodTable != null) {
+                                for (MethodScope methodScope : superClass.methodTable) {
+                                    if (methodScope.parentScope != null) {
+                                        boolean foundSameSig = false;
+                                        for (MethodScope subMethodScope : seenMethods) {
 
-                if (javaClass.name.equals("Main")) {
-                    int a = 1;
-                }
-                for (Name superName : javaClass.extendsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
-                    if (superClass != null) {
-                        if (superClass.methodTable != null) {
-                            if (javaClass.name.equals("Main")) {
-                                int a = 1;
-                            }
-                            for (MethodScope methodScope : superClass.methodTable) {
-                                if (methodScope.modifiers.contains("abstract") && methodScope.parentScope!=null) {
-                                    boolean foundSameSig = false;
-                                    for (MethodScope subMethodScope : seenMethods) {
-                                        if (methodScope.sameSignature(subMethodScope)) {
-                                            if (!javaClass.modifiers.contains("abstract")) {
-                                                if (subMethodScope.bodyBlock!=null) foundSameSig = true;
-                                            }
-                                            else {
+                                            if (methodScope.sameSignature(subMethodScope)) {
                                                 foundSameSig = true;
                                             }
+
                                         }
-                                    }
-                                    if (!foundSameSig) {
-                                        if (!javaClass.modifiers.contains("abstract")) {
-                                            System.err.println("Unimplemented abstract method");
-                                            System.exit(42);
+                                        if (!foundSameSig) {
+                                            if (!javaClass.modifiers.contains("abstract")) {
+                                                if (hasRealChild) {
+                                                    System.err.println("Unimplemented interface method");
+                                                    System.exit(42);
+                                                }
+                                            } else {
+                                                if (hasRealChild) {
+                                                    System.err.println("Unimplemented interface method");
+                                                    System.exit(42);
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
+                            if (javaClass.modifiers.contains("abstract") && !hasRealChild) {
+                                if (checkSuperAbstractMethods(superClass, seenMethods, false)) return true;
+                            } else {
+                                if (checkSuperAbstractMethods(superClass, seenMethods, true)) return true;
+                            }
                         }
+                    }
+                }
+                else {
+                    if (javaClass.name.equals("Main")) {
+                        int a = 1;
+                    }
+                    for (Name superName : javaClass.extendsTable) {
+                        ClassScope superClass = classMap.get(superName.getQualifiedName());
+                        if (superClass != null) {
+                            if (superClass.methodTable != null) {
+                                if (javaClass.name.equals("Main")) {
+                                    int a = 1;
+                                }
+                                for (MethodScope methodScope : superClass.methodTable) {
+                                    if (methodScope.modifiers.contains("abstract") && methodScope.parentScope != null) {
+                                        boolean foundSameSig = false;
+                                        for (MethodScope subMethodScope : seenMethods) {
+                                            if (methodScope.sameSignature(subMethodScope)) {
+                                                if (!javaClass.modifiers.contains("abstract")) {
+                                                    if (subMethodScope.bodyBlock != null) foundSameSig = true;
+                                                } else {
+                                                    foundSameSig = true;
+                                                }
+                                            }
+                                        }
+                                        if (!foundSameSig) {
+                                            if (!javaClass.modifiers.contains("abstract")) {
+                                                System.err.println("Unimplemented abstract method");
+                                                System.exit(42);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
-                        if (javaClass.modifiers.contains("abstract") && !hasRealChild) {
-                            if (checkSuperAbstractMethods(superClass, seenMethods, false)) return true;
-                        }
-                        else {
-                            if (checkSuperAbstractMethods(superClass, seenMethods, true)) return true;
+                            if (javaClass.modifiers.contains("abstract") && !hasRealChild) {
+                                if (checkSuperAbstractMethods(superClass, seenMethods, false)) return true;
+                            } else {
+                                if (checkSuperAbstractMethods(superClass, seenMethods, true)) return true;
+                            }
                         }
                     }
                 }
