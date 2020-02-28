@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
+
 public class TypeLinker {
     public static void disambiguate(final ASTHead astHead){
         // Get every Variable_ID and classify it as
@@ -61,7 +63,7 @@ public class TypeLinker {
     }
 
     public static void changeIfDeclOnDemand(ASTNode node){
-        if (parentIsLexeme(node, "TYPEIMPORTONDEMANDDECLARATION")){
+        if (within(node, "TYPEIMPORTONDEMANDDECLARATION")){
             node.kind = Kind.PACKAGEORTYPENAME;
         }
     }
@@ -350,7 +352,8 @@ public class TypeLinker {
                     ImportScope import1 = javaClass.imports.get(i);
                     ImportScope import2 = javaClass.imports.get(j);
                     System.out.println(import1.name.getClassName() + " = " + import2.name.getClassName());
-                    if (import1.name.getClassName().equals(import2.name.getClassName())) {
+                    if (import1.name.getClassName().equals(import2.name.getClassName())
+                            && import1.type != ON_DEMAND && import2.type != ON_DEMAND) {
                         if (!import1.name.getQualifiedName().equals(import2.name.getQualifiedName())) {
                             System.err.println("Two single-type imports clashed");
                             System.exit(42);
@@ -362,9 +365,16 @@ public class TypeLinker {
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
             // Get all typeNames from the AST - ignore any whose parent is a package declaration
             ASTHead astHead = javaClass.ast;
+            System.out.println("Java Class: " + javaClass.name);
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
+            for (ASTNode ast : nameNodes){
+                System.out.println("BEFORE: " + ast.lexeme);
+            }
+            System.out.println("BEFORE: " + nameNodes.size());
             nameNodes = nameNodes.stream().filter(n -> !within(n, "PACKAGEDECLARATION")).collect(Collectors.toCollection(ArrayList::new));
-
+            for (ASTNode ast : nameNodes) {
+                System.out.println("AFTER " + ast.lexeme);
+            }
 
             // for each typeName see if it is an object in our classTable
             for (ASTNode node : nameNodes){
@@ -372,7 +382,6 @@ public class TypeLinker {
                 System.out.println("Does it contain " + name);
                 boolean found = false;
                 for (int i = 0; i < classTable.size(); ++i){
-                    System.out.println("Checking " + classTable.get(i).name);
                     if (classTable.get(i).name.equals(name)) {
                         found = true;
                     }
