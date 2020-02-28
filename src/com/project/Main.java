@@ -47,8 +47,6 @@ public class Main {
             System.out.println("Parsing " + fileName + ".");
 
             // Parsing step.
-System.out.println(inputStreamJLR1);
-System.out.println(Main.class.getCanonicalName());
             final ASTHead AST = new ASTHead(JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1)));
 
             System.out.println("Weeding " + fileName + ".");
@@ -129,10 +127,16 @@ System.out.println(Main.class.getCanonicalName());
         }
 
         TypeLinker.link(classTable, classMap);
+
+//        for (final ClassScope classScope : classTable) {
+//            classScope.qualifySupersAndInterfaces(classMap);
+//        }
+
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
         if (!hCheck.followsClassHierarchyRules()) {
+            System.err.println();
             System.exit(42);
         }
 

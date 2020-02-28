@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Name {
     private final ArrayList<String> fullyQualifiedName;
@@ -48,10 +49,17 @@ public class Name {
         return name;
     }
 
+    public Name generateAppendedPackageName(final String className) {
+        final Name name = new Name();
+        name.fullyQualifiedName.add(className);
+        name.fullyQualifiedName.addAll(fullyQualifiedName);
+        return name;
+    }
+
     public String getQualifiedName() {
-        String name = "";
-        for (String n : fullyQualifiedName) {
-            name += n + ".";
+        final StringBuilder name = new StringBuilder();
+        for (final String n : fullyQualifiedName) {
+            name.append(n).append(".");
         }
         return name.substring(0, name.length() - 1);
     }
@@ -62,7 +70,7 @@ public class Name {
 
 
     public String getSimpleName() {
-        return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
+        return fullyQualifiedName.get(0);
     }
 
     //TODO: Just returning null string rn but should this ever need to occur?
@@ -70,8 +78,14 @@ public class Name {
         return fullyQualifiedName.size() > 0 ? fullyQualifiedName.get(0) : "null";
     }
 
+    public boolean checkPackageMatch(final Name other) {
+        final List<String> packageName = fullyQualifiedName.subList(1, fullyQualifiedName.size());
+        return packageName.containsAll(other.fullyQualifiedName)
+                && other.fullyQualifiedName.containsAll(packageName);
+    }
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof Name) {
             final Name other = (Name) obj;
 
@@ -90,5 +104,21 @@ public class Name {
         }
 
         return true;
+    }
+
+    public boolean checkClassName() {
+        return false;
+    }
+
+    public boolean isJavaLang() {
+        return fullyQualifiedName.size() == 2
+                && fullyQualifiedName.get(0).equals("lang")
+                && fullyQualifiedName.get(1).equals("java");
+    }
+    public boolean isJavaLangObject() {
+        return fullyQualifiedName.size() == 3
+                && fullyQualifiedName.get(0).equals("lang")
+                && fullyQualifiedName.get(1).equals("java")
+                && fullyQualifiedName.get(1).equals("Object");
     }
 }
