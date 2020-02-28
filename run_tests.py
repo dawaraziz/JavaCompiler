@@ -37,12 +37,23 @@ def main():
                     # For every test file in the directory that isn't a sub directory just compile the file
                     if os.path.isfile(os.path.join(path, test)):
                         file_path = "{}/{}/{}".format(test_dir, folder, test)
+                        with open(file_path, "r") as file:
+                            data = file.readlines()
+                            for line in data:
+                                if 'Hierarchy check' in line or 'HIERARCHY' in line:
+                                    print('*****Hierarchy FILE: ' + file_path)
                         result = subprocess.run(['java', '-jar', 'build/jar/joosc.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
+                        for file_path in file_paths:
+                            with open(file_path, "r") as file:
+                                data = file.readlines()
+                                for line in data:
+                                    if 'Hierarchy check' in line or 'HIERARCHY' in line:
+                                        print('*****Hierarchy FILE: ' + file_path)
                         compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths + stdLib
                         result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
