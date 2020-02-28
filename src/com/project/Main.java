@@ -109,6 +109,7 @@ public class Main {
 
 
         if (!hCheck.followsClassHierarchyRules()) {
+            System.err.println();
             System.exit(42);
         }
 

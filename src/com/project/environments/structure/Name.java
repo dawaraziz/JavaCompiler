@@ -59,7 +59,7 @@ public class Name {
 
 
     public String getSimpleName() {
-        return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
+        return fullyQualifiedName.get(0);
     }
 
     //TODO: Just returning null string rn but should this ever need to occur?

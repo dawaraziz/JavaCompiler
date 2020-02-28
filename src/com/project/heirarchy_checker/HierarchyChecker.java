@@ -50,7 +50,7 @@ public class HierarchyChecker {
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             namesSeen.add(name);
             if (cycleCheck(javaClass, namesSeen)) {
-                System.out.println("Detected a cycle");
+                System.err.println("Detected a cycle");
                 return true;
             }
         }
@@ -114,16 +114,18 @@ public class HierarchyChecker {
         for (ClassScope javaClass: classTable) {
 
             if (javaClass.imports != null) {
+                if (javaClass.name.equals("List"));
                 for (ImportScope importScope: javaClass.imports) {
-                    if (javaClass.name.equals(importScope.name.getSimpleName())) {
-                        System.out.println("Clashing Import and Name");
+                    String name = importScope.name.getSimpleName();
+                    if (javaClass.name.equals(name)) {
+                        System.err.println("Clashing Import and Name");
                         return false;
                     }
                 }
             }
 
             if (extendedClasses.contains(javaClass.name) && javaClass.modifiers.contains("final")) {
-                System.out.println("Class extending a final class");
+                System.err.println("Class extending a final class");
                 return false;
             }
 
@@ -131,12 +133,12 @@ public class HierarchyChecker {
             if (javaClass.extendsTable != null) {
                 for (Name extendsClass: javaClass.extendsTable) {
                     if (interfacesSeen.contains(extendsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
-                        System.out.println("Class Extending Interface");
+                        System.err.println("Class Extending Interface");
                         return false;
                     }
 
                     if (classesSeen.contains(extendsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
-                        System.out.println("Interface Extending Class");
+                        System.err.println("Interface Extending Class");
                         return false;
                     }
                 }
@@ -145,7 +147,7 @@ public class HierarchyChecker {
             if (javaClass.implementsTable != null) {
                 for (Name implementsClass : javaClass.implementsTable) {
                     if (classesSeen.contains(implementsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
-                        System.out.println("Class Implementing Class");
+                        System.err.println("Class Implementing Class");
                         return false;
                     }
                 }
@@ -390,14 +392,14 @@ public class HierarchyChecker {
                     while (j < paramsList.size()) {
                         if (i != j) {
                             if (paramsList.get(i) == null && paramsList.get(j) == null) {
-                                System.out.println("Constructors with same parameter types");
+                                System.err.println("Constructors with same parameter types");
                                 return false;
                             }
 
                             else if (paramsList.get(i) != null && paramsList.get(j) != null) {
                                 if (paramsList.get(i).size() == paramsList.get(j).size()) {
                                     if (paramsList.get(i).containsAll(paramsList.get(j)) && paramsList.get(j).containsAll(paramsList.get(i))) {
-                                        System.out.println("Constructors with same parameter types");
+                                        System.err.println("Constructors with same parameter types");
                                         return false;
                                     }
                                 }
