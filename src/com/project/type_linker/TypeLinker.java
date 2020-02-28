@@ -385,7 +385,8 @@ public class TypeLinker {
                             }
                         }
 
-                        // For all combinations of packages the import on demand resolve to
+                        // For all combinations of packages the import on demands resolve to check
+                        // that their classes don't clash, if they do, it is only a problem if the type is used
                         for (String pkg1Name : matched1){
                             for (String pkg2Name : matched2) {
                                 for (ClassScope c : packages.get(pkg1Name).classes) {
@@ -403,6 +404,17 @@ public class TypeLinker {
                     }
                 }
             }
+    }
+
+    public static void checkPackageNames(final ClassScope javaClass, final HashMap<String, PackageScope> packages){
+        // Package - Classname clash ex. foo.bar package name illegal if there is a qualified classname foo.bar
+        for (String pkgName : packages.keySet()){
+            System.out.println(pkgName + " $: " + javaClass.packageName.getQualifiedName()+'.'+javaClass.name);
+            if(pkgName.equals(javaClass.packageName.getQualifiedName()+'.'+javaClass.name)){
+                System.err.println("Package Name " + pkgName + " clashes with qualified class name");
+                System.exit(42);
+            }
+        }
     }
 
     public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap, final HashMap<String, PackageScope> packages){
@@ -458,6 +470,9 @@ public class TypeLinker {
 
             // Check all on demand imports resolve
             checkOnDemandImports(javaClass, packages);
+
+            // Check all on demand imports resolve
+            checkPackageNames(javaClass, packages);
 
             // Deal with variable redeclaration within scopes
             checkVariableDeclarationScopes(astHead);
