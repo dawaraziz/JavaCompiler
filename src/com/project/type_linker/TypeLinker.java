@@ -61,7 +61,7 @@ public class TypeLinker {
     }
 
     public static void changeIfDeclOnDemand(ASTNode node){
-        if (parentIsLexeme(node, "TYPEIMPORTONDEMANDDECLARATION")){
+        if (within(node, "TYPEIMPORTONDEMANDDECLARATION")){
             node.kind = Kind.PACKAGEORTYPENAME;
         }
     }
@@ -362,9 +362,16 @@ public class TypeLinker {
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
             // Get all typeNames from the AST - ignore any whose parent is a package declaration
             ASTHead astHead = javaClass.ast;
+            System.out.println("Java Class: " + javaClass.name);
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
+            for (ASTNode ast : nameNodes){
+                System.out.println("BEFORE: " + ast.lexeme);
+            }
+            System.out.println("BEFORE: " + nameNodes.size());
             nameNodes = nameNodes.stream().filter(n -> !within(n, "PACKAGEDECLARATION")).collect(Collectors.toCollection(ArrayList::new));
-
+            for (ASTNode ast : nameNodes) {
+                System.out.println("AFTER " + ast.lexeme);
+            }
 
             // for each typeName see if it is an object in our classTable
             for (ASTNode node : nameNodes){
@@ -372,7 +379,6 @@ public class TypeLinker {
                 System.out.println("Does it contain " + name);
                 boolean found = false;
                 for (int i = 0; i < classTable.size(); ++i){
-                    System.out.println("Checking " + classTable.get(i).name);
                     if (classTable.get(i).name.equals(name)) {
                         found = true;
                     }

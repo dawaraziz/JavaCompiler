@@ -20,7 +20,6 @@ def main():
     test_dir = "tests"
 
     stdLib = getStandardLibraryPaths()
-    print(stdLib)
 
     Failed = 0
     Passed = 0
@@ -32,7 +31,7 @@ def main():
                 illegalTest = True if "illegalJoos" in folder else False
                 path = os.path.join(test_dir, folder)
 
-                for test in os.listdir(path):
+                for test in listdir_nohidden(path):
 #                     print("{1}{0}{1}".format(test, "\033[39m"))
 
                     # For every test file in the directory that isn't a sub directory just compile the file
@@ -51,6 +50,12 @@ def main():
 
     print("\033[0mTOTAL PASSED TESTS: {}".format(Passed))
     print("\033[0mTOTAL FAILED TESTS: {}".format(Failed))
+
+
+def listdir_nohidden(path):
+    for f in os.listdir(path):
+        if not f.startswith('.'):
+            yield f
 
 
 def getStandardLibraryPaths():
