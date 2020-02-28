@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Name {
@@ -102,19 +103,20 @@ public class Name {
         return true;
     }
 
-    public boolean checkClassName() {
-        return false;
+    public boolean containsPrefixName(final Name name) {
+        if (name.fullyQualifiedName.size() > this.fullyQualifiedName.size()) return false;
+
+        for (int i = name.fullyQualifiedName.size() - 1, j = this.fullyQualifiedName.size() - 1
+             ;i >= 0 && j >= 0; --i, --j) {
+            if (!name.fullyQualifiedName.get(i).equals(this.fullyQualifiedName.get(j))) return false;
+        }
+
+        return true;
     }
 
     public boolean isJavaLang() {
         return fullyQualifiedName.size() == 2
                 && fullyQualifiedName.get(0).equals("lang")
                 && fullyQualifiedName.get(1).equals("java");
-    }
-    public boolean isJavaLangObject() {
-        return fullyQualifiedName.size() == 3
-                && fullyQualifiedName.get(0).equals("lang")
-                && fullyQualifiedName.get(1).equals("java")
-                && fullyQualifiedName.get(1).equals("Object");
     }
 }

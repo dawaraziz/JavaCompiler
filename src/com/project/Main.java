@@ -106,9 +106,9 @@ public class Main {
 
         TypeLinker.link(classTable, classMap);
 
-//        for (final ClassScope classScope : classTable) {
-//            classScope.qualifySupersAndInterfaces(classMap);
-//        }
+        for (final ClassScope classScope : classTable) {
+            classScope.qualifySupersAndInterfaces(classTable);
+        }
 
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
