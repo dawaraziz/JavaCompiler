@@ -27,15 +27,13 @@ public class HierarchyChecker {
 
         for (ClassScope javaClass : classTable) {
             if (javaClass.extendsTable != null) {
-                System.out.println(javaClass.name);
+                System.out.println("Class: " + javaClass.name);
                 System.out.println("---------------------------------------");
                 for (Name extendClassName : javaClass.extendsTable) {
                     String fqn = extendClassName.getQualifiedName();
                     String name = "";
-                    System.out.println(fqn);
                     if (javaClass.packageName == null) name = javaClass.name;
                     else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                    System.out.println(name);
                     if (fqn.equals(name)) {
                         System.err.println("Detected a cycle");
                         return true;
@@ -113,21 +111,22 @@ public class HierarchyChecker {
 
         for (ClassScope javaClass: classTable) {
 
-            if (javaClass.imports != null) {
-                if (javaClass.name.equals("List"));
-                for (ImportScope importScope: javaClass.imports) {
-                    String name = importScope.name.getSimpleName();
-                    if (javaClass.name.equals(name)) {
-                        String qualifiedName = "";
-                        if (javaClass.packageName == null) qualifiedName = javaClass.name;
-                        else qualifiedName = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                        if (!qualifiedName.equals(importScope.name.getQualifiedName())) {
-                            System.err.println("Clashing Import and Name");
-                            return false;
-                        }
-                    }
-                }
-            }
+            // TODO: Calum - I have a check for this in TypeLinker, I don't think we need it here
+//            if (javaClass.imports != null) {
+//                if (javaClass.name.equals("List"));
+//                for (ImportScope importScope: javaClass.imports) {
+//                    String name = importScope.name.getSimpleName();
+//                    if (javaClass.name.equals(name) && importScope.type != ImportScope.IMPORT_TYPE.ON_DEMAND) {
+//                        String qualifiedName = "";
+//                        if (javaClass.packageName == null) qualifiedName = javaClass.name;
+//                        else qualifiedName = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+//                        if (!qualifiedName.equals(importScope.name.getQualifiedName())) {
+//                            System.err.println("Clashing Import and Name");
+//                            return false;
+//                        }
+//                    }
+//                }
+//            }
 
             if (extendedClasses.contains(javaClass.name) && javaClass.modifiers.contains("final")) {
                 System.err.println("Class extending a final class");

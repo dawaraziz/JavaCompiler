@@ -67,7 +67,7 @@ public class Main {
 
         // Checks for duplicate classes.
         for (int i = 0; i < classTable.size(); ++i) {
-            System.out.println("Class: " + classTable.get(i).name);
+            System.out.println("Class: " + classTable.get(i).packageName);
             for (int j = i + 1; j < classTable.size(); ++j) {
                 if (classTable.get(i).equals(classTable.get(j))) {
                     System.err.println("Found duplicate class in same package.");
