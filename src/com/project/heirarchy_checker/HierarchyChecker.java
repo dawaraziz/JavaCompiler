@@ -186,8 +186,12 @@ public class HierarchyChecker {
             if (javaClass.methodTable != null) {
                 for (MethodScope subMethod : javaClass.methodTable) {
                     for (MethodScope method : inheritedMethods) {
-                        System.out.println(subMethod);
-                        System.out.println(method);
+                        System.out.println(">>>>>>>");
+                        System.out.println(subMethod.name);
+                        System.out.println(method.name);
+                        if (subMethod.name.equals("bleh") ) {
+                            int a = 1;
+                        }
                         if (subMethod.sameSignature(method)) {
                             if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
                                 System.err.println("Non static method replacing static");
@@ -234,6 +238,7 @@ public class HierarchyChecker {
         }
 
         if (javaClass.implementsTable != null) {
+            if (javaClass.name.equals("Main"));
             for (Name extendName : javaClass.implementsTable) {
                 ClassScope extendClass = classMap.get(extendName.getQualifiedName());
                 if (extendClass != null) {
@@ -403,7 +408,7 @@ public class HierarchyChecker {
 
                             else if (paramsList.get(i) != null && paramsList.get(j) != null) {
                                 if (paramsList.get(i).size() == paramsList.get(j).size()) {
-                                    if (paramsList.get(i).containsAll(paramsList.get(j)) && paramsList.get(j).containsAll(paramsList.get(i))) {
+                                    if (paramsList.get(i).equals(paramsList.get(j)) && paramsList.get(j).equals(paramsList.get(i))) {
                                         System.err.println("Constructors with same parameter types");
                                         return false;
                                     }
