@@ -181,12 +181,11 @@ public class HierarchyChecker {
         for (ClassScope javaClass: classTable) {
             ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
 
-
             if (javaClass.methodTable != null) {
                 for (MethodScope subMethod : javaClass.methodTable) {
                     for (MethodScope method : inheritedMethods) {
-                        if (subMethod.name.equals("bleh") ) {
-                            int a = 1;
+                        if (javaClass.name.equals("Main")){
+                            int a =1;
                         }
                         if (subMethod.sameSignature(method)) {
                             if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
@@ -196,6 +195,9 @@ public class HierarchyChecker {
                             if (!subMethod.type.equals(method.type)) {
                                 System.err.println("Same signature with different return types");
                                 return true;
+                            }
+                            if (javaClass.name.equals("Main")){
+                                int a =1;
                             }
                             if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
                                 System.err.println("Protected method replacing public");
@@ -207,6 +209,59 @@ public class HierarchyChecker {
                             }
                         }
                     }
+                }
+                int i = 0;
+                while (i < inheritedMethods.size()) {
+                    int j = 0;
+                    while (j < inheritedMethods.size()) {
+                        if (i != j) {
+                            MethodScope method = inheritedMethods.get(i);
+                            MethodScope subMethod = inheritedMethods.get(i);
+                            ClassScope objectScope = null;
+                            for (final ClassScope scope : classTable) {
+                                if (scope.name.equals("Object")
+                                        && scope.packageName.equals(Name.generateJavaLangPackageName())) {
+                                    objectScope = scope;
+                                    break;
+                                }
+                            }
+
+                            if (objectScope == null) {
+                                System.err.println("Could not identify java.lang.Object. Aborting!");
+                                System.exit(42);
+                            }
+                            boolean check1 = objectScope.methodTable.contains(subMethod);
+                            boolean check = (objectScope.methodTable.contains(method) && objectScope.methodTable.contains(subMethod)
+                                    && method.modifiers.containsAll(subMethod.modifiers) && subMethod.modifiers.containsAll(method.modifiers)
+                                    && method.modifiers.size() == subMethod.modifiers.size());
+                            if (!(check)) {
+                                if (subMethod.sameSignature(method)) {
+                                    if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
+                                        System.err.println("Non static method replacing static");
+                                        return true;
+                                    }
+                                    if (!subMethod.type.equals(method.type)) {
+                                        System.err.println("Same signature with different return types");
+                                        return true;
+                                    }
+                                    if (javaClass.name.equals("Main")) {
+                                        int a = 1;
+                                    }
+                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
+                                        System.err.println("Protected method replacing public");
+                                        return true;
+                                    }
+                                    if (method.modifiers.contains("final")) {
+                                        System.err.println("Method replacing final method");
+                                        return true;
+                                    }
+                                }
+                            }
+
+                        }
+                        j++;
+                    }
+                    i++;
                 }
             }
 
