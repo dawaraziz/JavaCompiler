@@ -191,8 +191,6 @@ public class TypeLinker {
             }
 
 
-
-
             //If it is in a RELATIONALEXPRESSION and not after instanceof
             if (parentIsLexeme(node, "RELATIONALEXPRESSION")){
                 node.kind = Kind.EXPRESSIONNAME;
@@ -368,14 +366,7 @@ public class TypeLinker {
             ASTHead astHead = javaClass.ast;
             System.out.println("Java Class: " + javaClass.name);
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
-            for (ASTNode ast : nameNodes){
-                System.out.println("BEFORE: " + ast.lexeme);
-            }
-            System.out.println("BEFORE: " + nameNodes.size());
             nameNodes = nameNodes.stream().filter(n -> !within(n, "PACKAGEDECLARATION")).collect(Collectors.toCollection(ArrayList::new));
-            for (ASTNode ast : nameNodes) {
-                System.out.println("AFTER " + ast.lexeme);
-            }
 
             // for each typeName see if it is an object in our classTable
             for (ASTNode node : nameNodes){

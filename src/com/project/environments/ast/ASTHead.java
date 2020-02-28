@@ -229,6 +229,8 @@ public class ASTHead {
         return imports;
     }
 
+
+
     public String getExpectedFileName() {
         final ArrayList<ASTNode> declarations =
                 headNode.findNodesWithLexeme(CLASS_DECLARATION, INTERFACE_DECLARATION);
@@ -269,7 +271,7 @@ public class ASTHead {
         final ArrayList<ASTNode> packageNodes = headNode.findNodesWithLexeme(PACKAGE_DECLARATION);
 
         if (packageNodes.size() == 0) {
-            return null;
+            return new Name("default");
         } else if (packageNodes.size() > 1) {
             System.err.println("Somehow identified more than one package in a class; aborting!");
             System.exit(42);

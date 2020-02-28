@@ -95,6 +95,7 @@ public class ASTNode {
         return leafNodes;
     }
 
+
     public static ArrayList<String> lexemesToStringList(final ArrayList<ASTNode> nodes) {
         final ArrayList<String> strings = new ArrayList<>();
 
@@ -104,6 +105,7 @@ public class ASTNode {
 
         return strings;
     }
+
 
     public void setLexeme(final String lexeme) {
         this.lexeme = lexeme;
