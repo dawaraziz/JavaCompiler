@@ -218,7 +218,9 @@ public class ClassScope extends Scope {
                                     || classScope.packageName.equals(this.packageName))
                                     &&  extendsName.containsSomePackageSuffix(classScope.packageName)) {
                                 System.out.println("Changing " + i + " to: " + qualifiedName);
-                                extendsTable.set(i, qualifiedName);
+                                if (!classScope.packageName.isDefault()) {
+                                    extendsTable.set(i, qualifiedName);
+                                }
                                 isImported = true;
                                 break;
                             }
@@ -258,7 +260,9 @@ public class ClassScope extends Scope {
                                     || classScope.packageName.equals(this.packageName))
                                     &&  implementsName.containsSomePackageSuffix(classScope.packageName)) {
                                 System.out.println("Changing " + i + " to: " + qualifiedName);
-                                implementsTable.set(i, qualifiedName);
+                                if (!classScope.packageName.isDefault()) {
+                                    implementsTable.set(i, qualifiedName);
+                                }
                                 isImported = true;
                                 break;
                             }
