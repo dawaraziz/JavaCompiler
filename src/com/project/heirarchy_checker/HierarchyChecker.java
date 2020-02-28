@@ -295,8 +295,10 @@ public class HierarchyChecker {
                     }
                 }
             }
-            if (javaClass.name.equals("Main"));
-            return checkSuperAbstractMethods(javaClass);
+            if (javaClass.name.equals("Main")) {
+                int a = 1;
+            };
+            if (checkSuperAbstractMethods(javaClass)) return true;
 
         }
         return false;

@@ -39,27 +39,33 @@ def main():
                     if os.path.isfile(os.path.join(path, test)):
                         file_path = "{}/{}/{}".format(test_dir, folder, test)
                         if (hierarchy):
+                            doH = False
                             with open(file_path, "r") as file:
                                 data = file.readlines()
                                 for line in data:
                                     if 'Hierarchy check' in line or 'HIERARCHY' in line:
                                         print('*****Hierarchy FILE: ' + file_path)
-                        result = subprocess.run(['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-                        Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
+                                        doH = True
+                            if (doH):
+                                result = subprocess.run(['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                                Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
                         if (hierarchy):
+                            doH = False
                             for file_path in file_paths:
                                 with open(file_path, "r") as file:
                                     data = file.readlines()
                                     for line in data:
                                         if 'Hierarchy check' in line or 'HIERARCHY' in line:
                                             print('*****Hierarchy FILE: ' + file_path)
-                        compilation_unit = ['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar'] + file_paths + stdLib
-                        result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-                        Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
+                                            doH = True
+                            if (doH):
+                                compilation_unit = ['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar'] + file_paths + stdLib
+                                result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                                Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
 
     print("\033[0mTOTAL PASSED TESTS: {}".format(Passed))
