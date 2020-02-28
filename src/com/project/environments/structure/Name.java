@@ -109,6 +109,18 @@ public class Name {
         return true;
     }
 
+    public boolean containsSomePackageSuffix(final Name name) {
+        if (this.fullyQualifiedName.size() == 1) return true;
+
+        if ((this.fullyQualifiedName.size() - 1) > name.fullyQualifiedName.size()) return false;
+
+        for (int i = 1; i < this.fullyQualifiedName.size(); ++i) {
+            if (!name.fullyQualifiedName.get(i-1).equals(this.fullyQualifiedName.get(i))) return false;
+        }
+
+        return true;
+    }
+
     public boolean containsPrefixName(final Name name) {
         if (name.fullyQualifiedName.size() > this.fullyQualifiedName.size()) return false;
 
@@ -124,5 +136,9 @@ public class Name {
         return fullyQualifiedName.size() == 2
                 && fullyQualifiedName.get(0).equals("lang")
                 && fullyQualifiedName.get(1).equals("java");
+    }
+
+    public boolean isDefault() {
+        return fullyQualifiedName.size() == 1 && fullyQualifiedName.get(0).equals("default#");
     }
 }

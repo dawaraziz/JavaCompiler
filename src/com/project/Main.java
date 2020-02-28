@@ -19,10 +19,7 @@ import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(final String[] args) {
@@ -76,6 +73,10 @@ public class Main {
             }
         }
 
+        for (final ClassScope classScope : classTable) {
+            classScope.qualifySupersAndInterfaces(classTable);
+        }
+
         // Find the Object class.
         ClassScope objectScope = null;
         for (final ClassScope scope : classTable) {
@@ -102,7 +103,26 @@ public class Main {
         for (ClassScope javaClass: classTable) {
             String name = "";
             if (javaClass.packageName == null) name = javaClass.name;
-            else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+            else {
+                String packageN = javaClass.packageName.getQualifiedName();
+                String split[];
+                if (packageN.contains(".")) {
+                    System.out.println("Yes");
+                    split = packageN.split("\\.");
+                }
+                else split = new String[]{packageN};
+                System.out.println(packageN);
+                System.out.println(split.length);
+                if (split[0].contains("default#")) {
+                    String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
+                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
+                    else name = javaClass.name;
+                    System.out.println("000000000000000");
+                    System.out.println(name);
+                } else {
+                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                }
+            }
             classMap.put(name, javaClass);
         }
 
@@ -127,23 +147,21 @@ public class Main {
 
         TypeLinker.link(classTable, classMap, packages);
 
-        for (final ClassScope classScope : classTable) {
-            classScope.qualifySupersAndInterfaces(classTable);
-        }
-
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
         if (!hCheck.followsClassHierarchyRules()) {
-            System.err.println();
+            System.out.println("1");
             System.exit(42);
         }
 
         if (hCheck.cycleDetected()) {
+            System.out.println("2");
             System.exit(42);
         }
 
         if (!hCheck.followsMethodHierarchyRules()) {
+            System.out.println("3");
             System.exit(42);
         }
 

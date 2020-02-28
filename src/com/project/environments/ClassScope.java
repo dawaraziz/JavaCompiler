@@ -160,6 +160,8 @@ public class ClassScope extends Scope {
                 System.exit(42);
             }
 
+            if (!objectMethod.modifiers.contains("public")) continue;
+
             final ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
             newMods.add("abstract");
 
@@ -208,22 +210,30 @@ public class ClassScope extends Scope {
             for (int i = 0; i < extendsTable.size(); ++i) {
                 final Name extendsName = extendsTable.get(i);
 
-                if (isImportSuffix(extendsName)) break;
+                if (isImportSuffix(extendsName)) {
+                    isImported = true;
+                    break;
+                }
 
-                for (ClassScope classScope : classTable) {
+                for (final ClassScope classScope : classTable) {
                     if (classScope != null
                             && extendsName.getClassName().equals(classScope.name)) {
-
-                        if (classScope.packageName != null ) {
+                        if (classScope.packageName != null) {
                             final Name qualifiedName = classScope.packageName.generateAppendedPackageName(extendsName.getClassName());
-                            if (isOnDemandImportSuffix(classScope.packageName)
-                                    || classScope.packageName.equals(this.packageName)) {
-                                System.out.println("Changing "+i +" to: "+qualifiedName);
-//                                extendsTable.set(i, qualifiedName);
+                            if (extendsName.checkPackageMatch(classScope.packageName)) {
+                                isImported = true;
+                                break;
+                            } else if ((isOnDemandImportSuffix(classScope.packageName)
+                                    || classScope.packageName.equals(this.packageName))
+                                    &&  extendsName.containsSomePackageSuffix(classScope.packageName)) {
+                                System.out.println("Changing " + i + " to: " + qualifiedName);
+                                if (!classScope.packageName.isDefault()) {
+                                    extendsTable.set(i, qualifiedName);
+                                }
                                 isImported = true;
                                 break;
                             }
-                        } else if (classScope.packageName == null && this.packageName == null) {
+                        } else if (this.packageName == null) {
                             isImported = true;
                             break;
                         }
@@ -236,31 +246,48 @@ public class ClassScope extends Scope {
                 System.exit(42);
             }
         }
-//
-//        if (implementsTable != null) {
-//            boolean isImported = false;
-//            for (int i = 0; i < implementsTable.size(); ++i) {
-//                final Name extendsName = implementsTable.get(i);
-//
-//                if (isImportSuffix(extendsName)) break;
-//
-//                final ClassScope scope = classTable.get(extendsName.getClassName());
-//                if (scope != null && extendsName.getClassName().equals(scope.name)) {
-//
-//                    final Name qualifiedName = scope.packageName.generateAppendedPackageName(extendsName.getClassName());
-//
-//                    if (isOnDemandImportSuffix(qualifiedName)) {
-//                        implementsTable.set(i, qualifiedName);
-//                        isImported = true;
-//                        break;
-//                    }
-//                }
-//            }
-//            if (!isImported) {
-//                System.err.println("Could not find import for interface name.");
-//                System.exit(42);
-//            }
-//        }
+
+        if (implementsTable != null) {
+            boolean isImported = false;
+            for (int i = 0; i < implementsTable.size(); ++i) {
+                final Name implementsName = implementsTable.get(i);
+
+                if (isImportSuffix(implementsName)) {
+                    isImported = true;
+                    break;
+                }
+
+                for (final ClassScope classScope : classTable) {
+                    if (classScope != null
+                            && implementsName.getClassName().equals(classScope.name)) {
+                        if (classScope.packageName != null) {
+                            final Name qualifiedName = classScope.packageName.generateAppendedPackageName(implementsName.getClassName());
+                            if (implementsName.checkPackageMatch(classScope.packageName)) {
+                                isImported = true;
+                                break;
+                            } else if ((isOnDemandImportSuffix(classScope.packageName)
+                                    || classScope.packageName.equals(this.packageName))
+                                    &&  implementsName.containsSomePackageSuffix(classScope.packageName)) {
+                                System.out.println("Changing " + i + " to: " + qualifiedName);
+                                if (!classScope.packageName.isDefault()) {
+                                    implementsTable.set(i, qualifiedName);
+                                }
+                                isImported = true;
+                                break;
+                            }
+                        } else if (this.packageName == null) {
+                            isImported = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!isImported) {
+                System.err.println("Could not find import for implements name.");
+                System.exit(42);
+            }
+        }
     }
 
     private boolean isImportSuffix(final Name extendsName) {
