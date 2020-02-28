@@ -185,9 +185,6 @@ public class HierarchyChecker {
             if (javaClass.methodTable != null) {
                 for (MethodScope subMethod : javaClass.methodTable) {
                     for (MethodScope method : inheritedMethods) {
-                        System.out.println(">>>>>>>");
-                        System.out.println(subMethod.name);
-                        System.out.println(method.name);
                         if (subMethod.name.equals("bleh") ) {
                             int a = 1;
                         }
@@ -297,37 +294,15 @@ public class HierarchyChecker {
                         return true;
                     }
                 }
+            }
+            if (javaClass.methodTable != null) {
+                ArrayList<MethodScope> seenMethods = new ArrayList<>();
+                seenMethods.addAll(javaClass.methodTable);
+                if (javaClass.extendsTable!=null) {
+                    for (Name extendsName : javaClass.extendsTable) {
 
-
-//                ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
-//                inheritedMethods.addAll(javaClass.methodTable);
-//
-//                int i = 0;
-//                while (i < inheritedMethods.size()) {
-//                    int j = 0;
-//                    MethodScope method1 = inheritedMethods.get(i);
-//
-//                    ArrayList<MethodScope> abstractMethods = new ArrayList<>();
-//
-//                    if (method1.modifiers.contains("abstract")) {
-//                        abstractMethods.add(method1);
-//                    }
-//                    i++;
-//                }
-//
-//                    while (j < inheritedMethods.size()) {
-//                        if (i != j) {
-//                            MethodScope method2 = inheritedMethods.get(j);
-//
-//                            if (method1.sameSignature(method2)) {
-//                                if (method1.modifiers.contains("abstract")) {
-//
-//                                }
-//                            }
-//
-//                        }
-//                    }
-//                }
+                    }
+                }
             }
 
         }
