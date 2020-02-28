@@ -210,59 +210,57 @@ public class HierarchyChecker {
                         }
                     }
                 }
-                int i = 0;
-                while (i < inheritedMethods.size()) {
-                    int j = 0;
-                    while (j < inheritedMethods.size()) {
-                        if (i != j) {
-                            MethodScope method = inheritedMethods.get(i);
-                            MethodScope subMethod = inheritedMethods.get(i);
-                            ClassScope objectScope = null;
-                            for (final ClassScope scope : classTable) {
-                                if (scope.name.equals("Object")
-                                        && scope.packageName.equals(Name.generateJavaLangPackageName())) {
-                                    objectScope = scope;
-                                    break;
-                                }
-                            }
-
-                            if (objectScope == null) {
-                                System.err.println("Could not identify java.lang.Object. Aborting!");
-                                System.exit(42);
-                            }
-                            boolean check1 = objectScope.methodTable.contains(subMethod);
-                            boolean check = (objectScope.methodTable.contains(method) && objectScope.methodTable.contains(subMethod)
-                                    && method.modifiers.containsAll(subMethod.modifiers) && subMethod.modifiers.containsAll(method.modifiers)
-                                    && method.modifiers.size() == subMethod.modifiers.size());
-                            if (!(check)) {
-                                if (subMethod.sameSignature(method)) {
-                                    if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
-                                        System.err.println("Non static method replacing static");
-                                        return true;
-                                    }
-                                    if (!subMethod.type.equals(method.type)) {
-                                        System.err.println("Same signature with different return types");
-                                        return true;
-                                    }
-                                    if (javaClass.name.equals("Main")) {
-                                        int a = 1;
-                                    }
-                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
-                                        System.err.println("Protected method replacing public");
-                                        return true;
-                                    }
-                                    if (method.modifiers.contains("final")) {
-                                        System.err.println("Method replacing final method");
-                                        return true;
-                                    }
-                                }
-                            }
-
-                        }
-                        j++;
-                    }
-                    i++;
-                }
+//                int i = 0;
+//                while (i < inheritedMethods.size()) {
+//                    int j = 0;
+//                    while (j < inheritedMethods.size()) {
+//                        if (i != j) {
+//                            MethodScope method = inheritedMethods.get(i);
+//                            MethodScope subMethod = inheritedMethods.get(i);
+//                            ClassScope objectScope = null;
+//                            for (final ClassScope scope : classTable) {
+//                                if (scope.name.equals("Object")
+//                                        && scope.packageName.equals(Name.generateJavaLangPackageName())) {
+//                                    objectScope = scope;
+//                                    break;
+//                                }
+//                            }
+//
+//                            if (objectScope == null) {
+//                                System.err.println("Could not identify java.lang.Object. Aborting!");
+//                                System.exit(42);
+//                            }
+//                            boolean check1 = objectScope.methodTable.contains(subMethod);
+//                            boolean check = (subMethod.parentScope == null & method.parentScope == null);
+//                            if (!(check)) {
+//                                if (subMethod.sameSignature(method)) {
+//                                    if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
+//                                        System.err.println("Non static method replacing static");
+//                                        return true;
+//                                    }
+//                                    if (!subMethod.type.equals(method.type)) {
+//                                        System.err.println("Same signature with different return types");
+//                                        return true;
+//                                    }
+//                                    if (javaClass.name.equals("Main")) {
+//                                        int a = 1;
+//                                    }
+//                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
+//                                        System.err.println("Protected method replacing public");
+//                                        return true;
+//                                    }
+//                                    if (method.modifiers.contains("final")) {
+//                                        System.err.println("Method replacing final method");
+//                                        return true;
+//                                    }
+//                                }
+//                            }
+//
+//                        }
+//                        j++;
+//                    }
+//                    i++;
+//                }
             }
 
         }
@@ -355,7 +353,12 @@ public class HierarchyChecker {
             };
 
             ArrayList<MethodScope> seenMethods = new ArrayList<>();
-            if (checkSuperAbstractMethods(javaClass, seenMethods)) return true;
+            if (javaClass.modifiers.contains("abstract")) {
+                if (checkSuperAbstractMethods(javaClass, seenMethods, false)) return true;
+            }
+            else {
+                if (checkSuperAbstractMethods(javaClass, seenMethods, true)) return true;
+            }
 
         }
         return false;
@@ -436,21 +439,28 @@ public class HierarchyChecker {
         return inheritedMethods;
     }
 
-    private boolean checkSuperAbstractMethods(ClassScope javaClass,ArrayList<MethodScope> seenMethods) {
+    private boolean checkSuperAbstractMethods(ClassScope javaClass,ArrayList<MethodScope> seenMethods, boolean hasRealChild) {
         if (javaClass.methodTable != null) {
             seenMethods.addAll(javaClass.methodTable);
             if (javaClass.extendsTable!=null) {
+                if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
+                    
+                }
+
+                if (javaClass.name.equals("Main")) {
+                    int a = 1;
+                }
                 for (Name superName : javaClass.extendsTable) {
                     ClassScope superClass = classMap.get(superName.getQualifiedName());
                     if (superClass != null) {
                         if (superClass.methodTable != null) {
-//                            ArrayList<MethodScope> inheritedMethodsExcept = getInheritedMethodsExceptList(javaClass, superClass);
-//                            seenMethods.addAll(inheritedMethodsExcept);
+                            if (javaClass.name.equals("Main")) {
+                                int a = 1;
+                            }
                             for (MethodScope methodScope : superClass.methodTable) {
                                 if (methodScope.modifiers.contains("abstract") && methodScope.parentScope!=null) {
                                     boolean foundSameSig = false;
                                     for (MethodScope subMethodScope : seenMethods) {
-                                        if (methodScope.name.equals("f"));
                                         if (methodScope.sameSignature(subMethodScope)) {
                                             if (!javaClass.modifiers.contains("abstract")) {
                                                 if (subMethodScope.bodyBlock!=null) foundSameSig = true;
@@ -469,7 +479,13 @@ public class HierarchyChecker {
                                 }
                             }
                         }
-                        if (checkSuperAbstractMethods(superClass, seenMethods)) return true;
+
+                        if (javaClass.modifiers.contains("abstract") && !hasRealChild) {
+                            if (checkSuperAbstractMethods(superClass, seenMethods, false)) return true;
+                        }
+                        else {
+                            if (checkSuperAbstractMethods(superClass, seenMethods, true)) return true;
+                        }
                     }
                 }
             }
@@ -493,11 +509,22 @@ public class HierarchyChecker {
                                             System.err.println("Unimplemented interface method");
                                             System.exit(42);
                                         }
+                                        else {
+                                            if (hasRealChild) {
+                                                System.err.println("Unimplemented interface method");
+                                                System.exit(42);
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                        if (checkSuperAbstractMethods(superClass, seenMethods)) return true;
+                        if (javaClass.modifiers.contains("abstract") && !hasRealChild) {
+                            if (checkSuperAbstractMethods(superClass, seenMethods, false)) return true;
+                        }
+                        else {
+                            if (checkSuperAbstractMethods(superClass, seenMethods, true)) return true;
+                        }
                     }
                 }
             }
