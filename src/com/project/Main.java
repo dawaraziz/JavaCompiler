@@ -152,15 +152,17 @@ public class Main {
 
 
         if (!hCheck.followsClassHierarchyRules()) {
-            System.err.println();
+            System.out.println("1");
             System.exit(42);
         }
 
         if (hCheck.cycleDetected()) {
+            System.out.println("2");
             System.exit(42);
         }
 
         if (!hCheck.followsMethodHierarchyRules()) {
+            System.out.println("3");
             System.exit(42);
         }
 

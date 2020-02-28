@@ -298,7 +298,9 @@ public class HierarchyChecker {
             if (javaClass.name.equals("Main")) {
                 int a = 1;
             };
-            if (checkSuperAbstractMethods(javaClass)) return true;
+
+            ArrayList<MethodScope> seenMethods = new ArrayList<>();
+            if (checkSuperAbstractMethods(javaClass, seenMethods)) return true;
 
         }
         return false;
@@ -379,25 +381,32 @@ public class HierarchyChecker {
         return inheritedMethods;
     }
 
-    private boolean checkSuperAbstractMethods(ClassScope javaClass) {
+    private boolean checkSuperAbstractMethods(ClassScope javaClass,ArrayList<MethodScope> seenMethods) {
         if (javaClass.methodTable != null) {
-            ArrayList<MethodScope> seenMethods = new ArrayList<>();
             seenMethods.addAll(javaClass.methodTable);
             if (javaClass.extendsTable!=null) {
                 for (Name superName : javaClass.extendsTable) {
                     ClassScope superClass = classMap.get(superName.getQualifiedName());
                     if (superClass != null) {
                         if (superClass.methodTable != null) {
-                            ArrayList<MethodScope> inheritedMethodsExcept = getInheritedMethodsExceptList(javaClass, superClass);
-                            seenMethods.addAll(inheritedMethodsExcept);
+//                            ArrayList<MethodScope> inheritedMethodsExcept = getInheritedMethodsExceptList(javaClass, superClass);
+//                            seenMethods.addAll(inheritedMethodsExcept);
                             for (MethodScope methodScope : superClass.methodTable) {
-                                for (MethodScope subMethodScope : seenMethods) {
-                                    if (methodScope.modifiers.contains("abstract")) {
-                                        boolean foundSameSig = false;
-                                        if (methodScope.sameSignature(subMethodScope) && javaClass.modifiers.contains("abstract")) {
-                                            foundSameSig = true;
+                                if (methodScope.modifiers.contains("abstract") && methodScope.parentScope!=null) {
+                                    boolean foundSameSig = false;
+                                    for (MethodScope subMethodScope : seenMethods) {
+                                        if (methodScope.name.equals("f"));
+                                        if (methodScope.sameSignature(subMethodScope)) {
+                                            if (!javaClass.modifiers.contains("abstract")) {
+                                                if (subMethodScope.bodyBlock!=null) foundSameSig = true;
+                                            }
+                                            else {
+                                                foundSameSig = true;
+                                            }
                                         }
-                                        if (!foundSameSig) {
+                                    }
+                                    if (!foundSameSig) {
+                                        if (!javaClass.modifiers.contains("abstract")) {
                                             System.err.println("Unimplemented abstract method");
                                             System.exit(42);
                                         }
@@ -414,12 +423,16 @@ public class HierarchyChecker {
                     if (superClass != null) {
                         if (superClass.methodTable != null) {
                             for (MethodScope methodScope : superClass.methodTable) {
-                                for (MethodScope subMethodScope : seenMethods) {
+                                if (methodScope.parentScope!=null) {
                                     boolean foundSameSig = false;
-                                    if (methodScope.sameSignature(subMethodScope)) {
-                                        foundSameSig = true;
+                                    for (MethodScope subMethodScope : seenMethods) {
+
+                                        if (methodScope.sameSignature(subMethodScope)) {
+                                            foundSameSig = true;
+                                        }
+
                                     }
-                                    if (foundSameSig) {
+                                    if (!foundSameSig) {
                                         if (!javaClass.modifiers.contains("abstract")) {
                                             System.err.println("Unimplemented interface method");
                                             System.exit(42);
