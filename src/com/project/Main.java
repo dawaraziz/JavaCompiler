@@ -73,6 +73,10 @@ public class Main {
             }
         }
 
+        for (final ClassScope classScope : classTable) {
+            classScope.qualifySupersAndInterfaces(classTable);
+        }
+
         // Find the Object class.
         ClassScope objectScope = null;
         for (final ClassScope scope : classTable) {
@@ -143,10 +147,6 @@ public class Main {
         }
 
         TypeLinker.link(classTable, classMap);
-
-        for (final ClassScope classScope : classTable) {
-            classScope.qualifySupersAndInterfaces(classTable);
-        }
 
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 

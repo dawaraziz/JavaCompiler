@@ -36,7 +36,7 @@ public class ParserSymbol {
     }
 
     public boolean isVariableCullTree(final Kind kind) {
-        if (children.size() == 0 && this.kind == kind) {
+        if ((children.size() == 0 && this.kind == kind) || this.lexeme.equals("QUALIFIEDNAME")) {
             return true;
         } else if (children.size() == 1) {
             return children.get(0).isVariableCullTree(kind);
