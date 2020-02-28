@@ -37,7 +37,7 @@ public class HierarchyChecker {
                     else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
                     System.out.println(name);
                     if (fqn.equals(name)) {
-                        System.out.println("Detected a cycle");
+                        System.err.println("Detected a cycle");
                         return true;
                     }
                 }
@@ -121,7 +121,7 @@ public class HierarchyChecker {
                         String qualifiedName = "";
                         if (javaClass.packageName == null) qualifiedName = javaClass.name;
                         else qualifiedName = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                        if (qualifiedName.equals(importScope.name.getQualifiedName())) {
+                        if (!qualifiedName.equals(importScope.name.getQualifiedName())) {
                             System.err.println("Clashing Import and Name");
                             return false;
                         }
@@ -190,19 +190,19 @@ public class HierarchyChecker {
                         System.out.println(method);
                         if (subMethod.sameSignature(method)) {
                             if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
-                                System.out.println("Non static method replacing static");
+                                System.err.println("Non static method replacing static");
                                 return true;
                             }
                             if (!subMethod.type.equals(method.type)) {
-                                System.out.println("Same signature with different return types");
+                                System.err.println("Same signature with different return types");
                                 return true;
                             }
                             if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
-                                System.out.println("Protected method replacing public");
+                                System.err.println("Protected method replacing public");
                                 return true;
                             }
                             if (method.modifiers.contains("final")) {
-                                System.out.println("Method replacing final method");
+                                System.err.println("Method replacing final method");
                                 return true;
                             }
                         }
@@ -289,7 +289,7 @@ public class HierarchyChecker {
             if (javaClass.methodTable != null && javaClass.type != ClassScope.CLASS_TYPE.INTERFACE) {
                 for (MethodScope method : javaClass.methodTable) {
                     if (method.modifiers.contains("abstract") && !javaClass.modifiers.contains("abstract")) {
-                        System.out.println("Non abstract class with abstract method");
+                        System.err.println("Non abstract class with abstract method");
                         return true;
                     }
                 }
@@ -363,12 +363,12 @@ public class HierarchyChecker {
                     if (methodSignatures.containsKey(method.name)) {
                         ArrayList<Parameter> params = methodSignatures.get(method.name);
                         if (params == null && method.parameters == null) {
-                            System.out.println("Duplicate method signatures");
+                            System.err.println("Duplicate method signatures");
                             return true;
                         }
                         else if (params != null && method.parameters != null) {
                             if (params.size() == method.parameters.size() && params.containsAll(method.parameters) && method.parameters.containsAll(params)) {
-                                System.out.println("Duplicate method signatures");
+                                System.err.println("Duplicate method signatures");
                                 return true;
                             }
                         }
