@@ -118,8 +118,13 @@ public class HierarchyChecker {
                 for (ImportScope importScope: javaClass.imports) {
                     String name = importScope.name.getSimpleName();
                     if (javaClass.name.equals(name)) {
-                        System.err.println("Clashing Import and Name");
-                        return false;
+                        String qualifiedName = "";
+                        if (javaClass.packageName == null) qualifiedName = javaClass.name;
+                        else qualifiedName = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                        if (qualifiedName.equals(importScope.name.getQualifiedName())) {
+                            System.err.println("Clashing Import and Name");
+                            return false;
+                        }
                     }
                 }
             }
