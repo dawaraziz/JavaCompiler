@@ -59,9 +59,13 @@ public class Name {
 
     public String getQualifiedName() {
         final StringBuilder name = new StringBuilder();
-        for (final String n : fullyQualifiedName) {
+        ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
+        Collections.reverse(temp);
+        for (final String n : temp) {
             name.append(n).append(".");
         }
+        System.out.println("(((((((");
+        System.out.println(name.substring(0, name.length() - 1));
         return name.substring(0, name.length() - 1);
     }
 
