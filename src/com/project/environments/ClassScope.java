@@ -4,8 +4,11 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+
+import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
 
 public class ClassScope extends Scope {
     public enum CLASS_TYPE {
@@ -139,7 +142,7 @@ public class ClassScope extends Scope {
     }
 
     public void generateObjectMethods(final ArrayList<MethodScope> objectMethods) {
-        if (extendsTable != null && extendsTable.size() > 1) return;
+        if (extendsTable != null && extendsTable.size() > 0) return;
 
         for (final MethodScope objectMethod : objectMethods) {
             final Boolean check = containsMethod(objectMethod);
@@ -149,7 +152,7 @@ public class ClassScope extends Scope {
                 System.exit(42);
             }
 
-            ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
+            final ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
             newMods.add("abstract");
 
             if (!check) {
@@ -188,6 +191,75 @@ public class ClassScope extends Scope {
 
     @Override
     boolean isInitCheck(final String variableName) {
+        return false;
+    }
+
+    public void qualifySupersAndInterfaces(final HashMap<String, ClassScope> classMap) {
+        if (extendsTable != null) {
+            boolean isImported = false;
+            for (int i = 0; i < extendsTable.size(); ++i) {
+                final Name extendsName = extendsTable.get(i);
+
+                if (isImportSuffix(extendsName)) break;
+
+                final ClassScope scope = classMap.get(extendsName.getClassName());
+                if (scope != null && extendsName.getClassName().equals(scope.name)) {
+
+                    final Name qualifiedName = scope.packageName.generateAppendedPackageName(extendsName.getClassName());
+
+                    if (isOnDemandImportSuffix(qualifiedName)) {
+                        extendsTable.set(i, qualifiedName);
+                        isImported = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isImported) {
+                System.err.println("Could not find import for extend name.");
+                System.exit(42);
+            }
+        }
+
+        if (implementsTable != null) {
+            boolean isImported = false;
+            for (int i = 0; i < implementsTable.size(); ++i) {
+                final Name extendsName = implementsTable.get(i);
+
+                if (isImportSuffix(extendsName)) break;
+
+                final ClassScope scope = classMap.get(extendsName.getClassName());
+                if (scope != null && extendsName.getClassName().equals(scope.name)) {
+
+                    final Name qualifiedName = scope.packageName.generateAppendedPackageName(extendsName.getClassName());
+
+                    if (isOnDemandImportSuffix(qualifiedName)) {
+                        implementsTable.set(i, qualifiedName);
+                        isImported = true;
+                        break;
+                    }
+                }
+            }
+            if (!isImported) {
+                System.err.println("Could not find import for interface name.");
+                System.exit(42);
+            }
+        }
+    }
+
+    private boolean isImportSuffix(final Name extendsName) {
+        for (final ImportScope importScope : imports) {
+            if (importScope.type == ImportScope.IMPORT_TYPE.ON_DEMAND) continue;
+            if (importScope.name.containsSuffixName(extendsName)) return true;
+        }
+        return false;
+    }
+
+    private boolean isOnDemandImportSuffix(final Name qualifiedName) {
+        for (final ImportScope importScope : imports) {
+            if (importScope.type == SINGLE) continue;
+            if (importScope.name.containsSuffixName(qualifiedName)) return true;
+        }
         return false;
     }
 }

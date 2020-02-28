@@ -49,6 +49,13 @@ public class Name {
         return name;
     }
 
+    public Name generateAppendedPackageName(final String className) {
+        final Name name = new Name();
+        name.fullyQualifiedName.add(className);
+        name.fullyQualifiedName.addAll(fullyQualifiedName);
+        return name;
+    }
+
     public String getQualifiedName() {
         final StringBuilder name = new StringBuilder();
         for (final String n : fullyQualifiedName) {
@@ -74,7 +81,7 @@ public class Name {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof Name) {
             final Name other = (Name) obj;
 
@@ -103,5 +110,11 @@ public class Name {
         return fullyQualifiedName.size() == 2
                 && fullyQualifiedName.get(0).equals("lang")
                 && fullyQualifiedName.get(1).equals("java");
+    }
+    public boolean isJavaLangObject() {
+        return fullyQualifiedName.size() == 3
+                && fullyQualifiedName.get(0).equals("lang")
+                && fullyQualifiedName.get(1).equals("java")
+                && fullyQualifiedName.get(1).equals("Object");
     }
 }

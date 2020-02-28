@@ -104,7 +104,12 @@ public class Main {
             System.out.println("Name: " + name);
         }
 
-//        TypeLinker.link(classTable, classMap);
+        TypeLinker.link(classTable, classMap);
+
+//        for (final ClassScope classScope : classTable) {
+//            classScope.qualifySupersAndInterfaces(classMap);
+//        }
+
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
 
