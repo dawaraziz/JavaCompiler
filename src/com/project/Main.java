@@ -104,7 +104,6 @@ public class Main {
             if (javaClass.packageName == null) name = javaClass.name;
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             classMap.put(name, javaClass);
-            System.out.println("Name: " + name);
         }
 
 
@@ -126,7 +125,7 @@ public class Main {
             packages.put(pkg_name, pkg);
         }
 
-        TypeLinker.link(classTable, classMap);
+        TypeLinker.link(classTable, classMap, packages);
 
         for (final ClassScope classScope : classTable) {
             classScope.qualifySupersAndInterfaces(classTable);

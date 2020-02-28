@@ -3,6 +3,7 @@ package com.project.environments;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,6 +23,8 @@ public class ClassScope extends Scope {
 
     public final ArrayList<String> modifiers;
     public final ArrayList<ImportScope> imports;
+    public final HashSet<String> usedTypeNameStrings;
+    public final ArrayList<Name> usedTypeNames; // Same thing as used TypeNameStrings but Name Objects
 
     public final ArrayList<Name> implementsTable;
     public ArrayList<Name> extendsTable;
@@ -106,6 +109,12 @@ public class ClassScope extends Scope {
 
         constructorTable = new ArrayList<>();
         generateConstructorTable();
+
+        this.usedTypeNameStrings = ast.getUsedTypeNames();
+        this.usedTypeNames = new ArrayList<>();
+        for (String s : usedTypeNameStrings){
+            usedTypeNames.add(new Name(s));
+        }
     }
 
     private void generateConstructorTable() {

@@ -4,6 +4,7 @@ import com.project.environments.ClassScope;
 import com.project.environments.ImportScope;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
+import com.project.environments.structure.Name;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 import resources.Pair;
@@ -160,7 +161,7 @@ public class TypeLinker {
 
             //TODO: NOT SURE IF THIS IS CORRECT
             if (parentIsLexeme(node, "QUALIFIEDNAME")) {
-                if (within(node, "CLASSBODY")){
+                if (within(node, "CLASSBODY") && !(node.parent.parent != null && node.parent.parent.lexeme.equals("LOCALVARIABLEDECLARATION"))){
                     node.kind = Kind.EXPRESSIONNAME;
                 }
             }
@@ -278,7 +279,6 @@ public class TypeLinker {
     // Go through AST checking scopes of variables by using a stack of lists of variables
     // Every time we see open bracket add a new scope and every time we see a close pop one off
     public static void checkVariableDeclarationScopes(ASTHead astHead){
-        System.out.println("Starting");
         Stack<Stack<ArrayList<String>>> scopesStack = new Stack<>();
         Stack<ArrayList<String>> topScopeStack = new Stack<>();
         scopesStack.add(topScopeStack);
@@ -293,21 +293,17 @@ public class TypeLinker {
             if (curr.lexeme.equals("CONSTRUCTORDECLARATOR") || curr.lexeme.equals("METHODDECLARATION")) {
                 scopesStack.add(new Stack<>());
                 scopesStack.peek().push(new ArrayList<>());
-                System.out.println("New Constructor or method Scope");
             }
             // New Scope add a new array to scope stack
             else if (curr.kind == Kind.CURLY_BRACKET_OPEN) {
                 currentScope.push(new ArrayList<>());
-                System.out.println("Push Scope");
             }
             // Moved up a scope pop off scopeStack
             else if (curr.kind == Kind.CURLY_BRACKET_CLOSE){
                 currentScope.pop();
                 if(currentScope.size() == 0){
                     scopesStack.pop();
-                    System.out.println("Pop Method or Constructor Scope");
                 }
-                System.out.println("Pop Scope");
             }
             else if (curr.lexeme.equals("VARIABLEDECLARATORID")){
                 ArrayList<ASTNode> variables = curr.getDirectChildrenWithKinds("EXPRESSIONNAME");
@@ -335,13 +331,85 @@ public class TypeLinker {
         }
     }
 
-    public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap){
+    // Given a java class makes sure its on demand imports properly resolve
+    public static void checkOnDemandImports(final ClassScope javaClass, final HashMap<String, PackageScope> packages){
+            // Check imported name exists or is a prefix or a name
+            for (ImportScope importScope : javaClass.imports){
+                if(importScope.type == ON_DEMAND){
+                    boolean exists = false;
+                    for (String pkgName : packages.keySet()){
+//                        if (importScope.name.getQualifiedName().equals(pkgName)){
+//                            exists = true;
+//                        }
+                        if (pkgName.startsWith(importScope.name.getQualifiedName())){
+                            exists = true;
+                        }
+                    }
+                    if (exists == false){
+                        System.err.println("Imported on demand package " + importScope.name.getQualifiedName() + " does not exist");
+                        System.exit(42);
+                    }
+                }
+            }
+
+            // Check if any two on demand imports have a conflicting class
+            // ONLY COUNTS IF WE USE THE CLASS IN A WAY THAT CAN CONFLICT
+            System.out.println("Types used in : " + javaClass.name);
+            for (Name name : javaClass.usedTypeNames){
+                System.out.println("Name$ " + name.getQualifiedName());
+            }
+            for (int i = 0; i < javaClass.imports.size(); i++){
+                for (int j = i+1; j < javaClass.imports.size(); j++){
+                    ImportScope importScope1 = javaClass.imports.get(i);
+                    ImportScope importScope2 = javaClass.imports.get(j);
+
+                    String import1Name = importScope1.name.getQualifiedName();
+                    String import2Name = importScope2.name.getQualifiedName();
+
+                    // Both on demand and not a prefix of one another
+                    if(importScope1.type == ON_DEMAND && importScope2.type == ON_DEMAND &&
+                    !import1Name.startsWith(import2Name) && !import2Name.startsWith(import1Name)){
+                        System.out.println(importScope1.name + " and# " + importScope2.name);
+
+                        // Check classes within each import package for conflict
+                        // For an importScope i need all packages that it is a prefix of
+                        ArrayList<String> matched1 = new ArrayList<>();
+                        ArrayList<String> matched2 = new ArrayList<>();
+
+                        for (String s : packages.keySet()){
+                            if (s.startsWith(import1Name)){
+                                matched1.add(s);
+                            }
+                            if (s.startsWith(import2Name)){
+                                matched2.add(s);
+                            }
+                        }
+
+                        // For all combinations of packages the import on demand resolve to
+                        for (String pkg1Name : matched1){
+                            for (String pkg2Name : matched2) {
+                                for (ClassScope c : packages.get(pkg1Name).classes) {
+                                    for (ClassScope c2 : packages.get(pkg2Name).classes) {
+                                        if (c.name.equals(c2.name)) {
+                                            if (javaClass.usedTypeNameStrings.contains(c.name)) {
+                                                System.err.println("Two on demand imports " + importScope1.name + " and " + importScope2.name + " have a conflicting class " + c.name);
+                                                System.exit(42);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap, final HashMap<String, PackageScope> packages){
         for (ClassScope javaClass : classTable) {
 
             // Check no import clashes with class or interface definitions
             for (ImportScope imp : javaClass.imports) {
-                System.out.println(imp.name.getClassName() + " = " + javaClass.name);
-                System.out.println(imp.name.getQualifiedName() + " =? " + javaClass.packageName);
                 if (imp.type == SINGLE && imp.name.getClassName().equals(javaClass.name) &&
                     !imp.name.checkPackageMatch(javaClass.packageName)){
                     System.err.println("Class import same as class or interface declared");
@@ -354,7 +422,6 @@ public class TypeLinker {
                 for (int j = i+1; j < javaClass.imports.size(); j++) {
                     ImportScope import1 = javaClass.imports.get(i);
                     ImportScope import2 = javaClass.imports.get(j);
-                    System.out.println(import1.name.getClassName() + " = " + import2.name.getClassName());
                     if (import1.name.getClassName().equals(import2.name.getClassName())
                             && import1.type != ON_DEMAND && import2.type != ON_DEMAND) {
                         if (!import1.name.getQualifiedName().equals(import2.name.getQualifiedName())) {
@@ -368,14 +435,12 @@ public class TypeLinker {
             // All type names must resolve to some class or interface declared in some file listed on the Joos command line.
             // Get all typeNames from the AST - ignore any whose parent is a package declaration
             ASTHead astHead = javaClass.ast;
-            System.out.println("Java Class: " + javaClass.name);
             ArrayList<ASTNode> nameNodes = astHead.unsafeGetHeadNode().findNodesWithKinds(Kind.TYPENAME);
             nameNodes = nameNodes.stream().filter(n -> !within(n, "PACKAGEDECLARATION")).collect(Collectors.toCollection(ArrayList::new));
 
             // for each typeName see if it is an object in our classTable
             for (ASTNode node : nameNodes){
                 String name = node.lexeme;
-                System.out.println("Does it contain " + name);
                 boolean found = false;
                 for (int i = 0; i < classTable.size(); ++i){
                     if (classTable.get(i).name.equals(name)) {
@@ -391,12 +456,11 @@ public class TypeLinker {
             // All simple type names must resolve to a unique class or interface.
 
 
+            // Check all on demand imports resolve
+            checkOnDemandImports(javaClass, packages);
+
             // Deal with variable redeclaration within scopes
             checkVariableDeclarationScopes(astHead);
-
-
-
-
 
         }
         return;

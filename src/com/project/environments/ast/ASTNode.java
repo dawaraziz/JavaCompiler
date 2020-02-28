@@ -20,6 +20,17 @@ public class ASTNode {
         return kind != null ? kind.toString() : lexeme;
     }
 
+    public boolean withinLexeme(String lex){
+        ASTNode node = this;
+        while (node.parent != null){
+            if (node.parent.lexeme.equals(lex)){
+                return true;
+            }
+            node = node.parent;
+        }
+        return false;
+    }
+
     public ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {
         final ArrayList<ASTNode> nodesWithLexeme = new ArrayList<>();
 
@@ -57,7 +68,6 @@ public class ASTNode {
 
         for (final ASTNode child : children) {
             for (final String kind : kinds) {
-                System.out.println(kind + " equals " + child.kind);
                 if (child.kind != null && kind != null && kind.equals(child.kind.toString())) {
                     childrenWithKind.add(child);
                 }
@@ -104,6 +114,16 @@ public class ASTNode {
         }
 
         return strings;
+    }
+
+    public String stringFromChildren() {
+        StringBuilder sb = new StringBuilder();
+
+        for (final ASTNode node : this.children) {
+            sb.insert(0, node.lexeme);
+        }
+
+        return sb.toString();
     }
 
 

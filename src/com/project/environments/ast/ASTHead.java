@@ -13,6 +13,7 @@ import com.project.scanner.structure.Kind;
 import resources.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -229,6 +230,28 @@ public class ASTHead {
         return imports;
     }
 
+    public HashSet<String> getUsedTypeNames(){
+        HashSet<String> res = new HashSet<>();
+        ASTNode node = headNode;
+        final Stack<ASTNode> stack = new Stack<>();
+        stack.add(node);
+        while (!stack.empty()) {
+            ASTNode curr = stack.pop();
+            if(curr.withinLexeme("CLASSBODY")) {
+                // If qualified name with first child a typename (last part of qualified name)
+                if (curr.lexeme.equals("QUALIFIEDNAME") && curr.children.get(0).kind == Kind.TYPENAME){
+                    res.add(curr.stringFromChildren());
+                }
+                if (curr.kind == Kind.TYPENAME && !curr.withinLexeme("QUALIFIEDNAME")) {
+                    res.add(curr.lexeme);
+                }
+            }
+            for (ASTNode child : curr.children) {
+                stack.add(child);
+            }
+        }
+        return res;
+    }
 
 
     public String getExpectedFileName() {
