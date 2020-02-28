@@ -29,8 +29,8 @@ public class HierarchyChecker {
             if (javaClass.extendsTable != null) {
                 System.out.println("Class: " + javaClass.name);
                 System.out.println("---------------------------------------");
-                for (Name extendClassName : javaClass.extendsTable) {
-                    String fqn = extendClassName.getQualifiedName();
+                for (Name superClassName : javaClass.extendsTable) {
+                    String fqn = superClassName.getQualifiedName();
                     String name = "";
                     if (javaClass.packageName == null) name = javaClass.name;
                     else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
@@ -58,10 +58,10 @@ public class HierarchyChecker {
 
     private boolean cycleCheck(ClassScope javaClass, ArrayList<String> namesSeen) {
         if (javaClass.extendsTable != null) {
-            for (Name extendsName : javaClass.extendsTable) {
-                if (namesSeen.contains(extendsName.getQualifiedName())) return true;
-                else namesSeen.add(extendsName.getQualifiedName());
-                ClassScope classScope = classMap.get(extendsName.getQualifiedName());
+            for (Name superName : javaClass.extendsTable) {
+                if (namesSeen.contains(superName.getQualifiedName())) return true;
+                else namesSeen.add(superName.getQualifiedName());
+                ClassScope classScope = classMap.get(superName.getQualifiedName());
                 if (classScope == null) {
                     int a = 1;
                 }
@@ -135,13 +135,13 @@ public class HierarchyChecker {
 
 
             if (javaClass.extendsTable != null) {
-                for (Name extendsClass: javaClass.extendsTable) {
-                    if (interfacesSeen.contains(extendsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
+                for (Name superClass: javaClass.extendsTable) {
+                    if (interfacesSeen.contains(superClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
                         System.err.println("Class Extending Interface");
                         return false;
                     }
 
-                    if (classesSeen.contains(extendsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
+                    if (classesSeen.contains(superClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
                         System.err.println("Interface Extending Class");
                         return false;
                     }
@@ -220,12 +220,12 @@ public class HierarchyChecker {
         ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
         Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
-            for (Name extendName : javaClass.extendsTable) {
-                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
-                if (extendClass != null) {
-                    classes.push(extendClass);
-                    if (extendClass.methodTable != null) {
-                        for (MethodScope method: extendClass.methodTable) {
+            for (Name superName : javaClass.extendsTable) {
+                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                if (superClass != null) {
+                    classes.push(superClass);
+                    if (superClass.methodTable != null) {
+                        for (MethodScope method: superClass.methodTable) {
                             inheritedMethods.add(method);
                         }
                     }
@@ -235,12 +235,12 @@ public class HierarchyChecker {
 
         if (javaClass.implementsTable != null) {
             if (javaClass.name.equals("Main"));
-            for (Name extendName : javaClass.implementsTable) {
-                ClassScope extendClass = classMap.get(extendName.getQualifiedName());
-                if (extendClass != null) {
-                    classes.push(extendClass);
-                    if (extendClass.methodTable != null) {
-                        for (MethodScope method: extendClass.methodTable) {
+            for (Name superName : javaClass.implementsTable) {
+                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                if (superClass != null) {
+                    classes.push(superClass);
+                    if (superClass.methodTable != null) {
+                        for (MethodScope method: superClass.methodTable) {
                             inheritedMethods.add(method);
                         }
                     }
@@ -252,12 +252,12 @@ public class HierarchyChecker {
             System.out.println("Hello 55");
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
-                for (Name extendName : currClass.extendsTable) {
-                    ClassScope extendClass = classMap.get(extendName.getQualifiedName());
-                    if (extendClass != null) {
-                        classes.push(extendClass);
-                        if (extendClass.methodTable != null) {
-                            for (MethodScope method: extendClass.methodTable) {
+                for (Name superName : currClass.extendsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        classes.push(superClass);
+                        if (superClass.methodTable != null) {
+                            for (MethodScope method: superClass.methodTable) {
                                 inheritedMethods.add(method);
                             }
                         }
@@ -266,12 +266,12 @@ public class HierarchyChecker {
             }
 
             if (currClass.implementsTable != null) {
-                for (Name extendName : currClass.implementsTable) {
-                    ClassScope extendClass = classMap.get(extendName.getQualifiedName());
-                    if (extendClass != null) {
-                        classes.push(extendClass);
-                        if (extendClass.methodTable != null) {
-                            for (MethodScope method: extendClass.methodTable) {
+                for (Name superName : currClass.implementsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        classes.push(superClass);
+                        if (superClass.methodTable != null) {
+                            for (MethodScope method: superClass.methodTable) {
                                 inheritedMethods.add(method);
                             }
                         }
@@ -295,42 +295,145 @@ public class HierarchyChecker {
                     }
                 }
             }
-            if (javaClass.methodTable != null) {
-                ArrayList<MethodScope> seenMethods = new ArrayList<>();
-                seenMethods.addAll(javaClass.methodTable);
-                if (javaClass.extendsTable!=null) {
-                    for (Name extendsName : javaClass.extendsTable) {
-
-                    }
-                }
-            }
+            if (javaClass.name.equals("Main"));
+            return checkSuperAbstractMethods(javaClass);
 
         }
         return false;
     }
 
-    private boolean foundAbstractMethod (ClassScope javaClass) {
-
+    private ArrayList<MethodScope> getInheritedMethodsExceptList(ClassScope javaClass, ClassScope exceptClass) {
+        ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+        Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
-            for (Name extendClassName : javaClass.extendsTable) {
-                String name = extendClassName.getQualifiedName();
-                ClassScope extendClass = classMap.get(name);
-
-                if (extendClass != null) {
-                    if (extendClass.methodTable != null) {
-                        for (MethodScope method : extendClass.methodTable) {
-                            if (method.modifiers.contains("abstract")) {
-                                return true;
+            for (Name superName : javaClass.extendsTable) {
+                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                if (superClass != null) {
+                    if (!superClass.equals(exceptClass)) {
+                        classes.push(superClass);
+                        if (superClass.methodTable != null) {
+                            for (MethodScope method : superClass.methodTable) {
+                                inheritedMethods.add(method);
                             }
                         }
                     }
-                    if (foundAbstractMethod(extendClass)) return true;
                 }
             }
         }
 
+        if (javaClass.implementsTable != null) {
+            if (javaClass.name.equals("Main"));
+            for (Name superName : javaClass.implementsTable) {
+                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                if (superClass != null) {
+                    if (!superClass.equals(exceptClass)) {
+                        classes.push(superClass);
+                        if (superClass.methodTable != null) {
+                            for (MethodScope method : superClass.methodTable) {
+                                inheritedMethods.add(method);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        while (!classes.empty()) {
+            System.out.println("Hello 55");
+            ClassScope currClass = classes.pop();
+            if (currClass.extendsTable != null) {
+                for (Name superName : currClass.extendsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        if (!superClass.equals(exceptClass)) {
+                            classes.push(superClass);
+                            if (superClass.methodTable != null) {
+                                for (MethodScope method : superClass.methodTable) {
+                                    inheritedMethods.add(method);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (currClass.implementsTable != null) {
+                for (Name superName : currClass.implementsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        if (!superClass.equals(exceptClass)) {
+                            classes.push(superClass);
+                            if (superClass.methodTable != null) {
+                                for (MethodScope method : superClass.methodTable) {
+                                    inheritedMethods.add(method);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return inheritedMethods;
+    }
+
+    private boolean checkSuperAbstractMethods(ClassScope javaClass) {
+        if (javaClass.methodTable != null) {
+            ArrayList<MethodScope> seenMethods = new ArrayList<>();
+            seenMethods.addAll(javaClass.methodTable);
+            if (javaClass.extendsTable!=null) {
+                for (Name superName : javaClass.extendsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        if (superClass.methodTable != null) {
+                            ArrayList<MethodScope> inheritedMethodsExcept = getInheritedMethodsExceptList(javaClass, superClass);
+                            seenMethods.addAll(inheritedMethodsExcept);
+                            for (MethodScope methodScope : superClass.methodTable) {
+                                for (MethodScope subMethodScope : seenMethods) {
+                                    if (methodScope.modifiers.contains("abstract")) {
+                                        boolean foundSameSig = false;
+                                        if (methodScope.sameSignature(subMethodScope) && javaClass.modifiers.contains("abstract")) {
+                                            foundSameSig = true;
+                                        }
+                                        if (!foundSameSig) {
+                                            System.err.println("Unimplemented abstract method");
+                                            System.exit(42);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (javaClass.implementsTable != null) {
+                for (Name superName : javaClass.implementsTable) {
+                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    if (superClass != null) {
+                        if (superClass.methodTable != null) {
+                            for (MethodScope methodScope : superClass.methodTable) {
+                                for (MethodScope subMethodScope : seenMethods) {
+                                    boolean foundSameSig = false;
+                                    if (methodScope.sameSignature(subMethodScope)) {
+                                        foundSameSig = true;
+                                    }
+                                    if (foundSameSig) {
+                                        if (!javaClass.modifiers.contains("abstract")) {
+                                            System.err.println("Unimplemented interface method");
+                                            System.exit(42);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
+
+
 
 
     private boolean checkForDuplicateMethods() {
