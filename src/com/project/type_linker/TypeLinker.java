@@ -88,6 +88,9 @@ public class TypeLinker {
             else if (parentIsLexeme(node, "VARIABLEDECLARATORID")){
                 node.kind = Kind.EXPRESSIONNAME;
             }
+            else if (parentIsLexeme(node, "VARIABLEDECLARATOR")){
+                node.kind = Kind.EXPRESSIONNAME;
+            }
 
             // in an assignment ex. r = 5;
             else if (parentIsLexeme(node, "ASSIGNMENT")){
@@ -274,6 +277,7 @@ public class TypeLinker {
     // Go through AST checking scopes of variables by using a stack of lists of variables
     // Every time we see open bracket add a new scope and every time we see a close pop one off
     public static void checkVariableDeclarationScopes(ASTHead astHead){
+        System.out.println("Starting");
         Stack<Stack<ArrayList<String>>> scopesStack = new Stack<>();
         Stack<ArrayList<String>> topScopeStack = new Stack<>();
         scopesStack.add(topScopeStack);
@@ -288,23 +292,21 @@ public class TypeLinker {
             if (curr.lexeme.equals("CONSTRUCTORDECLARATOR") || curr.lexeme.equals("METHODDECLARATION")) {
                 scopesStack.add(new Stack<>());
                 scopesStack.peek().push(new ArrayList<>());
-//                System.out.println("New Constructor or method Scope");
+                System.out.println("New Constructor or method Scope");
             }
             // New Scope add a new array to scope stack
             else if (curr.kind == Kind.CURLY_BRACKET_OPEN) {
                 currentScope.push(new ArrayList<>());
-//                System.out.println("Push Scope");
+                System.out.println("Push Scope");
             }
             // Moved up a scope pop off scopeStack
             else if (curr.kind == Kind.CURLY_BRACKET_CLOSE){
-                if (curr.parent.lexeme.equals("CONSTRUCTORBODY") || curr.parent.parent.lexeme.equals("METHODDECLARATION")){
+                currentScope.pop();
+                if(currentScope.size() == 0){
                     scopesStack.pop();
-//                    System.out.println("Pop Method or Constructor Scope");
+                    System.out.println("Pop Method or Constructor Scope");
                 }
-                else {
-                    currentScope.pop();
-//                    System.out.println("Pop Scope");
-                }
+                System.out.println("Pop Scope");
             }
             else if (curr.lexeme.equals("VARIABLEDECLARATORID")){
                 ArrayList<ASTNode> variables = curr.getDirectChildrenWithKinds("EXPRESSIONNAME");
