@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Name {
     private final ArrayList<String> fullyQualifiedName;
@@ -49,9 +50,9 @@ public class Name {
     }
 
     public String getQualifiedName() {
-        String name = "";
-        for (String n : fullyQualifiedName) {
-            name += n + ".";
+        final StringBuilder name = new StringBuilder();
+        for (final String n : fullyQualifiedName) {
+            name.append(n).append(".");
         }
         return name.substring(0, name.length() - 1);
     }
@@ -64,6 +65,12 @@ public class Name {
     //TODO: Just returning null string rn but should this ever need to occur?
     public String getClassName() {
         return fullyQualifiedName.size() > 0 ? fullyQualifiedName.get(0) : "null";
+    }
+
+    public boolean checkPackageMatch(final Name other) {
+        final List<String> packageName = fullyQualifiedName.subList(1, fullyQualifiedName.size());
+        return packageName.containsAll(other.fullyQualifiedName)
+                && other.fullyQualifiedName.containsAll(packageName);
     }
 
     @Override
