@@ -209,7 +209,8 @@ public class ClassScope extends Scope {
                             final Name qualifiedName = classScope.packageName.generateAppendedPackageName(extendsName.getClassName());
                             if (isOnDemandImportSuffix(classScope.packageName)
                                     || classScope.packageName.equals(this.packageName)) {
-                                extendsTable.set(i, qualifiedName);
+                                System.out.println("Changing "+i +" to: "+qualifiedName);
+//                                extendsTable.set(i, qualifiedName);
                                 isImported = true;
                                 break;
                             }

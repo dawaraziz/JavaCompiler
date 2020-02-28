@@ -63,6 +63,7 @@ public class Name {
         Collections.reverse(temp);
         for (final String n : temp) {
             name.append(n).append(".");
+            System.out.println("concat: " + n);
         }
         System.out.println("(((((((");
         System.out.println(name.substring(0, name.length() - 1));

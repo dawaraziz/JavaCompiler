@@ -16,6 +16,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
+import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
 
 public class TypeLinker {
     public static void disambiguate(final ASTHead astHead){
@@ -340,8 +341,9 @@ public class TypeLinker {
             // Check no import clashes with class or interface definitions
             for (ImportScope imp : javaClass.imports) {
                 System.out.println(imp.name.getClassName() + " = " + javaClass.name);
-                if (imp.name.getClassName().equals(javaClass.name)
-                    && !imp.name.checkPackageMatch(javaClass.packageName)){
+                System.out.println(imp.name.getQualifiedName() + " =? " + javaClass.packageName);
+                if (imp.type == SINGLE && imp.name.getClassName().equals(javaClass.name) &&
+                    !imp.name.checkPackageMatch(javaClass.packageName)){
                     System.err.println("Class import same as class or interface declared");
                     System.exit(42);
                 }
