@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Name {
     private final ArrayList<String> fullyQualifiedName;
@@ -49,8 +50,10 @@ public class Name {
     }
 
     public String getQualifiedName() {
+        ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
+        System.out.println(temp);
         String name = "";
-        for (String n : fullyQualifiedName) {
+        for (String n : temp) {
             name += n + ".";
         }
         return name.substring(0, name.length() - 1);
