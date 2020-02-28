@@ -340,7 +340,8 @@ public class TypeLinker {
             // Check no import clashes with class or interface definitions
             for (ImportScope imp : javaClass.imports) {
                 System.out.println(imp.name.getClassName() + " = " + javaClass.name);
-                if (imp.name.getClassName().equals(javaClass.name)){
+                if (imp.name.getClassName().equals(javaClass.name)
+                    && !imp.name.checkPackageMatch(javaClass.packageName)){
                     System.err.println("Class import same as class or interface declared");
                     System.exit(42);
                 }

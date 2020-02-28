@@ -1,7 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 public class Name {
     private final ArrayList<String> fullyQualifiedName;
@@ -50,11 +50,9 @@ public class Name {
     }
 
     public String getQualifiedName() {
-        ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
-        Collections.reverse(temp);
-        String name = "";
-        for (String n : temp) {
-            name += n + ".";
+        final StringBuilder name = new StringBuilder();
+        for (final String n : fullyQualifiedName) {
+            name.append(n).append(".");
         }
         return name.substring(0, name.length() - 1);
     }
@@ -67,6 +65,12 @@ public class Name {
     //TODO: Just returning null string rn but should this ever need to occur?
     public String getClassName() {
         return fullyQualifiedName.size() > 0 ? fullyQualifiedName.get(0) : "null";
+    }
+
+    public boolean checkPackageMatch(final Name other) {
+        final List<String> packageName = fullyQualifiedName.subList(1, fullyQualifiedName.size());
+        return packageName.containsAll(other.fullyQualifiedName)
+                && other.fullyQualifiedName.containsAll(packageName);
     }
 
     @Override
@@ -89,5 +93,15 @@ public class Name {
         }
 
         return true;
+    }
+
+    public boolean checkClassName() {
+        return false;
+    }
+
+    public boolean isJavaLang() {
+        return fullyQualifiedName.size() == 2
+                && fullyQualifiedName.get(0).equals("lang")
+                && fullyQualifiedName.get(1).equals("java");
     }
 }
