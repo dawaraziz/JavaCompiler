@@ -124,7 +124,6 @@ public class Main {
                 }
             }
             classMap.put(name, javaClass);
-            System.out.println("Name: " + name);
         }
 
 
@@ -146,7 +145,7 @@ public class Main {
             packages.put(pkg_name, pkg);
         }
 
-        TypeLinker.link(classTable, classMap);
+        TypeLinker.link(classTable, classMap, packages);
 
         HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
