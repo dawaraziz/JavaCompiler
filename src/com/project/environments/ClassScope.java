@@ -69,7 +69,7 @@ public class ClassScope extends Scope {
             if (extendsTable == null) {
                 extendsTable = new ArrayList<>();
             }
-            if (!extendsTable.contains(Name.generateObjectExtendsName())) {
+            if (extendsTable.size() == 0) {
                 extendsTable.add(Name.generateObjectExtendsName());
             }
         }

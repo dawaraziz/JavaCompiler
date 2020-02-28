@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
+
 public class TypeLinker {
     public static void disambiguate(final ASTHead astHead){
         // Get every Variable_ID and classify it as
@@ -350,7 +352,8 @@ public class TypeLinker {
                     ImportScope import1 = javaClass.imports.get(i);
                     ImportScope import2 = javaClass.imports.get(j);
                     System.out.println(import1.name.getClassName() + " = " + import2.name.getClassName());
-                    if (import1.name.getClassName().equals(import2.name.getClassName())) {
+                    if (import1.name.getClassName().equals(import2.name.getClassName())
+                            && import1.type != ON_DEMAND && import2.type != ON_DEMAND) {
                         if (!import1.name.getQualifiedName().equals(import2.name.getQualifiedName())) {
                             System.err.println("Two single-type imports clashed");
                             System.exit(42);
