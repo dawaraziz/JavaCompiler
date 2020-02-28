@@ -414,6 +414,7 @@ public class HierarchyChecker {
                                 }
                             }
                         }
+                        if (checkSuperAbstractMethods(superClass, seenMethods)) return true;
                     }
                 }
             }
@@ -441,6 +442,7 @@ public class HierarchyChecker {
                                 }
                             }
                         }
+                        if (checkSuperAbstractMethods(superClass, seenMethods)) return true;
                     }
                 }
             }
