@@ -151,6 +151,8 @@ public class ClassScope extends Scope {
                 System.exit(42);
             }
 
+            if (!objectMethod.modifiers.contains("public")) continue;
+
             final ArrayList<String> newMods = new ArrayList<>(objectMethod.modifiers);
             newMods.add("abstract");
 
