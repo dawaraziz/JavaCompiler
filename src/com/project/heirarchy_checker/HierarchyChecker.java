@@ -2,11 +2,13 @@ package com.project.heirarchy_checker;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ConstructorScope;
+import com.project.environments.ImportScope;
 import com.project.environments.MethodScope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -110,6 +112,15 @@ public class HierarchyChecker {
         }
 
         for (ClassScope javaClass: classTable) {
+
+            if (javaClass.imports != null) {
+                for (ImportScope importScope: javaClass.imports) {
+                    if (javaClass.name.equals(importScope.name.getSimpleName())) {
+                        System.out.println("Clashing Import and Name");
+                        return false;
+                    }
+                }
+            }
 
             if (extendedClasses.contains(javaClass.name) && javaClass.modifiers.contains("final")) {
                 System.out.println("Class extending a final class");

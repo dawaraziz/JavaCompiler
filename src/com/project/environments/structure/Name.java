@@ -51,7 +51,7 @@ public class Name {
 
     public String getQualifiedName() {
         ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
-        System.out.println(temp);
+        Collections.reverse(temp);
         String name = "";
         for (String n : temp) {
             name += n + ".";
