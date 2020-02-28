@@ -94,4 +94,14 @@ public class Name {
 
         return true;
     }
+
+    public boolean checkClassName() {
+        return false;
+    }
+
+    public boolean isJavaLang() {
+        return fullyQualifiedName.size() == 2
+                && fullyQualifiedName.get(0).equals("lang")
+                && fullyQualifiedName.get(1).equals("java");
+    }
 }

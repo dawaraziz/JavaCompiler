@@ -66,11 +66,15 @@ public class ClassScope extends Scope {
         }
 
         if (this.type == CLASS_TYPE.CLASS) {
-            if (extendsTable == null) {
-                extendsTable = new ArrayList<>();
-            }
-            if (extendsTable.size() == 0) {
-                extendsTable.add(Name.generateObjectExtendsName());
+            if (!this.name.equals("Object")
+                    || this.packageName == null
+                    || !this.packageName.isJavaLang()) {
+                if (extendsTable == null) {
+                    extendsTable = new ArrayList<>();
+                }
+                if (extendsTable.size() == 0) {
+                    extendsTable.add(Name.generateObjectExtendsName());
+                }
             }
         }
 
