@@ -16,6 +16,7 @@ def main():
     # run_tests.py a1
     prefix = sys.argv[1] if len(sys.argv) > 1 else exit('give assignment as first argument ex. run_tests.py a1')
     show_all = True if len(sys.argv) > 1 and'-s' in sys.argv else False
+    hierarchy = True if len(sys.argv) > 1 and'-h' in sys.argv else False
 
     test_dir = "tests"
 
@@ -37,23 +38,25 @@ def main():
                     # For every test file in the directory that isn't a sub directory just compile the file
                     if os.path.isfile(os.path.join(path, test)):
                         file_path = "{}/{}/{}".format(test_dir, folder, test)
-                        with open(file_path, "r") as file:
-                            data = file.readlines()
-                            for line in data:
-                                if 'Hierarchy check' in line or 'HIERARCHY' in line:
-                                    print('*****Hierarchy FILE: ' + file_path)
+                        if (hierarchy):
+                            with open(file_path, "r") as file:
+                                data = file.readlines()
+                                for line in data:
+                                    if 'Hierarchy check' in line or 'HIERARCHY' in line:
+                                        print('*****Hierarchy FILE: ' + file_path)
                         result = subprocess.run(['java', '-jar', 'build/jar/joosc.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
-                        for file_path in file_paths:
-                            with open(file_path, "r") as file:
-                                data = file.readlines()
-                                for line in data:
-                                    if 'Hierarchy check' in line or 'HIERARCHY' in line:
-                                        print('*****Hierarchy FILE: ' + file_path)
+                        if (hierarchy):
+                            for file_path in file_paths:
+                                with open(file_path, "r") as file:
+                                    data = file.readlines()
+                                    for line in data:
+                                        if 'Hierarchy check' in line or 'HIERARCHY' in line:
+                                            print('*****Hierarchy FILE: ' + file_path)
                         compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths + stdLib
                         result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
@@ -74,9 +77,6 @@ def getStandardLibraryPaths():
     io = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/io")]
     lang = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/lang")]
     util = [os.path.join(pwd, c) for c in allFilesInDirAndSubdir("JavaStdLib/2.0/java/util")]
-#     io = allFilesInDirAndSubdir("JavaStdLib/2.0/java/io")
-#     lang = allFilesInDirAndSubdir("JavaStdLib/2.0/java/lang")
-#     util = allFilesInDirAndSubdir("JavaStdLib/2.0/java/util")
     stdLib = io + lang + util
     return stdLib
 
