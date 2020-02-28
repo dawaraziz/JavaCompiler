@@ -10,6 +10,7 @@ import com.project.environments.structure.Type;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -26,14 +27,34 @@ public class HierarchyChecker {
     public boolean cycleDetected() {
 
         for (ClassScope javaClass : classTable) {
+            if (javaClass.name.equals("Main")) {
+                int a = 1;
+            }
             if (javaClass.extendsTable != null) {
                 System.out.println("Class: " + javaClass.name);
                 System.out.println("---------------------------------------");
                 for (Name superClassName : javaClass.extendsTable) {
                     String fqn = superClassName.getQualifiedName();
-                    String name = "";
-                    if (javaClass.packageName == null) name = javaClass.name;
-                    else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                    String name = ""; 
+                    if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
+                    else {
+                        String packageN = javaClass.packageName.getQualifiedName();
+                        String split[];
+                        if (packageN.contains(".")) {
+                            split = packageN.split("\\.");
+                        }
+                        else split = new String[]{packageN};
+                        System.out.println(packageN);
+                        System.out.println(split.length);
+                        if (split[0].contains("default#")) {
+                            String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
+                            if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
+                            else name = javaClass.name;
+                            System.out.println(name);
+                        } else {
+                            name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                        }
+                    }
                     if (fqn.equals(name)) {
                         System.err.println("Detected a cycle");
                         return true;
@@ -41,13 +62,32 @@ public class HierarchyChecker {
                 }
             }
 
-
+            if (javaClass.name.equals("D")) {
+                int a = 1;
+            }
             ArrayList<String> namesSeen = new ArrayList<>();
             String name = "";
-            if (javaClass.packageName == null) name = javaClass.name;
-            else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+            if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
+            else {
+                String packageN = javaClass.packageName.getQualifiedName();
+                String split[];
+                if (packageN.contains(".")) {
+                    split = packageN.split("\\.");
+                }
+                else split = new String[]{packageN};
+                System.out.println(packageN);
+                System.out.println(split.length);
+                if (split[0].contains("default#")) {
+                    String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
+                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
+                    else name = javaClass.name;
+                    System.out.println(name);
+                } else {
+                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                }
+            }
             namesSeen.add(name);
-            if (cycleCheck(javaClass, namesSeen)) {
+            if (cycleCheck(javaClass, name, true)) {
                 System.err.println("Detected a cycle");
                 return true;
             }
@@ -56,17 +96,38 @@ public class HierarchyChecker {
         return false;
     }
 
-    private boolean cycleCheck(ClassScope javaClass, ArrayList<String> namesSeen) {
+    private boolean cycleCheck(ClassScope javaClass, String startName, Boolean start) {
         if (javaClass.extendsTable != null) {
             for (Name superName : javaClass.extendsTable) {
-                if (namesSeen.contains(superName.getQualifiedName())) return true;
-                else namesSeen.add(superName.getQualifiedName());
-                ClassScope classScope = classMap.get(superName.getQualifiedName());
+                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String name = "";
+                if (javaClass.packageName.getQualifiedName().equals("default#")) name = superClass.name;
+                else {
+                    String packageN = superClass.packageName.getQualifiedName();
+                    String split[];
+                    if (packageN.contains(".")) {
+                        split = packageN.split("\\.");
+                    }
+                    else split = new String[]{packageN};
+                    System.out.println(packageN);
+                    System.out.println(split.length);
+                    if (split[0].contains("default#")) {
+                        String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
+                        if (newSplit.length > 1) name = String.join(".", newSplit) + "." + superClass.name;
+                        else name = superClass.name;
+                        System.out.println(name);
+                    } else {
+                        name = superClass.packageName.getQualifiedName() + "." + superClass.name;
+                    }
+                }
+                if (name.equals(startName) && !start) return true;
+
+                ClassScope classScope = classMap.get(name);
                 if (classScope == null) {
                     int a = 1;
                 }
                 if (classScope == null) return false;
-                if (cycleCheck(classScope, namesSeen)) return true;
+                if (cycleCheck(classScope, startName, false)) return true;
             }
         }
 
@@ -82,7 +143,7 @@ public class HierarchyChecker {
         for (ClassScope javaClass : classTable) {
             if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
                 String name = "";
-                if (javaClass.packageName == null) {
+                if (javaClass.packageName.getQualifiedName().equals("default#")) {
                     name = javaClass.name;
                 }
                 else {
@@ -99,7 +160,7 @@ public class HierarchyChecker {
                 }
 
                 String name = "";
-                if (javaClass.packageName == null) {
+                if (javaClass.packageName.getQualifiedName().equals("default#")) {
                     name = javaClass.name;
                 }
                 else {
@@ -118,9 +179,9 @@ public class HierarchyChecker {
 //                    String name = importScope.name.getSimpleName();
 //                    if (javaClass.name.equals(name) && importScope.type != ImportScope.IMPORT_TYPE.ON_DEMAND) {
 //                        String qualifiedName = "";
-//                        if (javaClass.packageName == null) qualifiedName = javaClass.name;
+//                        if (javaClass.packageName.getQualifiedName().equals("default#")) qualifiedName = javaClass.name;
 //                        else qualifiedName = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-//                        if (!qualifiedName.equals(importScope.name.getQualifiedName())) {
+//                        if (!QualifiedName().equals(importScope.name.getQualifiedName())) {
 //                            System.err.println("Clashing Import and Name");
 //                            return false;
 //                        }

@@ -107,7 +107,6 @@ public class Main {
                 String packageN = javaClass.packageName.getQualifiedName();
                 String split[];
                 if (packageN.contains(".")) {
-                    System.out.println("Yes");
                     split = packageN.split("\\.");
                 }
                 else split = new String[]{packageN};
@@ -117,7 +116,6 @@ public class Main {
                     String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
                     if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
                     else name = javaClass.name;
-                    System.out.println("000000000000000");
                     System.out.println(name);
                 } else {
                     name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
