@@ -206,7 +206,7 @@ public class ASTHead {
         for (final ASTNode onDemandImport : onDemandImports) {
             final ASTNode name = getNameNode(onDemandImport);
 
-            if (name.kind == Kind.PACKAGEORTYPENAME) {
+            if (name.kind == Kind.PACKAGEORTYPENAME || name.kind == Kind.TYPENAME) {
                 imports.add(new ImportScope(ON_DEMAND, name.lexeme, parentClass));
             } else {
                 imports.add(new ImportScope(ON_DEMAND, lexemesToStringList(name.children), parentClass));
@@ -515,7 +515,7 @@ public class ASTHead {
 
         // After I change the type from Variable_ID this will break
         if (nameNodes.size() != 1) {
-            nameNodes = startNode.getDirectChildrenWithKinds("TYPENAME");
+            nameNodes = startNode.getDirectChildrenWithKinds("PACKAGEORTYPENAME","TYPENAME","AMBIGUOUSNAME");
 
             if (nameNodes.size() != 1) {
                 System.err.println("Identified badly formatted name in a class; aborting!");

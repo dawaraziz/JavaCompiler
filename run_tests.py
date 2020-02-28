@@ -20,6 +20,7 @@ def main():
     test_dir = "tests"
 
     stdLib = getStandardLibraryPaths()
+    print(stdLib)
 
     Failed = 0
     Passed = 0
@@ -39,12 +40,11 @@ def main():
                         file_path = "{}/{}/{}".format(test_dir, folder, test)
                         result = subprocess.run(['java', '-jar', 'build/jar/joosc.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
-#                         print(result.stdout)
 
                     # If directory compile all files within it
                     else:
                         file_paths = allFilesInDirAndSubdir(os.path.join(path, test))
-                        compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths + stdlib
+                        compilation_unit = ['java', '-jar', 'build/jar/joosc.jar'] + file_paths + stdLib
                         result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         Passed, Failed = passOrFail(test, result, illegalTest, show_all, Passed, Failed)
 
