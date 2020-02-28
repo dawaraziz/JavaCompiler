@@ -2,11 +2,13 @@ package com.project;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
+import com.project.environments.ast.ASTNode;
 import com.project.environments.structure.Name;
 import com.project.heirarchy_checker.HierarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
+import com.project.type_linker.PackageScope;
 import com.project.type_linker.TypeLinker;
 import com.project.weeders.AbstractMethodWeeder;
 import com.project.weeders.ClassModifierWeeder;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
@@ -104,6 +107,25 @@ System.out.println(Main.class.getCanonicalName());
             else name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
             classMap.put(name, javaClass);
             System.out.println("Name: " + name);
+        }
+
+
+        // Get all declared packages
+        HashSet<String> package_names = new HashSet<>();
+        for (ClassScope javaClass: classTable) {
+            // given the AST we need to get the package declarations qualified name if it exists
+            package_names.add(javaClass.packageName.getQualifiedName());
+        }
+
+        // Create each package its own scope
+        HashMap<String, PackageScope> packages = new HashMap();
+        for (String pkg_name : package_names){
+            PackageScope pkg = new PackageScope(pkg_name);
+            for (ClassScope javaClass: classTable) {
+                if(pkg_name.equals(javaClass.packageName.getQualifiedName()))
+                    pkg.addClassToScope(javaClass);
+            }
+            packages.put(pkg_name, pkg);
         }
 
         TypeLinker.link(classTable, classMap);
