@@ -5,15 +5,13 @@ import com.project.environments.ImportScope;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.structure.Name;
+import com.project.environments.structure.Type;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 import resources.Pair;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
@@ -338,10 +336,13 @@ public class TypeLinker {
                 if(importScope.type == ON_DEMAND){
                     boolean exists = false;
                     for (String pkgName : packages.keySet()){
-//                        if (importScope.name.getQualifiedName().equals(pkgName)){
-//                            exists = true;
-//                        }
-                        if (pkgName.startsWith(importScope.name.getQualifiedName())){
+                        if (importScope.name.getQualifiedName().equals(pkgName)){
+                            exists = true;
+                        }
+                        // A legal prefix must be all the way to a dot
+                        String legalPrefix = importScope.name.getQualifiedName() + ".";
+                        if (pkgName.startsWith(legalPrefix)){
+                            System.out.println("PREFIX! " + importScope.name.getQualifiedName());
                             exists = true;
                         }
                     }
@@ -414,7 +415,60 @@ public class TypeLinker {
                 System.err.println("Package Name " + pkgName + " clashes with qualified class name");
                 System.exit(42);
             }
+            //If classname prefix of package fail
+            if(pkgName.startsWith(javaClass.packageName.getQualifiedName()+'.'+javaClass.name)){
+                System.err.println("Package Name " + pkgName + " clashes with qualified class name (Classname is Prefix)");
+                System.exit(42);
+            }
+            // If Package is the same as a simple Classname fail
+//            if(pkgName.equals(javaClass.name)){
+//                System.err.println("Package Name: " + pkgName + " is the same as a simple class name");
+//                System.exit(42);
+//            }
         }
+    }
+
+    public static void checkTypesAreImported(final ClassScope javaClass, final HashMap<String, PackageScope> packages){
+        // for every typename in javaclass we import the appropriate
+        System.out.println("Checking IMPORTS FOR " + javaClass.name);
+        for (String type : javaClass.usedTypeNameStrings) {
+            // for each type check that one of the imported packages contains it
+            boolean imported = false;
+
+            for (ImportScope importScope : javaClass.imports) {
+                System.out.println("SIZE: " + javaClass.imports.size());
+                // For Import on demand
+                if (importScope.type.equals(ON_DEMAND)) {
+                    String importPackage = importScope.name.getQualifiedName();
+                    System.out.println(importPackage + " is in map? " + packages.containsKey(importPackage));
+                    PackageScope pkgScope = packages.get(importPackage);
+                    if (pkgScope != null) {
+                        for (ClassScope importedClass : pkgScope.classes) {
+                            System.out.println("Type Used: " + type + " $Imported: " + importedClass.name);
+                            if (type.equals(importedClass.name)) {
+                                imported = true;
+                            }
+                        }
+                    }
+                }
+                else {
+                    //Single Type Import
+                    String importedType = importScope.name.getSimpleName();
+                    System.out.println(importedType);
+                    if (type.equals(importedType)){
+                        imported = true;
+                    }
+
+                }
+
+
+            }
+            if (!imported) {
+                System.err.println(type + " was not imported");
+                System.exit(42);
+            }
+        }
+
     }
 
     public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap, final HashMap<String, PackageScope> packages){
@@ -473,6 +527,9 @@ public class TypeLinker {
 
             // Check all on demand imports resolve
             checkPackageNames(javaClass, packages);
+
+            // Check all types used are properly imported
+            checkTypesAreImported(javaClass, packages);
 
             // Deal with variable redeclaration within scopes
             checkVariableDeclarationScopes(astHead);
