@@ -417,10 +417,10 @@ public class TypeLinker {
                                         if (c.name.equals(c2.name)) {
                                             if (javaClass.usedTypeNameStrings.contains(c.name)) {
                                                 //also make sure there is no single class import for this
-                                                if(javaClass.hasSingleTypeImportOfClass(c.name)) {
+//                                                if(javaClass.hasSingleTypeImportOfClass(c.name)) {
                                                     System.err.println("Two on demand imports " + importScope1.name + " and " + importScope2.name + " have a conflicting class " + c.name);
                                                     System.exit(42);
-                                                }
+//                                                }
                                             }
                                         }
                                     }
