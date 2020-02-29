@@ -188,8 +188,32 @@ public class HierarchyChecker {
 //                    }
 //                }
 //            }
+            if (javaClass.name.equals("Integer")) {
+                int a =1;
+            }
+            String name = "";
 
-            if (extendedClasses.contains(javaClass.name) && javaClass.modifiers.contains("final")) {
+            if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
+            else {
+                String packageN = javaClass.packageName.getQualifiedName();
+                String split[];
+                if (packageN.contains(".")) {
+                    split = packageN.split("\\.");
+                }
+                else split = new String[]{packageN};
+                System.out.println(packageN);
+                System.out.println(split.length);
+                if (split[0].contains("default#")) {
+                    String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
+                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
+                    else name = javaClass.name;
+                    System.out.println(name);
+                } else {
+                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
+                }
+            }
+
+            if (extendedClasses.contains(name) && javaClass.modifiers.contains("final")) {
                 System.err.println("Class extending a final class");
                 return false;
             }
