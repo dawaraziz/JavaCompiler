@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,12 @@ public class Name {
 
     private Name(){
         fullyQualifiedName = new ArrayList<>();
+    }
+
+    public boolean isNotSimpleName(){
+        boolean notSimple = this.getQualifiedName().contains(".");
+        System.out.println("Is there a dot? guaranteed " + notSimple + " in " + this.getQualifiedName());
+        return notSimple;
     }
 
     public static Name generateLangImportName() {
@@ -71,6 +78,24 @@ public class Name {
         return getQualifiedName();
     }
 
+
+    public String getPackageName(){
+        //this excludes the class unlike qualified name
+        String qualifiedName = getQualifiedName();
+        final StringBuilder name = new StringBuilder();
+        ArrayList<String> fullyQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
+        for (int i = 0; i < fullyQualifiedName.size()-1; i++){
+            String n = fullyQualifiedName.get(i);
+            name.append(n).append(".");
+        }
+        return name.substring(0, name.length() - 1);
+    }
+
+    public String getActualSimpleName(){
+        String qualifiedName = getQualifiedName();
+        ArrayList<String> fullQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
+        return fullQualifiedName.get(fullQualifiedName.size()-1);
+    }
 
     public String getSimpleName() {
         return fullyQualifiedName.get(0);

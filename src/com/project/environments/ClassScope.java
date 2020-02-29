@@ -305,4 +305,16 @@ public class ClassScope extends Scope {
         }
         return false;
     }
+
+    public boolean hasSingleTypeImportOfClass(String className){
+        for (ImportScope importScope : imports){
+            if (importScope.type == SINGLE){
+                System.out.println("TESTIMG " + importScope.name.getActualSimpleName() + " : " + className);
+                if (importScope.name.getActualSimpleName().equals(className)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

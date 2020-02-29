@@ -15,4 +15,15 @@ public class PackageScope {
     public void addClassToScope(ClassScope javaClass){
         classes.add(javaClass);
     }
+
+    public boolean containsClass(String className) {
+        for (ClassScope includedClass : classes) {
+            // Equals simple type or the fully qualified name
+            System.out.println(includedClass.name +" BANG " + className);
+            if (includedClass.name.equals(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

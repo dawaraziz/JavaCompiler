@@ -329,6 +329,28 @@ public class TypeLinker {
         }
     }
 
+    public static void checkSingleImports(final ClassScope javaClass, final HashMap<String, PackageScope> packages) {
+        for (ImportScope importScope : javaClass.imports) {
+            if (importScope.type == SINGLE) {
+                boolean exists = false;
+                String importPackage = importScope.name.getPackageName();
+                String importClass = importScope.name.getActualSimpleName();
+                for (Map.Entry<String, PackageScope> pkgEntry : packages.entrySet()) {
+                    if (importPackage.equals(pkgEntry.getKey())) {
+                        if (pkgEntry.getValue().containsClass(importClass)) {
+                            exists = true;
+                        }
+                    }
+                }
+                if (exists == false) {
+                    System.err.println("Imported Single Class " + importScope.name.getQualifiedName() + " does not exist");
+                    System.exit(42);
+                }
+            }
+        }
+    }
+
+
     // Given a java class makes sure its on demand imports properly resolve
     public static void checkOnDemandImports(final ClassScope javaClass, final HashMap<String, PackageScope> packages){
             // Check imported name exists or is a prefix or a name
@@ -394,8 +416,11 @@ public class TypeLinker {
                                     for (ClassScope c2 : packages.get(pkg2Name).classes) {
                                         if (c.name.equals(c2.name)) {
                                             if (javaClass.usedTypeNameStrings.contains(c.name)) {
-                                                System.err.println("Two on demand imports " + importScope1.name + " and " + importScope2.name + " have a conflicting class " + c.name);
-                                                System.exit(42);
+                                                //also make sure there is no single class import for this
+                                                if(javaClass.hasSingleTypeImportOfClass(c.name)) {
+                                                    System.err.println("Two on demand imports " + importScope1.name + " and " + importScope2.name + " have a conflicting class " + c.name);
+                                                    System.exit(42);
+                                                }
                                             }
                                         }
                                     }
@@ -420,48 +445,59 @@ public class TypeLinker {
                 System.err.println("Package Name " + pkgName + " clashes with qualified class name (Classname is Prefix)");
                 System.exit(42);
             }
-            // If Package is the same as a simple Classname fail
-//            if(pkgName.equals(javaClass.name)){
-//                System.err.println("Package Name: " + pkgName + " is the same as a simple class name");
-//                System.exit(42);
-//            }
         }
     }
 
     public static void checkTypesAreImported(final ClassScope javaClass, final HashMap<String, PackageScope> packages){
         // for every typename in javaclass we import the appropriate
-        System.out.println("Checking IMPORTS FOR " + javaClass.name);
-        for (String type : javaClass.usedTypeNameStrings) {
+        for (Name typeName : javaClass.usedTypeNames) {
             // for each type check that one of the imported packages contains it
             boolean imported = false;
+            String type = typeName.getSimpleName();
 
-            for (ImportScope importScope : javaClass.imports) {
-                System.out.println("SIZE: " + javaClass.imports.size());
-                // For Import on demand
-                if (importScope.type.equals(ON_DEMAND)) {
-                    String importPackage = importScope.name.getQualifiedName();
-                    System.out.println(importPackage + " is in map? " + packages.containsKey(importPackage));
-                    PackageScope pkgScope = packages.get(importPackage);
-                    if (pkgScope != null) {
-                        for (ClassScope importedClass : pkgScope.classes) {
-                            System.out.println("Type Used: " + type + " $Imported: " + importedClass.name);
-                            if (type.equals(importedClass.name)) {
-                                imported = true;
+            //if its a qualified name then just make sure the package exists and it contains the class
+            if(typeName.isNotSimpleName()){
+                String qualifiedPackage = typeName.getPackageName();
+                String qualifiedClass = typeName.getActualSimpleName();
+                PackageScope pkgScope = packages.get(qualifiedPackage);
+                if (pkgScope != null && pkgScope.containsClass(qualifiedClass)){
+                    imported = true;
+                }
+            }
+            else {
+                ArrayList<ImportScope> importsAndSelf = new ArrayList<>();
+                importsAndSelf.addAll(javaClass.imports);
+                // Add own package if it is part of one so it can access other classes in its package
+                if (!javaClass.packageName.equals("default#")) {
+                    importsAndSelf.add(new ImportScope(ON_DEMAND, javaClass.packageName, null));
+                }
+                for (ImportScope importScope : importsAndSelf) {
+
+                    // For Import on demand
+                    if (importScope.type.equals(ON_DEMAND)) {
+                        String importPackage = importScope.name.getQualifiedName();
+                        PackageScope pkgScope = packages.get(importPackage);
+                        if (pkgScope != null) {
+                            for (ClassScope importedClass : pkgScope.classes) {
+                                // Equals simple type or the fully qualified name
+                                if (type.equals(importedClass.name)) {
+                                    imported = true;
+                                }
                             }
                         }
+                    } else {
+                        //Single Type Import
+                        String importedType = importScope.name.getSimpleName();
+                        System.out.println(importedType);
+                        // Equals simple Type or fully qualified
+                        if (type.equals(importedType) || type.equals(importScope.name.getQualifiedName())) {
+                            imported = true;
+                        }
+
                     }
-                }
-                else {
-                    //Single Type Import
-                    String importedType = importScope.name.getSimpleName();
-                    System.out.println(importedType);
-                    if (type.equals(importedType)){
-                        imported = true;
-                    }
+
 
                 }
-
-
             }
             if (!imported) {
                 System.err.println(type + " was not imported");
@@ -473,6 +509,12 @@ public class TypeLinker {
 
     public static void link(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap, final HashMap<String, PackageScope> packages){
         for (ClassScope javaClass : classTable) {
+
+            //Class name can't be package name
+//            if (javaClass.name.equals(javaClass.packageName.getActualSimpleName())){
+//                System.err.println("Class name is the same as package name");
+//                System.exit(42);
+//            }
 
             // Check no import clashes with class or interface definitions
             for (ImportScope imp : javaClass.imports) {
@@ -524,6 +566,9 @@ public class TypeLinker {
 
             // Check all on demand imports resolve
             checkOnDemandImports(javaClass, packages);
+
+            // Check all on demand imports resolve
+            checkSingleImports(javaClass, packages);
 
             // Check all on demand imports resolve
             checkPackageNames(javaClass, packages);
