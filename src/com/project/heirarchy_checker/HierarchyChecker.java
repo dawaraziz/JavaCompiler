@@ -87,7 +87,7 @@ public class HierarchyChecker {
                 }
             }
             namesSeen.add(name);
-            if (cycleCheck(javaClass, name, true)) {
+            if (cycleCheck(javaClass, name, true, namesSeen)) {
                 System.err.println("Detected a cycle");
                 return true;
             }
@@ -96,12 +96,15 @@ public class HierarchyChecker {
         return false;
     }
 
-    private boolean cycleCheck(ClassScope javaClass, String startName, Boolean start) {
+    private boolean cycleCheck(ClassScope javaClass, String startName, Boolean start, ArrayList<String> namesSeen) {
         if (javaClass.extendsTable != null) {
             for (Name superName : javaClass.extendsTable) {
-                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String superClassName = "";
+                if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                else superClassName = superName.getQualifiedName();
+                ClassScope superClass = classMap.get(superClassName);
                 String name = "";
-                if (javaClass.packageName.getQualifiedName().equals("default#")) name = superClass.name;
+                if (superClass.packageName.getQualifiedName().equals("default#")) name = superClass.name;
                 else {
                     String packageN = superClass.packageName.getQualifiedName();
                     String split[];
@@ -121,13 +124,15 @@ public class HierarchyChecker {
                     }
                 }
                 if (name.equals(startName) && !start) return true;
+                if (namesSeen.contains(name) && !start) return false;
+                namesSeen.add(name);
 
                 ClassScope classScope = classMap.get(name);
                 if (classScope == null) {
                     int a = 1;
                 }
                 if (classScope == null) return false;
-                if (cycleCheck(classScope, startName, false)) return true;
+                if (cycleCheck(classScope, startName, false, namesSeen)) return true;
             }
         }
 
@@ -367,8 +372,14 @@ public class HierarchyChecker {
         ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
         Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
+            if (javaClass.name.equals("Main")) {
+                int a = 1;
+            }
             for (Name superName : javaClass.extendsTable) {
-                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String superClassName = "";
+                if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                else superClassName = superName.getQualifiedName();
+                ClassScope superClass = classMap.get(superClassName);
                 if (superClass != null) {
                     classes.push(superClass);
                     if (superClass.methodTable != null) {
@@ -383,7 +394,10 @@ public class HierarchyChecker {
         if (javaClass.implementsTable != null) {
             if (javaClass.name.equals("Main"));
             for (Name superName : javaClass.implementsTable) {
-                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String superClassName = "";
+                if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                else superClassName = superName.getQualifiedName();
+                ClassScope superClass = classMap.get(superClassName);
                 if (superClass != null) {
                     classes.push(superClass);
                     if (superClass.methodTable != null) {
@@ -399,7 +413,10 @@ public class HierarchyChecker {
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
                 for (Name superName : currClass.extendsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    String superClassName = "";
+                    if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                    else superClassName = superName.getQualifiedName();
+                    ClassScope superClass = classMap.get(superClassName);
                     if (superClass != null) {
                         classes.push(superClass);
                         if (superClass.methodTable != null) {
@@ -413,7 +430,10 @@ public class HierarchyChecker {
 
             if (currClass.implementsTable != null) {
                 for (Name superName : currClass.implementsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    String superClassName = "";
+                    if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                    else superClassName = superName.getQualifiedName();
+                    ClassScope superClass = classMap.get(superClassName);
                     if (superClass != null) {
                         classes.push(superClass);
                         if (superClass.methodTable != null) {
@@ -468,7 +488,10 @@ public class HierarchyChecker {
         Stack<ClassScope> classes = new Stack<>();
         if (javaClass.extendsTable != null) {
             for (Name superName : javaClass.extendsTable) {
-                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String superClassName = "";
+                if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                else superClassName = superName.getQualifiedName();
+                ClassScope superClass = classMap.get(superClassName);
                 if (superClass != null) {
                     if (!superClass.equals(exceptClass)) {
                         classes.push(superClass);
@@ -485,7 +508,10 @@ public class HierarchyChecker {
         if (javaClass.implementsTable != null) {
             if (javaClass.name.equals("Main"));
             for (Name superName : javaClass.implementsTable) {
-                ClassScope superClass = classMap.get(superName.getQualifiedName());
+                String superClassName = "";
+                if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                else superClassName = superName.getQualifiedName();
+                ClassScope superClass = classMap.get(superClassName);
                 if (superClass != null) {
                     if (!superClass.equals(exceptClass)) {
                         classes.push(superClass);
@@ -503,7 +529,10 @@ public class HierarchyChecker {
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
                 for (Name superName : currClass.extendsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    String superClassName = "";
+                    if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                    else superClassName = superName.getQualifiedName();
+                    ClassScope superClass = classMap.get(superClassName);
                     if (superClass != null) {
                         if (!superClass.equals(exceptClass)) {
                             classes.push(superClass);
@@ -519,7 +548,10 @@ public class HierarchyChecker {
 
             if (currClass.implementsTable != null) {
                 for (Name superName : currClass.implementsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    String superClassName = "";
+                    if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                    else superClassName = superName.getQualifiedName();
+                    ClassScope superClass = classMap.get(superClassName);
                     if (superClass != null) {
                         if (!superClass.equals(exceptClass)) {
                             classes.push(superClass);
@@ -549,7 +581,10 @@ public class HierarchyChecker {
             if (javaClass.extendsTable!=null) {
                 if (javaClass.type == ClassScope.CLASS_TYPE.INTERFACE) {
                     for (Name superName : javaClass.extendsTable) {
-                        ClassScope superClass = classMap.get(superName.getQualifiedName());
+                        String superClassName = "";
+                        if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                        else superClassName = superName.getQualifiedName();
+                        ClassScope superClass = classMap.get(superClassName);
                         if (superClass != null) {
                             if (superClass.methodTable != null) {
                                 for (MethodScope methodScope : superClass.methodTable) {
@@ -591,7 +626,10 @@ public class HierarchyChecker {
                         int a = 1;
                     }
                     for (Name superName : javaClass.extendsTable) {
-                        ClassScope superClass = classMap.get(superName.getQualifiedName());
+                        String superClassName = "";
+                        if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                        else superClassName = superName.getQualifiedName();
+                        ClassScope superClass = classMap.get(superClassName);
                         if (superClass != null) {
                             if (superClass.methodTable != null) {
                                 if (javaClass.name.equals("Main")) {
@@ -630,7 +668,10 @@ public class HierarchyChecker {
             }
             if (javaClass.implementsTable != null) {
                 for (Name superName : javaClass.implementsTable) {
-                    ClassScope superClass = classMap.get(superName.getQualifiedName());
+                    String superClassName = "";
+                    if (superName.getQualifiedName().contains("default#")) superClassName = superName.getQualifiedName().substring(9);
+                    else superClassName = superName.getQualifiedName();
+                    ClassScope superClass = classMap.get(superClassName);
                     if (superClass != null) {
                         if (superClass.methodTable != null) {
                             for (MethodScope methodScope : superClass.methodTable) {
