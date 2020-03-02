@@ -5,12 +5,8 @@ import com.project.environments.ImportScope;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.structure.Name;
-import com.project.environments.structure.Type;
-import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
-import resources.Pair;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -333,7 +329,7 @@ public class TypeLinker {
         for (ImportScope importScope : javaClass.imports) {
             if (importScope.type == SINGLE) {
                 boolean exists = false;
-                String importPackage = importScope.name.getPackageName();
+                String importPackage = importScope.name.getPackageString();
                 String importClass = importScope.name.getActualSimpleName();
                 for (Map.Entry<String, PackageScope> pkgEntry : packages.entrySet()) {
                     if (importPackage.equals(pkgEntry.getKey())) {
@@ -457,7 +453,7 @@ public class TypeLinker {
 
             //if its a qualified name then just make sure the package exists and it contains the class
             if(typeName.isNotSimpleName()){
-                String qualifiedPackage = typeName.getPackageName();
+                String qualifiedPackage = typeName.getPackageString();
                 String qualifiedClass = typeName.getActualSimpleName();
                 PackageScope pkgScope = packages.get(qualifiedPackage);
                 if (pkgScope != null && pkgScope.containsClass(qualifiedClass)){

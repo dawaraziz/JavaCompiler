@@ -21,7 +21,7 @@ public class Type {
     static final private String VOID_LEXEME = "void";
 
     public final PRIM_TYPE prim_type;
-    public final Name name;
+    public Name name;
     public final boolean isArray;
 
     public Type(final ArrayList<String> typeLexemes) {

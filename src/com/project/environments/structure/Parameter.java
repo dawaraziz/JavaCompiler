@@ -1,5 +1,7 @@
 package com.project.environments.structure;
 
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
+
 public class Parameter {
     public final Type type;
     public final Name name;
@@ -23,5 +25,9 @@ public class Parameter {
 
         if (this.type.equals(other.type)) return true;
         else return false;
+    }
+
+    public boolean isVariable() {
+        return type.prim_type == VAR;
     }
 }

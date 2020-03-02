@@ -62,19 +62,23 @@ public class Main {
             classTable.add(new ClassScope(new File(fileName).getName().split("\\.")[0], AST));
         }
 
+        // Link all types to their fully qualified name.
+        for (final ClassScope classScope : classTable) {
+            classScope.generateImportMaps(classTable);
+            classScope.linkSuperTypes();
+            classScope.linkImplementsTypes();
+            classScope.linkMethodParameters();
+        }
+
         // Checks for duplicate classes.
         for (int i = 0; i < classTable.size(); ++i) {
-            System.out.println("Class: " + classTable.get(i).packageName);
             for (int j = i + 1; j < classTable.size(); ++j) {
                 if (classTable.get(i).equals(classTable.get(j))) {
                     System.err.println("Found duplicate class in same package.");
                     System.exit(42);
                 }
             }
-        }
-
-        for (final ClassScope classScope : classTable) {
-            classScope.qualifySupersAndInterfaces(classTable);
+            classTable.get(i).duplicateCheck();
         }
 
         // Find the Object class.

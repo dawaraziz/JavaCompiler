@@ -1,6 +1,7 @@
 package com.project.environments;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
@@ -70,5 +71,29 @@ public class MethodScope extends Scope {
         }
 
         return false;
+    }
+
+    void linkParameters() {
+        if (!(parentScope instanceof ClassScope)) {
+            System.err.println("Found method with non-class scope parent; aborting!");
+            System.exit(42);
+        }
+
+        if (parameters == null) return;
+
+        final ClassScope parent = (ClassScope) parentScope;
+
+        for (final Parameter param : parameters) {
+
+            // We don't care about primitives.
+            if (param.isVariable()) {
+                final Name paramType = param.type.name;
+
+                // If the name has a package, it's already qualified.
+                if (paramType.getPackageName() == null) {
+                    param.type.name = parent.findImportedType(paramType.getSimpleName());
+                }
+            }
+        }
     }
 }

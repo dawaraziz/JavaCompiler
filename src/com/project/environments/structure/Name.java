@@ -30,9 +30,16 @@ public class Name {
     }
 
     public boolean isNotSimpleName(){
-        boolean notSimple = this.getQualifiedName().contains(".");
+        final boolean notSimple = this.getQualifiedName().contains(".");
         System.out.println("Is there a dot? guaranteed " + notSimple + " in " + this.getQualifiedName());
         return notSimple;
+    }
+
+    public static Name generateFullyQualifiedName(final String simpleName, final Name packageName) {
+        final Name name = new Name();
+        name.fullyQualifiedName.add(simpleName);
+        name.fullyQualifiedName.addAll(packageName.fullyQualifiedName);
+        return name;
     }
 
     public static Name generateLangImportName() {
@@ -66,7 +73,7 @@ public class Name {
 
     public String getQualifiedName() {
         final StringBuilder name = new StringBuilder();
-        ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
+        final ArrayList<String> temp = new ArrayList<>(fullyQualifiedName);
         Collections.reverse(temp);
         for (final String n : temp) {
             name.append(n).append(".");
@@ -79,26 +86,34 @@ public class Name {
     }
 
 
-    public String getPackageName(){
+    public String getPackageString(){
         //this excludes the class unlike qualified name
-        String qualifiedName = getQualifiedName();
+        final String qualifiedName = getQualifiedName();
         final StringBuilder name = new StringBuilder();
-        ArrayList<String> fullyQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
+        final ArrayList<String> fullyQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
         for (int i = 0; i < fullyQualifiedName.size()-1; i++){
-            String n = fullyQualifiedName.get(i);
+            final String n = fullyQualifiedName.get(i);
             name.append(n).append(".");
         }
         return name.substring(0, name.length() - 1);
     }
 
     public String getActualSimpleName(){
-        String qualifiedName = getQualifiedName();
-        ArrayList<String> fullQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
+        final String qualifiedName = getQualifiedName();
+        final ArrayList<String> fullQualifiedName = new ArrayList<>(Arrays.asList(qualifiedName.split("\\.")));
         return fullQualifiedName.get(fullQualifiedName.size()-1);
     }
 
     public String getSimpleName() {
         return fullyQualifiedName.get(0);
+    }
+
+    public Name getPackageName() {
+        if (fullyQualifiedName.size() == 1) return null;
+
+        final Name name =  new Name();
+        name.fullyQualifiedName.addAll(fullyQualifiedName.subList(1, fullyQualifiedName.size()));
+        return name;
     }
 
     //TODO: Just returning null string rn but should this ever need to occur?
@@ -134,24 +149,14 @@ public class Name {
         return true;
     }
 
-    public boolean containsSomePackageSuffix(final Name name) {
-        if (this.fullyQualifiedName.size() == 1) return true;
+    public static boolean containsPrefixName(final Name check, final Name prefix) {
+        final ArrayList<String> checkList = check.fullyQualifiedName;
+        final ArrayList<String> prefixList = prefix.fullyQualifiedName;
 
-        if ((this.fullyQualifiedName.size() - 1) > name.fullyQualifiedName.size()) return false;
+        if (checkList.size() < prefixList.size()) return false;
 
-        for (int i = 1; i < this.fullyQualifiedName.size(); ++i) {
-            if (!name.fullyQualifiedName.get(i-1).equals(this.fullyQualifiedName.get(i))) return false;
-        }
-
-        return true;
-    }
-
-    public boolean containsPrefixName(final Name name) {
-        if (name.fullyQualifiedName.size() > this.fullyQualifiedName.size()) return false;
-
-        for (int i = name.fullyQualifiedName.size() - 1, j = this.fullyQualifiedName.size() - 1
-             ;i >= 0 && j >= 0; --i, --j) {
-            if (!name.fullyQualifiedName.get(i).equals(this.fullyQualifiedName.get(j))) return false;
+        for (int i = checkList.size() - 1, j = prefixList.size() - 1; i >= 0  && j >= 0; --i, --j) {
+            if (!checkList.get(i).equals(prefixList.get(j))) return false;
         }
 
         return true;

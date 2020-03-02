@@ -45,4 +45,17 @@ public class ImportScope extends Scope {
             return null;
         }
     }
+
+    public String getSimpleName() {
+        if (type == IMPORT_TYPE.ON_DEMAND) return null;
+        return name.getSimpleName();
+    }
+
+    public Name getPackageName() {
+        if (type == IMPORT_TYPE.ON_DEMAND) {
+            return name;
+        } else {
+            return name.getPackageName();
+        }
+    }
 }

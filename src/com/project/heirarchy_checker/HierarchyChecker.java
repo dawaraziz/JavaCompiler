@@ -396,7 +396,6 @@ public class HierarchyChecker {
         }
 
         while (!classes.empty()) {
-            System.out.println("Hello 55");
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
                 for (Name superName : currClass.extendsTable) {
@@ -501,7 +500,6 @@ public class HierarchyChecker {
         }
 
         while (!classes.empty()) {
-            System.out.println("Hello 55");
             ClassScope currClass = classes.pop();
             if (currClass.extendsTable != null) {
                 for (Name superName : currClass.extendsTable) {

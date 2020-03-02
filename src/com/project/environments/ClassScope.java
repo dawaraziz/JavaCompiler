@@ -3,18 +3,26 @@ package com.project.environments;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.environments.structure.Name.containsPrefixName;
+import static com.project.environments.structure.Name.generateFullyQualifiedName;
 
 public class ClassScope extends Scope {
+
     public enum CLASS_TYPE {
         INTERFACE,
         CLASS
     }
+
+    private final Map<String, ClassScope> singleImportMap;
+    private final Map<String, ClassScope> onDemandImportMap;
+    private final Map<String, ClassScope> inPackageImportMap;
 
     public final String name;
     public final ASTHead ast;
@@ -41,6 +49,10 @@ public class ClassScope extends Scope {
         this.imports = ast.getImports(this);
         this.modifiers = ast.getClassModifiers();
 
+        singleImportMap = new HashMap<>();
+        onDemandImportMap = new HashMap<>();
+        inPackageImportMap = new HashMap<>();
+
         final ASTHead classDeclaration = ast.getClassDeclaration();
 
         this.type = classDeclaration.getClassType();
@@ -51,23 +63,6 @@ public class ClassScope extends Scope {
             extendsTable = classDeclaration.getInterfaceSuperInterfaces();
         } else {
             extendsTable = classDeclaration.getClassSuperClass();
-        }
-
-        if (extendsTable != null) {
-            for (int i = 0; i < extendsTable.size(); ++i) {
-                for (final ImportScope importName : imports) {
-
-                    final Name newName = importName.generateFullName(extendsTable.get(i));
-                    if (newName != null) {
-                        extendsTable.set(i, newName);
-                    }
-                }
-            }
-
-            if (new HashSet<>(extendsTable).size() < extendsTable.size()) {
-                System.err.println("Found duplicate implements in same interface.");
-                System.exit(42);
-            }
         }
 
         if (this.type == CLASS_TYPE.CLASS) {
@@ -83,23 +78,6 @@ public class ClassScope extends Scope {
             }
         }
 
-        if (implementsTable != null) {
-            for (int i = 0; i < implementsTable.size(); ++i) {
-                for (final ImportScope importName : imports) {
-                    final Name newName = importName.generateFullName(implementsTable.get(i));
-                    if (newName != null) {
-                        implementsTable.set(i, newName);
-                    }
-                }
-            }
-
-            if (new HashSet<Name>(implementsTable).size() < implementsTable.size()) {
-                System.err.println("Found duplicate implements in same class.");
-                System.exit(42);
-            }
-        }
-
-
         fieldTable = new ArrayList<>();
         generateFieldTable();
         checkDuplicateFields();
@@ -112,7 +90,7 @@ public class ClassScope extends Scope {
 
         this.usedTypeNameStrings = ast.getUsedTypeNames();
         this.usedTypeNames = new ArrayList<>();
-        for (String s : usedTypeNameStrings){
+        for (final String s : usedTypeNameStrings) {
             usedTypeNames.add(new Name(s));
         }
     }
@@ -143,6 +121,32 @@ public class ClassScope extends Scope {
             for (int j = i + 1; j < fieldTable.size(); ++j) {
                 if (fieldTable.get(i).name.equals(fieldTable.get(j).name)) {
                     System.err.println("Found duplicate field in same class.");
+                    System.exit(42);
+                }
+            }
+        }
+    }
+
+    private void checkDuplicateSupers() {
+        if (extendsTable == null) return;
+
+        for (int i = 0; i < extendsTable.size(); ++i) {
+            for (int j = i + 1; j < extendsTable.size(); ++j) {
+                if (extendsTable.get(i).equals(extendsTable.get(j))) {
+                    System.err.println("Found duplicate extends in same class.");
+                    System.exit(42);
+                }
+            }
+        }
+    }
+
+    private void checkDuplicateImplements() {
+        if (implementsTable == null) return;
+
+        for (int i = 0; i < implementsTable.size(); ++i) {
+            for (int j = i + 1; j < implementsTable.size(); ++j) {
+                if (implementsTable.get(i).equals(implementsTable.get(j))) {
+                    System.err.println("Found duplicate implements in same class.");
                     System.exit(42);
                 }
             }
@@ -204,117 +208,169 @@ public class ClassScope extends Scope {
         return false;
     }
 
-    public void qualifySupersAndInterfaces(final ArrayList<ClassScope> classTable) {
-        if (extendsTable != null) {
-            boolean isImported = false;
-            for (int i = 0; i < extendsTable.size(); ++i) {
-                final Name extendsName = extendsTable.get(i);
+    /**
+     * Generates a set of maps that link our imports to any existent classes.
+     *
+     * @param classTable Required to know about the classes.
+     */
+    public void generateImportMaps(final ArrayList<ClassScope> classTable) {
+        for (final ImportScope importScope : imports) {
+            if (importScope.type == SINGLE) {
+                final String simpleName = importScope.getSimpleName();
+                final Name packageName = importScope.getPackageName();
 
-                if (isImportSuffix(extendsName)) {
-                    isImported = true;
-                    break;
-                }
-
+                // Look for a class that matches the simple and package name.
+                boolean foundClass = false;
                 for (final ClassScope classScope : classTable) {
-                    if (classScope != null
-                            && extendsName.getClassName().equals(classScope.name)) {
-                        if (classScope.packageName != null) {
-                            final Name qualifiedName = classScope.packageName.generateAppendedPackageName(extendsName.getClassName());
-                            if (extendsName.checkPackageMatch(classScope.packageName)) {
-                                isImported = true;
-                                break;
-                            } else if ((isOnDemandImportSuffix(classScope.packageName)
-                                    || classScope.packageName.equals(this.packageName))
-                                    &&  extendsName.containsSomePackageSuffix(classScope.packageName)) {
-                                System.out.println("Changing " + i + " to: " + qualifiedName);
-                                if (!classScope.packageName.isDefault()) {
-                                    extendsTable.set(i, qualifiedName);
-                                }
-                                isImported = true;
-                                break;
-                            }
-                        } else if (this.packageName == null) {
-                            isImported = true;
-                            break;
+                    if (classScope.name.equals(simpleName)
+                            && classScope.packageName.equals(packageName)) {
+
+                        // If the map already has the class, we may have a duplicate!
+                        // Check if it's the exact same class; that's fine.
+                        if (singleImportMap.containsKey(simpleName)
+                                && !singleImportMap.get(simpleName).packageName.equals(packageName)) {
+                            System.err.println("Found duplicate single-type imports.");
+                            System.exit(42);
                         }
+
+                        singleImportMap.put(simpleName, classScope);
+                        foundClass = true;
+                        break;
                     }
                 }
-            }
 
-            if (!isImported) {
-                System.err.println("Could not find import for extend name.");
+                // If we can't find a class that matches the import, something's wrong.
+                if (!foundClass) {
+                    System.err.println("Couldn't link single-type import to class.");
+                    System.exit(42);
+                }
+            } else {
+                final Name packageName = importScope.getPackageName();
+
+                // Look for any classes that match the package name.
+                boolean foundClass = false;
+                for (final ClassScope classScope : classTable) {
+                    if (containsPrefixName(classScope.packageName, packageName)) {
+
+                        // We can have duplicates in our on-demand imports.
+                        onDemandImportMap.put(classScope.name, classScope);
+
+                        foundClass = true;
+                    }
+                }
+
+                // If we can't find any class that matches the import, something's wrong.
+                if (!foundClass) {
+                    System.err.println("Couldn't link on-demand type import to any class.");
+                    System.exit(42);
+                }
+            }
+        }
+
+        // Lastly, get all the classes in our own package.
+        for (final ClassScope classScope : classTable) {
+            if (classScope.packageName.equals(this.packageName)) {
+                inPackageImportMap.put(classScope.name, classScope);
+            }
+        }
+    }
+
+    public void linkSuperTypes() {
+        if (extendsTable == null) return;
+
+        for (int i = 0; i < extendsTable.size(); ++i) {
+            final Name superName = extendsTable.get(i);
+
+            // If the name has a package, it's already qualified.
+            if (superName.getPackageName() == null) {
+                extendsTable.set(i, findImportedType(superName.getSimpleName()));
+            }
+        }
+    }
+
+    public void linkImplementsTypes() {
+        if (implementsTable == null) return;
+
+        for (int i = 0; i < implementsTable.size(); ++i) {
+            final Name superName = implementsTable.get(i);
+
+            // If the name has a package, it's already qualified.
+            if (superName.getPackageName() == null) {
+                implementsTable.set(i, findImportedType(superName.getSimpleName()));
+            }
+        }
+    }
+
+    public void duplicateCheck() {
+        checkDuplicateImplements();
+        checkDuplicateSupers();
+    }
+
+    Name findImportedType(final String simpleName) {
+        final Name name = getImportedType(simpleName);
+
+        if (name == null) {
+            // If we can't find an import, we have a missing type.
+            System.err.println("Couldn't link " + simpleName + " to any imported type.");
+            System.exit(42);
+        }
+
+        // Check if a prefix of our name itself resolves to a type.
+        for (Name prefix = name.getPackageName(); prefix != null; prefix = prefix.getPackageName()) {
+            if (getImportedType(prefix.getSimpleName()) != null) {
+                System.err.println("Prefix of type was itself type.");
                 System.exit(42);
             }
         }
 
-        if (implementsTable != null) {
-            boolean isImported = false;
-            for (int i = 0; i < implementsTable.size(); ++i) {
-                final Name implementsName = implementsTable.get(i);
-
-                if (isImportSuffix(implementsName)) {
-                    isImported = true;
-                    break;
-                }
-
-                for (final ClassScope classScope : classTable) {
-                    if (classScope != null
-                            && implementsName.getClassName().equals(classScope.name)) {
-                        if (classScope.packageName != null) {
-                            final Name qualifiedName = classScope.packageName.generateAppendedPackageName(implementsName.getClassName());
-                            if (implementsName.checkPackageMatch(classScope.packageName)) {
-                                isImported = true;
-                                break;
-                            } else if ((isOnDemandImportSuffix(classScope.packageName)
-                                    || classScope.packageName.equals(this.packageName))
-                                    &&  implementsName.containsSomePackageSuffix(classScope.packageName)) {
-                                System.out.println("Changing " + i + " to: " + qualifiedName);
-                                if (!classScope.packageName.isDefault()) {
-                                    implementsTable.set(i, qualifiedName);
-                                }
-                                isImported = true;
-                                break;
-                            }
-                        } else if (this.packageName == null) {
-                            isImported = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!isImported) {
-                System.err.println("Could not find import for implements name.");
-                System.exit(42);
-            }
-        }
+        return name;
     }
 
-    private boolean isImportSuffix(final Name extendsName) {
-        for (final ImportScope importScope : imports) {
-            if (importScope.type == ImportScope.IMPORT_TYPE.ON_DEMAND) continue;
-            if (importScope.name.containsSuffixName(extendsName)) return true;
-        }
-        return false;
+    private Name getImportedType(final String simpleName) {
+        // First, check if it's already in our package.
+        final Name inPackageImportName = findInPackageImport(simpleName);
+        if (inPackageImportName != null) return inPackageImportName;
+
+        // Look for the class in the single import table first; it has precedent.
+        final Name singleImportName = findSingleImport(simpleName);
+        if (singleImportName != null) return singleImportName;
+
+        // Lastly, look in the on demand import table.
+        return findOnDemandImport(simpleName);
     }
 
-    private boolean isOnDemandImportSuffix(final Name packageName) {
-        for (final ImportScope importScope : imports) {
-            if (importScope.type == SINGLE) continue;
-            if (packageName.containsPrefixName(importScope.name)) return true;
-        }
-        return false;
+    private Name findSingleImport(final String simpleName) {
+        final ClassScope superClass = singleImportMap.get(simpleName);
+
+        // Null if we can't find the class in the single import table.
+        if (superClass != null) {
+            return generateFullyQualifiedName(superClass.name, superClass.packageName);
+        } else return null;
     }
 
-    public boolean hasSingleTypeImportOfClass(String className){
-        for (ImportScope importScope : imports){
-            if (importScope.type == SINGLE){
-                System.out.println("TESTIMG " + importScope.name.getActualSimpleName() + " : " + className);
-                if (importScope.name.getActualSimpleName().equals(className)){
-                    return true;
-                }
-            }
+    private Name findOnDemandImport(final String simpleName) {
+        final ClassScope superClass = onDemandImportMap.get(simpleName);
+
+        // Null if we can't find the class in the on-demand import table.
+        if (superClass != null) {
+            return generateFullyQualifiedName(superClass.name, superClass.packageName);
+        } else return null;
+    }
+
+    private Name findInPackageImport(final String simpleName) {
+        final ClassScope superClass = inPackageImportMap.get(simpleName);
+
+        // Null if we can't find the class in the in-package import table.
+        if (superClass != null) {
+            return generateFullyQualifiedName(superClass.name, superClass.packageName);
+        } else return null;
+    }
+
+    public void linkMethodParameters() {
+        if (methodTable == null) return;
+
+        for (final MethodScope methodScope : methodTable) {
+            methodScope.linkParameters();
         }
-        return false;
     }
 }
