@@ -1,6 +1,6 @@
 package com.project.environments.structure;
 
-import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
+import com.project.environments.ClassScope;
 
 public class Parameter {
     public final Type type;
@@ -15,19 +15,16 @@ public class Parameter {
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        }
-
-        if (obj == this) {
+        } else if (!(obj instanceof Parameter)) {
+            return false;
+        } else if (obj == this) {
             return true;
         }
 
-        Parameter other = (Parameter) obj;
-
-        if (this.type.equals(other.type)) return true;
-        else return false;
+        return this.type.equals(((Parameter) obj).type);
     }
 
-    public boolean isVariable() {
-        return type.prim_type == VAR;
+    public void linkType(final ClassScope classScope) {
+        type.linkType(classScope);
     }
 }

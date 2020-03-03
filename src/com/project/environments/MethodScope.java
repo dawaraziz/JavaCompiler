@@ -5,6 +5,7 @@ import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class MethodScope extends Scope {
@@ -48,6 +49,25 @@ public class MethodScope extends Scope {
         startScope = null;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final MethodScope that = (MethodScope) o;
+
+        if (!this.name.equals(that.name)) return false;
+
+        if (this.parameters == null && that.parameters == null) return true;
+
+        if (this.parameters == null || that.parameters == null) return false;
+        if (this.parameters.size() != that.parameters.size()) return false;
+        for (int i = 0; i < this.parameters.size(); ++i) {
+            if (!this.parameters.get(i).equals(that.parameters.get(i))) return false;
+        }
+
+        return true;
+    }
+
     public boolean sameSignature(final MethodScope otherMethod) {
         if (this.parameters != null && otherMethod.parameters != null) {
             return (this.name.equals(otherMethod.name) && this.parameters.size() == otherMethod.parameters.size()
@@ -78,22 +98,18 @@ public class MethodScope extends Scope {
             System.err.println("Found method with non-class scope parent; aborting!");
             System.exit(42);
         }
+        final ClassScope parent = (ClassScope) parentScope;
+
+        if (type == null) {
+            System.err.println("Found method with no type; aborting!");
+            System.exit(42);
+        }
+        type.linkType(parent);
 
         if (parameters == null) return;
 
-        final ClassScope parent = (ClassScope) parentScope;
-
         for (final Parameter param : parameters) {
-
-            // We don't care about primitives.
-            if (param.isVariable()) {
-                final Name paramType = param.type.name;
-
-                // If the name has a package, it's already qualified.
-                if (paramType.getPackageName() == null) {
-                    param.type.name = parent.findImportedType(paramType.getSimpleName());
-                }
-            }
+            param.linkType(parent);
         }
     }
 }

@@ -1,9 +1,12 @@
 package com.project.environments;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
+
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 
 public class FieldScope extends Scope {
     public final String name;
@@ -36,5 +39,28 @@ public class FieldScope extends Scope {
     @Override
     boolean isInitCheck(final String variableName) {
         return false;
+    }
+
+    void linkTypes() {
+        if (!(parentScope instanceof ClassScope)) {
+            System.err.println("Found field with non-class scope parent; aborting!");
+            System.exit(42);
+        }
+
+        if (type == null) {
+            System.err.println("Found field with null type; aborting!");
+            System.exit(42);
+        }
+
+        final ClassScope parent = (ClassScope) parentScope;
+
+        // We don't care about primitives.
+        if (type.prim_type == VAR) {
+
+            // If the name has a package, it's already qualified.
+            if (type.name.getPackageName() == null) {
+                type.name = parent.findImportedType(type.name.getSimpleName());
+            }
+        }
     }
 }

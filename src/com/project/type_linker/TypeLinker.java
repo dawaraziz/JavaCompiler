@@ -403,26 +403,6 @@ public class TypeLinker {
                                 matched2.add(s);
                             }
                         }
-
-                        // For all combinations of packages the import on demands resolve to check
-                        // that their classes don't clash, if they do, it is only a problem if the type is used
-                        for (String pkg1Name : matched1){
-                            for (String pkg2Name : matched2) {
-                                for (ClassScope c : packages.get(pkg1Name).classes) {
-                                    for (ClassScope c2 : packages.get(pkg2Name).classes) {
-                                        if (c.name.equals(c2.name)) {
-                                            if (javaClass.usedTypeNameStrings.contains(c.name)) {
-                                                //also make sure there is no single class import for this
-//                                                if(javaClass.hasSingleTypeImportOfClass(c.name)) {
-                                                    System.err.println("Two on demand imports " + importScope1.name + " and " + importScope2.name + " have a conflicting class " + c.name);
-                                                    System.exit(42);
-//                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }

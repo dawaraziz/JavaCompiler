@@ -39,8 +39,7 @@ public class ClassScope extends Scope {
 
     public final ArrayList<MethodScope> methodTable;
     public final ArrayList<ConstructorScope> constructorTable;
-    public final ArrayList<FieldScope> fieldTable;
-
+    private final ArrayList<FieldScope> fieldTable;
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -251,9 +250,17 @@ public class ClassScope extends Scope {
                 boolean foundClass = false;
                 for (final ClassScope classScope : classTable) {
                     if (containsPrefixName(classScope.packageName, packageName)) {
+                        final String simpleName = classScope.name;
 
-                        // We can have duplicates in our on-demand imports.
-                        onDemandImportMap.put(classScope.name, classScope);
+                        // We can have duplicates in our on-demand imports, but we can't use them.
+                        // We'll put the import to a null if we find it, so we error out if we use it.
+                        // Again, we make sure it's not exactly the same class.
+                        if (onDemandImportMap.containsKey(simpleName)
+                                && !onDemandImportMap.get(simpleName).packageName.equals(packageName)) {
+                            onDemandImportMap.replace(simpleName, null);
+                        } else {
+                            onDemandImportMap.put(simpleName, classScope);
+                        }
 
                         foundClass = true;
                     }
@@ -275,7 +282,28 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void linkSuperTypes() {
+    public void linkTypes() {
+        linkSuperTypes();
+        linkImplementsTypes();
+        linkFieldsTypes();
+
+        linkConstructorTypes();
+        linkMethodParameters();
+    }
+
+    private void linkConstructorTypes() {
+        if (constructorTable == null) {
+            System.err.println("Found no constructor for class " + name + ".");
+            System.exit(42);
+        }
+
+        for (final ConstructorScope constructorScope : constructorTable) {
+            constructorScope.linkTypes();
+        }
+    }
+
+
+    private void linkSuperTypes() {
         if (extendsTable == null) return;
 
         for (int i = 0; i < extendsTable.size(); ++i) {
@@ -288,7 +316,7 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void linkImplementsTypes() {
+    private void linkImplementsTypes() {
         if (implementsTable == null) return;
 
         for (int i = 0; i < implementsTable.size(); ++i) {
@@ -306,7 +334,7 @@ public class ClassScope extends Scope {
         checkDuplicateSupers();
     }
 
-    Name findImportedType(final String simpleName) {
+    public Name findImportedType(final String simpleName) {
         final Name name = getImportedType(simpleName);
 
         if (name == null) {
@@ -366,11 +394,19 @@ public class ClassScope extends Scope {
         } else return null;
     }
 
-    public void linkMethodParameters() {
+    private void linkMethodParameters() {
         if (methodTable == null) return;
 
         for (final MethodScope methodScope : methodTable) {
             methodScope.linkParameters();
+        }
+    }
+
+    private void linkFieldsTypes() {
+        if (fieldTable == null) return;
+
+        for (final FieldScope fieldScope : fieldTable) {
+            fieldScope.linkTypes();
         }
     }
 }

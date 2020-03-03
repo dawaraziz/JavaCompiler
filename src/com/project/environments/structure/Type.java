@@ -1,5 +1,7 @@
 package com.project.environments.structure;
 
+import com.project.environments.ClassScope;
+
 import java.util.ArrayList;
 
 public class Type {
@@ -73,25 +75,29 @@ public class Type {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
-        }
-
-        if (obj == this) {
+        } else if (!(obj instanceof Type)) {
+            return false;
+        } else if (obj == this) {
             return true;
         }
 
-        Type other = (Type) obj;
+        final Type other = (Type) obj;
 
         if (this.name != null) {
-            if (this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name))
-                return true;
-            else return false;
+            return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name);
+        } else {
+            return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name == other.name;
         }
-        else {
-            if (this.prim_type == other.prim_type && this.isArray == other.isArray && this.name == other.name) return true;
-            else return false;
+    }
+
+    public void linkType(final ClassScope classScope) {
+        if (prim_type == PRIM_TYPE.VAR) {
+            if (name.getPackageName() == null) {
+                name = classScope.findImportedType(name.getSimpleName());
+            }
         }
     }
 }

@@ -2,9 +2,8 @@ package com.project;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
-import com.project.environments.ast.ASTNode;
 import com.project.environments.structure.Name;
-import com.project.heirarchy_checker.HierarchyChecker;
+import com.project.hierarchy.HierarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
@@ -65,9 +64,7 @@ public class Main {
         // Link all types to their fully qualified name.
         for (final ClassScope classScope : classTable) {
             classScope.generateImportMaps(classTable);
-            classScope.linkSuperTypes();
-            classScope.linkImplementsTypes();
-            classScope.linkMethodParameters();
+            classScope.linkTypes();
         }
 
         // Checks for duplicate classes.

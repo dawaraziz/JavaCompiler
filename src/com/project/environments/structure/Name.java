@@ -81,6 +81,11 @@ public class Name {
         return name.substring(0, name.length() - 1);
     }
 
+    public String getDefaultlessQualifiedName() {
+        final String qualifiedName = getQualifiedName();
+        return qualifiedName.contains("default#") ? qualifiedName.substring(9) : qualifiedName;
+    }
+
     public String toString() {
         return getQualifiedName();
     }
