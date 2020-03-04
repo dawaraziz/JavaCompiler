@@ -141,7 +141,12 @@ public class HierarchyChecker {
         for (final ClassScope javaClass : classTable) {
             if (javaClass.methodTable == null) continue;
 
-            final ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
+            final ArrayList<MethodScope> interfaceMethods = getInterfaceMethods(javaClass);
+            final ArrayList<MethodScope> superMethods = getSuperMethods(javaClass);
+
+            final ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+            inheritedMethods.addAll(interfaceMethods);
+            inheritedMethods.addAll(superMethods);
 
             for (final MethodScope override : javaClass.methodTable) {
                 for (final MethodScope parent : inheritedMethods) {
@@ -161,6 +166,18 @@ public class HierarchyChecker {
                         System.exit(42);
                     } else if (parent.modifiers.contains("final")) {
                         System.err.println("Method replacing final method.");
+                        System.exit(42);
+                    }
+                }
+            }
+
+            for (final MethodScope interfaceMethod : interfaceMethods) {
+                for (final MethodScope superMethod : superMethods) {
+                    if (!interfaceMethod.equals(superMethod)) continue;
+
+                    if (interfaceMethod.modifiers.contains("public")
+                            && superMethod.modifiers.contains("protected")) {
+                        System.err.println("Inherited protected method from super and public method from interface.");
                         System.exit(42);
                     }
                 }
@@ -196,7 +213,21 @@ public class HierarchyChecker {
         }
     }
 
-    private ArrayList<MethodScope> getInheritedMethodsList(final ClassScope javaClass) {
+    private ArrayList<MethodScope> getInterfaceMethods(final ClassScope javaClass) {
+        final ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+
+        final Stack<ClassScope> classes = new Stack<>();
+        classes.push(javaClass);
+
+        while (!classes.isEmpty()) {
+            final ClassScope curClass = classes.pop();
+            inheritedMethods.addAll(getMethods(curClass.implementsTable, classes));
+        }
+
+        return inheritedMethods;
+    }
+
+    private ArrayList<MethodScope> getSuperMethods(final ClassScope javaClass) {
         final ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
 
         final Stack<ClassScope> classes = new Stack<>();
@@ -205,7 +236,6 @@ public class HierarchyChecker {
         while (!classes.isEmpty()) {
             final ClassScope curClass = classes.pop();
             inheritedMethods.addAll(getMethods(curClass.extendsTable, classes));
-            inheritedMethods.addAll(getMethods(curClass.implementsTable, classes));
         }
 
         return inheritedMethods;
