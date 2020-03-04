@@ -382,7 +382,7 @@ public class TypeLinker {
             } else {
                 final ArrayList<ImportScope> importsAndSelf = new ArrayList<>(javaClass.imports);
                 // Add own package if it is part of one so it can access other classes in its package
-                if (!javaClass.packageName.isDefault()) {
+                if (!javaClass.packageName.equals("default#")) {
                     importsAndSelf.add(new ImportScope(ON_DEMAND, javaClass.packageName, null));
                 }
                 for (final ImportScope importScope : importsAndSelf) {
