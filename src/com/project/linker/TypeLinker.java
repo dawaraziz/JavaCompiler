@@ -1,4 +1,4 @@
-package com.project.type_linker;
+package com.project.linker;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ImportScope;
@@ -498,7 +498,3 @@ public class TypeLinker {
         }
     }
 }
-
-
-
-

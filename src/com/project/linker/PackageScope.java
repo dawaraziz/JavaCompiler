@@ -1,4 +1,4 @@
-package com.project.type_linker;
+package com.project.linker;
 
 import com.project.environments.ClassScope;
 
@@ -11,7 +11,7 @@ public class PackageScope {
         classes.add(classScope);
     }
 
-    public boolean containsClass(final String className) {
+    boolean containsClass(final String className) {
         return classes.stream().anyMatch(c -> c.name.equals(className));
     }
 }
