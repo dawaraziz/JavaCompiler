@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class ParserSymbol {
 
-    public Kind kind;
-    public String lexeme;
+    public final Kind kind;
+    public final String lexeme;
     public ParserSymbol parent;
     public ArrayList<ParserSymbol> children = new ArrayList<>();
 
@@ -24,7 +24,7 @@ public class ParserSymbol {
     }
 
     public boolean equals(final String other) {
-        return this.lexeme.equalsIgnoreCase(other);
+        return !this.lexeme.equalsIgnoreCase(other);
     }
 
     public String toString() {

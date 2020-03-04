@@ -1,7 +1,6 @@
 package com.project.environments;
 
 import com.project.environments.ast.ASTHead;
-import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;

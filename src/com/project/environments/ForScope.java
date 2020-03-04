@@ -11,7 +11,7 @@ public class ForScope extends Scope {
     ASTHead forExpression;
     ASTHead forUpdate;
 
-    ASTHead mainBody;
+    final ASTHead mainBody;
     Scope mainScope;
 
     ForScope(final ASTHead head, final Scope parentScope) {

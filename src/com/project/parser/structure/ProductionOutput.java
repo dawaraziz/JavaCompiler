@@ -8,7 +8,7 @@ public class ProductionOutput {
     }
 
     public ActionType actionType;
-    public Integer rule;
+    public final Integer rule;
 
     public ProductionOutput(final String actionType, final Integer rule) {
         if (actionType.equalsIgnoreCase("SHIFT")) {

@@ -5,9 +5,9 @@ import com.project.environments.ast.ASTNode;
 
 public class WhileScope extends Scope {
 
-    public ASTHead expression;
+    public final ASTHead expression;
 
-    public ASTHead mainBody;
+    public final ASTHead mainBody;
     public Scope mainScope;
 
     WhileScope(final ASTHead head, final Scope parentScope) {

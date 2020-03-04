@@ -9,7 +9,7 @@ public class ASTNode {
     public Kind kind;
     public String lexeme;
     public ASTNode parent;
-    public ArrayList<ASTNode> children = new ArrayList<>();
+    public final ArrayList<ASTNode> children = new ArrayList<>();
 
     ASTNode(final ParserSymbol symbol) {
         this.kind = symbol.kind;
@@ -20,15 +20,33 @@ public class ASTNode {
         return kind != null ? kind.toString() : lexeme;
     }
 
-    public boolean withinLexeme(String lex){
+    boolean withinLexeme(final String lex) {
         ASTNode node = this;
-        while (node.parent != null){
-            if (node.parent.lexeme.equals(lex)){
+        while (node.parent != null) {
+            if (node.parent.lexeme.equals(lex)) {
                 return true;
             }
             node = node.parent;
         }
         return false;
+    }
+
+    public boolean parentIsLexeme(final String lex) {
+        return parent != null && parent.lexeme.equals(lex);
+    }
+
+    public boolean within(final String lex) {
+        if (parent == null) return false;
+
+        if (parent.lexeme.equals(lex)) {
+            return true;
+        } else {
+            return parent.within(lex);
+        }
+    }
+
+    public void defaultToTypeName() {
+        kind = Kind.TYPENAME;
     }
 
     public ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {
@@ -116,8 +134,8 @@ public class ASTNode {
         return strings;
     }
 
-    public String stringFromChildren() {
-        StringBuilder sb = new StringBuilder();
+    String stringFromChildren() {
+        final StringBuilder sb = new StringBuilder();
 
         for (final ASTNode node : this.children) {
             sb.insert(0, node.lexeme);

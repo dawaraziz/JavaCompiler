@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class ParserRule {
-    public String input;
-    public ArrayList<String> output;
+    public final String input;
+    public final ArrayList<String> output;
 
     public ParserRule(final String rule) {
         final String[] splitRule = rule.split(" ");

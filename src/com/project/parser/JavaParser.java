@@ -53,8 +53,8 @@ public class JavaParser {
 
         // We exit once we see the compilation unit symbol and EOF simultaneously.
         while (parseStack.isEmpty()
-                || !parseStack.peek().equals("COMPILATIONUNIT")
-                || !inputStack.peek().equals("EOF")) {
+                || parseStack.peek().equals("COMPILATIONUNIT")
+                || inputStack.peek().equals("EOF")) {
 
             // Get the current lookahead symbol.
             final String lookahead = inputStack.peek().toString();

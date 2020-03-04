@@ -2,7 +2,6 @@ package com.project;
 
 import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
-import com.project.environments.structure.Name;
 import com.project.hierarchy.HierarchyChecker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
@@ -18,7 +17,11 @@ import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(final String[] args) {
@@ -54,7 +57,7 @@ public class Main {
             FieldModifierWeeder.weed(AST);
             ClassNameWeeder.weed(AST, fileName);
 
-            TypeLinker.disambiguate(AST);
+            TypeLinker.assignTypesToNames(AST);
             AST.printAST();
 
             // Associates the AST with the class name.
@@ -92,61 +95,42 @@ public class Main {
             System.exit(42);
         }
 
+        // Generates the methods that every interface specially has from the Object class.
         for (final ClassScope classScope : classTable) {
             if (classScope.type == ClassScope.CLASS_TYPE.INTERFACE) {
                 classScope.generateObjectMethods(objectScope.methodTable);
             }
         }
 
-        HashMap<String, ClassScope> classMap = new HashMap<>();
+        // Generates a map of all the classes in the program.
+        final HashMap<String, ClassScope> classMap = new HashMap<>();
+        for (final ClassScope classScope : classTable) {
+            classMap.put(classScope.packageName
+                            .generateAppendedPackageName(classScope.name)
+                            .getDefaultlessQualifiedName(),
+                    classScope);
+        }
 
-        for (ClassScope javaClass: classTable) {
-            String name = "";
-            if (javaClass.packageName == null) name = javaClass.name;
-            else {
-                String packageN = javaClass.packageName.getQualifiedName();
-                String split[];
-                if (packageN.contains(".")) {
-                    split = packageN.split("\\.");
-                }
-                else split = new String[]{packageN};
-                System.out.println(packageN);
-                System.out.println(split.length);
-                if (split[0].contains("default#")) {
-                    String [] newSplit = Arrays.copyOfRange(split, 1, split.length);
-                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
-                    else name = javaClass.name;
-                    System.out.println(name);
-                } else {
-                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                }
+        // Generate a set of all packages in the program.
+        final HashSet<String> packageSet = classTable.stream()
+                .map(c -> c.packageName.getQualifiedName())
+                .collect(Collectors.toCollection(HashSet::new));
+
+        // Creates a map of package scopes.
+        final HashMap<String, PackageScope> packageMap = new HashMap<>();
+        for (final String packageName : packageSet) {
+            final PackageScope packageScope = new PackageScope();
+            for (final ClassScope javaClass : classTable) {
+                if (packageName.equals(javaClass.packageName.getQualifiedName()))
+                    packageScope.addClass(javaClass);
             }
-            classMap.put(name, javaClass);
+            packageMap.put(packageName, packageScope);
         }
 
+        TypeLinker.link(classTable, packageMap);
 
-        // Get all declared packages
-        HashSet<String> package_names = new HashSet<>();
-        for (ClassScope javaClass: classTable) {
-            // given the AST we need to get the package declarations qualified name if it exists
-            package_names.add(javaClass.packageName.getQualifiedName());
-        }
-
-        // Create each package its own scope
-        HashMap<String, PackageScope> packages = new HashMap();
-        for (String pkg_name : package_names){
-            PackageScope pkg = new PackageScope(pkg_name);
-            for (ClassScope javaClass: classTable) {
-                if(pkg_name.equals(javaClass.packageName.getQualifiedName()))
-                    pkg.addClassToScope(javaClass);
-            }
-            packages.put(pkg_name, pkg);
-        }
-
-        TypeLinker.link(classTable, classMap, packages);
-
+        // Checks that the class hierarchy is correct.
         final HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
-
         hCheck.cycleDetected();
         hCheck.followsClassHierarchyRules();
         hCheck.followsMethodHierarchyRules();

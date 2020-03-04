@@ -4,7 +4,7 @@ import com.project.environments.ast.ASTNode;
 
 public class StringLiteralHolder {
     private final ASTNode node;
-    public String value;
+    public final String value;
 
     public StringLiteralHolder(final ASTNode node, final String value) {
         this.node = node;

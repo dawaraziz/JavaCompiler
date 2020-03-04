@@ -36,16 +36,6 @@ public class ImportScope extends Scope {
         return false;
     }
 
-    public Name generateFullName(final Name name) {
-        if (type == IMPORT_TYPE.ON_DEMAND) return null;
-
-        if (this.name.containsSuffixName(name)) {
-            return this.name;
-        } else {
-            return null;
-        }
-    }
-
     public String getSimpleName() {
         if (type == IMPORT_TYPE.ON_DEMAND) return null;
         return name.getSimpleName();

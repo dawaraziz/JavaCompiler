@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class BlockScope extends Scope {
     private final static String BLOCK_STATEMENTS = "BLOCKSTATEMENTS";
 
-    public ArrayList<ASTHead> statements;
-    public ArrayList<Scope> childScopes;
+    public final ArrayList<ASTHead> statements;
+    public final ArrayList<Scope> childScopes;
 
     BlockScope(final ASTHead head, final Scope parentScope) {
         final ASTNode blockBody = head.unsafeGetHeadNode().children.get(1);

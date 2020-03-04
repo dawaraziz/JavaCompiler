@@ -89,7 +89,7 @@ public class Type {
         if (this.name != null) {
             return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name);
         } else {
-            return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name == other.name;
+            return this.prim_type == other.prim_type && this.isArray == other.isArray;
         }
     }
 

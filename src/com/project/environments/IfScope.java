@@ -6,9 +6,9 @@ import com.project.environments.ast.ASTNode;
 public class IfScope extends Scope {
     private static final String ELSE = "else";
 
-    public ASTHead expression;
+    public final ASTHead expression;
 
-    public ASTHead mainBody;
+    public final ASTHead mainBody;
     public Scope mainScope;
 
     public ASTHead elseBody;

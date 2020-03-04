@@ -111,19 +111,18 @@ public class ASTHead {
     }
 
     public void printAST() {
-        ASTNode node = headNode;
         final Stack<Pair<ASTNode, Integer>> stack = new Stack<>();
-        stack.add(new Pair(node, 0));
+        stack.add(new Pair<>(headNode, 0));
         while (!stack.empty()) {
-            Pair<ASTNode, Integer> pair = stack.pop();
-            ASTNode curr = pair.getO1();
-            int level = pair.getO2();
+            final Pair<ASTNode, Integer> pair = stack.pop();
+            final ASTNode curr = pair.getO1();
+            final int level = pair.getO2();
             for (int i = 0; i < level; i++) {
                 System.out.print("\t");
             }
             System.out.println(curr.lexeme + " : " + curr.kind + " : " + level);
-            for (ASTNode child : curr.children) {
-                stack.add(new Pair(child, level + 1));
+            for (final ASTNode child : curr.children) {
+                stack.add(new Pair<>(child, level + 1));
             }
         }
     }
@@ -230,25 +229,22 @@ public class ASTHead {
         return imports;
     }
 
-    public HashSet<String> getUsedTypeNames(){
-        HashSet<String> res = new HashSet<>();
-        ASTNode node = headNode;
+    public HashSet<String> getUsedTypeNames() {
+        final HashSet<String> res = new HashSet<>();
         final Stack<ASTNode> stack = new Stack<>();
-        stack.add(node);
+        stack.add(headNode);
         while (!stack.empty()) {
-            ASTNode curr = stack.pop();
-            if(curr.withinLexeme("CLASSBODY")) {
+            final ASTNode curr = stack.pop();
+            if (curr.withinLexeme("CLASSBODY")) {
                 // If qualified name with first child a typename (last part of qualified name)
-                if (curr.lexeme.equals("QUALIFIEDNAME") && curr.children.get(0).kind == Kind.TYPENAME){
+                if (curr.lexeme.equals("QUALIFIEDNAME") && curr.children.get(0).kind == Kind.TYPENAME) {
                     res.add(curr.stringFromChildren());
                 }
                 if (curr.kind == Kind.TYPENAME && !curr.withinLexeme("QUALIFIEDNAME")) {
                     res.add(curr.lexeme);
                 }
             }
-            for (ASTNode child : curr.children) {
-                stack.add(child);
-            }
+            stack.addAll(curr.children);
         }
         return res;
     }
@@ -349,7 +345,7 @@ public class ASTHead {
             return null;
         }
 
-        ArrayList<Name> extendsName = new ArrayList<>();
+        final ArrayList<Name> extendsName = new ArrayList<>();
         extendsName.add(new Name(lexemesToStringList(nodes.get(0).children.get(0).getLeafNodes())));
         return extendsName;
     }
@@ -361,8 +357,8 @@ public class ASTHead {
             return null;
         }
 
-        ArrayList<Name> extendsName = new ArrayList<>();
-        for (ASTNode node : nodes.get(0).children) {
+        final ArrayList<Name> extendsName = new ArrayList<>();
+        for (final ASTNode node : nodes.get(0).children) {
             if (node.kind == null || node.kind == Kind.TYPENAME) {
                 extendsName.add(new Name(lexemesToStringList(node.getLeafNodes())));
             }
@@ -540,7 +536,7 @@ public class ASTHead {
 
         // After I change the type from Variable_ID this will break
         if (nameNodes.size() != 1) {
-            nameNodes = startNode.getDirectChildrenWithKinds("PACKAGEORTYPENAME","TYPENAME","AMBIGUOUSNAME");
+            nameNodes = startNode.getDirectChildrenWithKinds("PACKAGEORTYPENAME", "TYPENAME", "AMBIGUOUSNAME");
 
             if (nameNodes.size() != 1) {
                 System.err.println("Identified badly formatted name in a class; aborting!");
@@ -641,5 +637,13 @@ public class ASTHead {
     public boolean isForStatement() {
         return headNode.lexeme.equals(FOR_STATEMENT)
                 || headNode.lexeme.equals(FOR_STATEMENT_NO_SHORT_IF);
+    }
+
+    public ArrayList<ASTNode> getVariableIDNodes() {
+        return headNode.findNodesWithKinds(Kind.VARIABLE_ID);
+    }
+
+    public ArrayList<ASTNode> getQualifiedNameNodes() {
+        return headNode.findNodesWithLexeme("QUALIFIEDNAME");
     }
 }
