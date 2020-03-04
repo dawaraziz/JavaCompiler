@@ -5,9 +5,9 @@ import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.structure.Name.containsPrefixName;
@@ -31,8 +31,7 @@ public class ClassScope extends Scope {
 
     public final ArrayList<String> modifiers;
     public final ArrayList<ImportScope> imports;
-    public final HashSet<String> usedTypeNameStrings;
-    public final ArrayList<Name> usedTypeNames; // Same thing as used TypeNameStrings but Name Objects
+    public final ArrayList<Name> usedTypeNames;
 
     public final ArrayList<Name> implementsTable;
     public ArrayList<Name> extendsTable;
@@ -87,14 +86,12 @@ public class ClassScope extends Scope {
         constructorTable = new ArrayList<>();
         generateConstructorTable();
 
-        this.usedTypeNameStrings = ast.getUsedTypeNames();
-        this.usedTypeNames = new ArrayList<>();
-        for (final String s : usedTypeNameStrings) {
-            usedTypeNames.add(new Name(s));
-        }
+        this.usedTypeNames = ast.getUsedTypeNames().stream()
+                .map(Name::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public boolean isJavaLangObject () {
+    public boolean isJavaLangObject() {
         return name.equals("Object") && packageName.equals(Name.generateJavaLangPackageName());
     }
 
@@ -221,6 +218,14 @@ public class ClassScope extends Scope {
             if (importScope.type == SINGLE) {
                 final String simpleName = importScope.getSimpleName();
                 final Name packageName = importScope.getPackageName();
+
+                // Check that the import isn't the same as our name.
+                // Check no import clashes with class or interface definitions
+                if (importScope.name.getClassName().equals(this.name)
+                        && !importScope.name.checkPackageMatch(this.packageName)) {
+                    System.err.println("Found import with same name as class.");
+                    System.exit(42);
+                }
 
                 // Look for a class that matches the simple and package name.
                 boolean foundClass = false;
