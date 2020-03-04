@@ -81,8 +81,7 @@ public class Main {
         // Find the Object class.
         ClassScope objectScope = null;
         for (final ClassScope scope : classTable) {
-            if (scope.name.equals("Object")
-                    && scope.packageName.equals(Name.generateJavaLangPackageName())) {
+            if (scope.isJavaLangObject()) {
                 objectScope = scope;
                 break;
             }
@@ -146,23 +145,11 @@ public class Main {
 
         TypeLinker.link(classTable, classMap, packages);
 
-        HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
+        final HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
 
-
-        if (!hCheck.followsClassHierarchyRules()) {
-            System.out.println("1");
-            System.exit(42);
-        }
-
-        if (hCheck.cycleDetected()) {
-            System.out.println("2");
-            System.exit(42);
-        }
-
-        if (!hCheck.followsMethodHierarchyRules()) {
-            System.out.println("3");
-            System.exit(42);
-        }
+        hCheck.cycleDetected();
+        hCheck.followsClassHierarchyRules();
+        hCheck.followsMethodHierarchyRules();
 
         System.exit(0);
     }

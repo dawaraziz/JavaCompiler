@@ -6,395 +6,234 @@ import com.project.environments.MethodScope;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
+import static com.project.environments.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.ClassScope.CLASS_TYPE.INTERFACE;
 
 public class HierarchyChecker {
 
-    final ArrayList<ClassScope> classTable;
-    final HashMap<String, ClassScope> classMap;
+    private final ArrayList<ClassScope> classTable;
+    private final HashMap<String, ClassScope> classMap;
 
-    public HierarchyChecker(final ArrayList<ClassScope> classTable, final HashMap<String, ClassScope> classMap) {
+    public HierarchyChecker(final ArrayList<ClassScope> classTable,
+                            final HashMap<String, ClassScope> classMap) {
         this.classTable = classTable;
         this.classMap = classMap;
     }
 
-    public boolean cycleDetected() {
+    public void cycleDetected() {
+        for (final ClassScope classScope : classTable) {
 
-        for (final ClassScope javaClass : classTable) {
-            if (javaClass.extendsTable != null) {
-                System.out.println("Class: " + javaClass.name);
-                System.out.println("---------------------------------------");
-                for (final Name superClassName : javaClass.extendsTable) {
-                    final String fqn = superClassName.getQualifiedName();
-                    String name = "";
-                    if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
-                    else {
-                        final String packageN = javaClass.packageName.getQualifiedName();
-                        final String[] split;
-                        if (packageN.contains(".")) {
-                            split = packageN.split("\\.");
-                        } else split = new String[]{packageN};
-                        System.out.println(packageN);
-                        System.out.println(split.length);
-                        if (split[0].contains("default#")) {
-                            final String[] newSplit = Arrays.copyOfRange(split, 1, split.length);
-                            if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
-                            else name = javaClass.name;
-                            System.out.println(name);
-                        } else {
-                            name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                        }
-                    }
-                    if (fqn.equals(name)) {
-                        System.err.println("Detected a cycle");
-                        return true;
-                    }
-                }
+            final String className = classScope.packageName
+                    .generateAppendedPackageName(classScope.name)
+                    .getDefaultlessQualifiedName();
+
+            if (classScope.extendsTable != null &&
+                    classScope.extendsTable.stream()
+                            .map(Name::getQualifiedName)
+                            .anyMatch(c -> c.equals(className))) {
+                System.err.println("Detected a cycle.");
+                System.exit(42);
             }
 
             final ArrayList<String> namesSeen = new ArrayList<>();
-            String name = "";
-            if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
-            else {
-                final String packageN = javaClass.packageName.getQualifiedName();
-                final String[] split;
-                if (packageN.contains(".")) {
-                    split = packageN.split("\\.");
-                } else split = new String[]{packageN};
-                System.out.println(packageN);
-                System.out.println(split.length);
-                if (split[0].contains("default#")) {
-                    final String[] newSplit = Arrays.copyOfRange(split, 1, split.length);
-                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
-                    else name = javaClass.name;
-                    System.out.println(name);
-                } else {
-                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                }
-            }
-            namesSeen.add(name);
-            if (cycleCheck(javaClass, name, true, namesSeen)) {
-                System.err.println("Detected a cycle");
-                return true;
-            }
-        }
+            namesSeen.add(className);
 
-        return false;
+            cycleCheck(classScope, className, namesSeen);
+        }
     }
 
-    private boolean cycleCheck(final ClassScope javaClass, final String startName, final Boolean start, final ArrayList<String> namesSeen) {
-        if (javaClass.extendsTable != null) {
-            for (final Name superName : javaClass.extendsTable) {
-                String superClassName = "";
-                if (superName.getQualifiedName().contains("default#"))
-                    superClassName = superName.getQualifiedName().substring(9);
-                else superClassName = superName.getQualifiedName();
-                final ClassScope superClass = classMap.get(superClassName);
-                String name = "";
-                if (superClass.packageName.getQualifiedName().equals("default#")) name = superClass.name;
-                else {
-                    final String packageN = superClass.packageName.getQualifiedName();
-                    final String[] split;
-                    if (packageN.contains(".")) {
-                        split = packageN.split("\\.");
-                    } else split = new String[]{packageN};
-                    System.out.println(packageN);
-                    System.out.println(split.length);
-                    if (split[0].contains("default#")) {
-                        final String[] newSplit = Arrays.copyOfRange(split, 1, split.length);
-                        if (newSplit.length > 1) name = String.join(".", newSplit) + "." + superClass.name;
-                        else name = superClass.name;
-                        System.out.println(name);
-                    } else {
-                        name = superClass.packageName.getQualifiedName() + "." + superClass.name;
-                    }
+    private void cycleCheck(final ClassScope classScope, final String startName,
+                            final ArrayList<String> namesSeen) {
+        if (classScope == null || classScope.extendsTable == null) return;
+
+        for (final Name superName : classScope.extendsTable) {
+            final ClassScope superClass = classMap.get(superName.getDefaultlessQualifiedName());
+            final String superQualifiedName = superClass.packageName
+                    .generateAppendedPackageName(superClass.name)
+                    .getDefaultlessQualifiedName();
+
+            if (namesSeen.size() > 1) {
+                if (superQualifiedName.equals(startName)) {
+                    System.err.println("Detected a cycle.");
+                    System.exit(42);
                 }
-                if (name.equals(startName) && !start) return true;
-                if (namesSeen.contains(name) && !start) return false;
-                namesSeen.add(name);
 
-                final ClassScope classScope = classMap.get(name);
-                if (classScope == null) return false;
-                if (cycleCheck(classScope, startName, false, namesSeen)) return true;
+                if (namesSeen.contains(superQualifiedName)) return;
             }
-        }
 
-        return false;
+            namesSeen.add(superQualifiedName);
+
+            cycleCheck(classMap.get(superQualifiedName), startName, namesSeen);
+        }
     }
 
 
-    public boolean followsClassHierarchyRules() {
+    public void followsClassHierarchyRules() {
         final ArrayList<String> interfacesSeen = new ArrayList<>();
         final ArrayList<String> classesSeen = new ArrayList<>();
         final ArrayList<String> extendedClasses = new ArrayList<>();
 
         for (final ClassScope javaClass : classTable) {
-            if (javaClass.type == INTERFACE) {
-                String name = "";
-                if (javaClass.packageName.getQualifiedName().equals("default#")) {
-                    name = javaClass.name;
-                } else {
-                    name = javaClass.packageName + "." + javaClass.name;
-                }
-                interfacesSeen.add((name));
-            } else {
-                if (javaClass.extendsTable != null) {
-                    for (final Name name : javaClass.extendsTable) {
-                        extendedClasses.add(name.getQualifiedName());
-                    }
-                }
 
-                String name = "";
-                if (javaClass.packageName.getQualifiedName().equals("default#")) {
-                    name = javaClass.name;
-                } else {
-                    name = javaClass.packageName + "." + javaClass.name;
+            if (javaClass.type == CLASS && javaClass.extendsTable != null) {
+                for (final Name name : javaClass.extendsTable) {
+                    extendedClasses.add(name.getQualifiedName());
                 }
-                classesSeen.add((name));
             }
+
+            (javaClass.type == INTERFACE ? interfacesSeen : classesSeen)
+                    .add(javaClass.packageName
+                            .generateAppendedPackageName(javaClass.name)
+                            .getDefaultlessQualifiedName());
         }
 
         for (final ClassScope javaClass : classTable) {
-            String name = "";
-
-            if (javaClass.packageName.getQualifiedName().equals("default#")) name = javaClass.name;
-            else {
-                final String packageN = javaClass.packageName.getQualifiedName();
-                final String[] split;
-                if (packageN.contains(".")) {
-                    split = packageN.split("\\.");
-                } else split = new String[]{packageN};
-                System.out.println(packageN);
-                System.out.println(split.length);
-                if (split[0].contains("default#")) {
-                    final String[] newSplit = Arrays.copyOfRange(split, 1, split.length);
-                    if (newSplit.length > 1) name = String.join(".", newSplit) + "." + javaClass.name;
-                    else name = javaClass.name;
-                    System.out.println(name);
-                } else {
-                    name = javaClass.packageName.getQualifiedName() + "." + javaClass.name;
-                }
-            }
+            final String name = javaClass.packageName
+                    .generateAppendedPackageName(javaClass.name)
+                    .getDefaultlessQualifiedName();
 
             if (extendedClasses.contains(name) && javaClass.modifiers.contains("final")) {
                 System.err.println("Class extending a final class");
-                return false;
+                System.exit(42);
             }
-
 
             if (javaClass.extendsTable != null) {
                 for (final Name superClass : javaClass.extendsTable) {
-                    if (interfacesSeen.contains(superClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
+                    if (interfacesSeen.contains(superClass.getQualifiedName())
+                            && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
                         System.err.println("Class Extending Interface");
-                        return false;
+                        System.exit(42);
                     }
 
-                    if (classesSeen.contains(superClass.getQualifiedName()) && javaClass.type == INTERFACE) {
+                    if (classesSeen.contains(superClass.getQualifiedName())
+                            && javaClass.type == INTERFACE) {
                         System.err.println("Interface Extending Class");
-                        return false;
+                        System.exit(42);
                     }
                 }
             }
 
             if (javaClass.implementsTable != null) {
                 for (final Name implementsClass : javaClass.implementsTable) {
-                    if (classesSeen.contains(implementsClass.getQualifiedName()) && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
+                    if (classesSeen.contains(implementsClass.getQualifiedName())
+                            && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
                         System.err.println("Class Implementing Class");
-                        return false;
+                        System.exit(42);
                     }
                 }
             }
         }
-
-        return true;
     }
 
 
-    public boolean followsMethodHierarchyRules() {
-        checkDuplicateConstructors();
-
+    public void followsMethodHierarchyRules() {
         checkAbstractMethodsInNonAbstractClass();
-        abstractMethodCheck();
-
+        checkDuplicateConstructors();
         checkDuplicateMethods();
-
-        return !followsMethodHierarchyRulesHelper();
+        checkInvalidOverride();
+        checkUnimplementedAbstractMethods();
     }
 
-    private boolean followsMethodHierarchyRulesHelper() {
-
+    private void checkInvalidOverride() {
         for (final ClassScope javaClass : classTable) {
+            if (javaClass.methodTable == null) continue;
+
             final ArrayList<MethodScope> inheritedMethods = getInheritedMethodsList(javaClass);
 
-            if (javaClass.methodTable != null) {
-                for (final MethodScope subMethod : javaClass.methodTable) {
-                    for (final MethodScope method : inheritedMethods) {
-                        if (subMethod.sameSignature(method)) {
-                            if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
-                                System.err.println("Non static method replacing static");
-                                return true;
-                            }
-                            if (!subMethod.type.equals(method.type)) {
-                                System.err.println("Same signature with different return types");
-                                return true;
-                            }
-                            if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
-                                System.err.println("Protected method replacing public");
-                                return true;
-                            }
-                            if (method.modifiers.contains("final")) {
-                                System.err.println("Method replacing final method");
-                                return true;
-                            }
-                        }
-                    }
-                }
-                int i = 0;
-                while (i < inheritedMethods.size()) {
-                    int j = 0;
-                    while (j < inheritedMethods.size()) {
-                        if (i != j) {
-                            final MethodScope method = inheritedMethods.get(i);
-                            final MethodScope subMethod = inheritedMethods.get(j);
-                            ClassScope objectScope = null;
-                            for (final ClassScope scope : classTable) {
-                                if (scope.name.equals("Object")
-                                        && scope.packageName.equals(Name.generateJavaLangPackageName())) {
-                                    objectScope = scope;
-                                    break;
-                                }
-                            }
+            for (final MethodScope override : javaClass.methodTable) {
+                for (final MethodScope parent : inheritedMethods) {
+                    if (!override.equals(parent)) continue;
 
-                            if (objectScope == null) {
-                                System.err.println("Could not identify java.lang.Object. Aborting!");
-                                System.exit(42);
-                            }
-                            final boolean check1 = subMethod.name.equals("getClass") && method.name.equals("getClass");
-                            final boolean check = (subMethod.parentScope == null & method.parentScope == null);
-                            if (!(check) && !check1) {
-                                if (subMethod.sameSignature(method)) {
-                                    if ((subMethod.modifiers.contains("static") && !method.modifiers.contains("static")) || (!subMethod.modifiers.contains("static") && method.modifiers.contains("static"))) {
-                                        System.err.println("Non static method replacing static");
-                                        return true;
-                                    }
-                                    if (!subMethod.type.equals(method.type)) {
-                                        System.err.println("Same signature with different return types");
-                                        return true;
-                                    }
-                                    if (subMethod.modifiers.contains("protected") && method.modifiers.contains("public")) {
-                                        if (!javaClass.name.equals("LinkedList") || !javaClass.packageName.getQualifiedName().equals("foo")) {
-                                            System.err.println("Protected method replacing public");
-                                            return true;
-                                        }
-                                    }
-                                    if (method.modifiers.contains("final")) {
-                                        System.err.println("Method replacing final method");
-                                        return true;
-                                    }
-                                }
-                            }
+                    final ArrayList<String> parentMods = parent.modifiers;
+                    final ArrayList<String> overrideMods = override.modifiers;
 
-                        }
-                        j++;
+                    if (parentMods.contains("static") ^ overrideMods.contains("static")) {
+                        System.err.println("Non static method replacing static.");
+                        System.exit(42);
+                    } else if (!parent.type.equals(override.type)) {
+                        System.err.println("Same signature with different return types.");
+                        System.exit(42);
+                    } else if (overrideMods.contains("protected") && parentMods.contains("public")) {
+                        System.err.println("Protected method replacing public.");
+                        System.exit(42);
+                    } else if (parent.modifiers.contains("final")) {
+                        System.err.println("Method replacing final method.");
+                        System.exit(42);
                     }
-                    i++;
                 }
             }
 
+            for (int i = 0; i < inheritedMethods.size(); ++i) {
+                final MethodScope method_1 = inheritedMethods.get(i);
+                for (int j = 0; j < inheritedMethods.size(); ++j) {
+                    if (i == j) continue;
+
+                    final MethodScope method_2 = inheritedMethods.get(j);
+
+                    if (method_2.name.equals("getClass") && method_1.name.equals("getClass")) continue;
+                    if (method_2.parentScope == null && method_1.parentScope == null) continue;
+
+                    if (!method_2.equals(method_1)) continue;
+
+                    final ArrayList<String> method_1_Mods = method_1.modifiers;
+                    final ArrayList<String> method_2_Mods = method_2.modifiers;
+
+                    if (method_1_Mods.contains("static") ^ method_2_Mods.contains("static")) {
+                        System.err.println("Non static method replacing static.");
+                        System.exit(42);
+                    } else if (!method_1.type.equals(method_2.type)) {
+                        System.err.println("Same signature with different return types.");
+                        System.exit(42);
+                    } else if (method_1.modifiers.contains("final")) {
+                        System.err.println("Method replacing final method.");
+                        System.exit(42);
+                    }
+                }
+            }
         }
-
-
-        return false;
     }
 
     private ArrayList<MethodScope> getInheritedMethodsList(final ClassScope javaClass) {
-
         final ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+
         final Stack<ClassScope> classes = new Stack<>();
-        if (javaClass.extendsTable != null) {
-            for (final Name superName : javaClass.extendsTable) {
-                String superClassName = "";
-                if (superName.getQualifiedName().contains("default#"))
-                    superClassName = superName.getQualifiedName().substring(9);
-                else superClassName = superName.getQualifiedName();
-                final ClassScope superClass = classMap.get(superClassName);
-                if (superClass != null) {
-                    classes.push(superClass);
-                    if (superClass.methodTable != null) {
-                        for (final MethodScope method : superClass.methodTable) {
-                            inheritedMethods.add(method);
-                        }
-                    }
-                }
-            }
-        }
+        classes.push(javaClass);
 
-        if (javaClass.implementsTable != null) {
-            if (javaClass.name.equals("Main")) ;
-            for (final Name superName : javaClass.implementsTable) {
-                String superClassName = "";
-                if (superName.getQualifiedName().contains("default#"))
-                    superClassName = superName.getQualifiedName().substring(9);
-                else superClassName = superName.getQualifiedName();
-                final ClassScope superClass = classMap.get(superClassName);
-                if (superClass != null) {
-                    classes.push(superClass);
-                    if (superClass.methodTable != null) {
-                        for (final MethodScope method : superClass.methodTable) {
-                            inheritedMethods.add(method);
-                        }
-                    }
-                }
-            }
-        }
-
-        while (!classes.empty()) {
-            final ClassScope currClass = classes.pop();
-            if (currClass.extendsTable != null) {
-                for (final Name superName : currClass.extendsTable) {
-                    String superClassName = "";
-                    if (superName.getQualifiedName().contains("default#"))
-                        superClassName = superName.getQualifiedName().substring(9);
-                    else superClassName = superName.getQualifiedName();
-                    final ClassScope superClass = classMap.get(superClassName);
-                    if (superClass != null) {
-                        classes.push(superClass);
-                        if (superClass.methodTable != null) {
-                            for (final MethodScope method : superClass.methodTable) {
-                                inheritedMethods.add(method);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (currClass.implementsTable != null) {
-                for (final Name superName : currClass.implementsTable) {
-                    String superClassName = "";
-                    if (superName.getQualifiedName().contains("default#"))
-                        superClassName = superName.getQualifiedName().substring(9);
-                    else superClassName = superName.getQualifiedName();
-                    final ClassScope superClass = classMap.get(superClassName);
-                    if (superClass != null) {
-                        classes.push(superClass);
-                        if (superClass.methodTable != null) {
-                            for (final MethodScope method : superClass.methodTable) {
-                                inheritedMethods.add(method);
-                            }
-                        }
-                    }
-                }
-            }
+        while (!classes.isEmpty()) {
+            final ClassScope curClass = classes.pop();
+            inheritedMethods.addAll(getMethods(curClass.extendsTable, classes));
+            inheritedMethods.addAll(getMethods(curClass.implementsTable, classes));
         }
 
         return inheritedMethods;
     }
 
-    private void abstractMethodCheck() {
+    private ArrayList<MethodScope> getMethods(final ArrayList<Name> superList,
+                                              final Stack<ClassScope> classes) {
+        final ArrayList<MethodScope> methods = new ArrayList<>();
+
+        if (superList == null) return methods;
+
+        for (final Name superName : superList) {
+            final ClassScope superClass = classMap.get(superName.getDefaultlessQualifiedName());
+
+            if (superClass == null) continue;
+
+            classes.push(superClass);
+
+            if (superClass.methodTable != null) {
+                methods.addAll(superClass.methodTable);
+            }
+        }
+
+        return methods;
+
+    }
+
+    private void checkUnimplementedAbstractMethods() {
         for (final ClassScope classScope : classTable) {
             checkSuperAbstractMethods(classScope,
                     new ArrayList<>(),
@@ -441,7 +280,7 @@ public class HierarchyChecker {
                             .anyMatch(methodScope::equals);
 
                     if (!foundSameSig && hasRealChild) {
-                        System.err.println("Unimplemented interface method");
+                        System.err.println("Found interface with unimplemented method.");
                         System.exit(42);
                     }
 
@@ -472,7 +311,7 @@ public class HierarchyChecker {
                         .anyMatch(c -> isClassAbstract || c.bodyBlock != null);
 
                 if (!foundSameSig && !isClassAbstract) {
-                    System.err.println("Unimplemented abstract method");
+                    System.err.println("Found class with unimplemented abstract method.");
                     System.exit(42);
                 }
             }
@@ -496,7 +335,7 @@ public class HierarchyChecker {
                     if (seenMethods.stream().anyMatch(methodScope::equals)) continue;
 
                     if (!classScope.modifiers.contains("abstract") || hasRealChild) {
-                        System.err.println("Unimplemented interface method");
+                        System.err.println("Found interface with unimplemented method.");
                         System.exit(42);
                     }
                 }

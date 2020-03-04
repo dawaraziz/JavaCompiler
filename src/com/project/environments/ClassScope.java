@@ -94,6 +94,10 @@ public class ClassScope extends Scope {
         }
     }
 
+    public boolean isJavaLangObject () {
+        return name.equals("Object") && packageName.equals(Name.generateJavaLangPackageName());
+    }
+
     private void generateConstructorTable() {
         final ArrayList<ASTHead> constructors = ast.getConstructorNodes();
         for (final ASTHead constructor : constructors) {
