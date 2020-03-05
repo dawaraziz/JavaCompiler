@@ -1,16 +1,16 @@
 package com.project.hierarchy;
 
-import com.project.environments.ClassScope;
-import com.project.environments.ConstructorScope;
-import com.project.environments.MethodScope;
+import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ConstructorScope;
+import com.project.environments.scopes.MethodScope;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import static com.project.environments.ClassScope.CLASS_TYPE.CLASS;
-import static com.project.environments.ClassScope.CLASS_TYPE.INTERFACE;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 
 public class HierarchyChecker {
 
@@ -78,13 +78,13 @@ public class HierarchyChecker {
 
         for (final ClassScope javaClass : classTable) {
 
-            if (javaClass.type == CLASS && javaClass.extendsTable != null) {
+            if (javaClass.classType == CLASS && javaClass.extendsTable != null) {
                 for (final Name name : javaClass.extendsTable) {
                     extendedClasses.add(name.getQualifiedName());
                 }
             }
 
-            (javaClass.type == INTERFACE ? interfacesSeen : classesSeen)
+            (javaClass.classType == INTERFACE ? interfacesSeen : classesSeen)
                     .add(javaClass.packageName
                             .generateAppendedPackageName(javaClass.name)
                             .getDefaultlessQualifiedName());
@@ -103,13 +103,13 @@ public class HierarchyChecker {
             if (javaClass.extendsTable != null) {
                 for (final Name superClass : javaClass.extendsTable) {
                     if (interfacesSeen.contains(superClass.getQualifiedName())
-                            && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
+                            && javaClass.classType == ClassScope.CLASS_TYPE.CLASS) {
                         System.err.println("Class Extending Interface");
                         System.exit(42);
                     }
 
                     if (classesSeen.contains(superClass.getQualifiedName())
-                            && javaClass.type == INTERFACE) {
+                            && javaClass.classType == INTERFACE) {
                         System.err.println("Interface Extending Class");
                         System.exit(42);
                     }
@@ -119,7 +119,7 @@ public class HierarchyChecker {
             if (javaClass.implementsTable != null) {
                 for (final Name implementsClass : javaClass.implementsTable) {
                     if (classesSeen.contains(implementsClass.getQualifiedName())
-                            && javaClass.type == ClassScope.CLASS_TYPE.CLASS) {
+                            && javaClass.classType == ClassScope.CLASS_TYPE.CLASS) {
                         System.err.println("Class Implementing Class");
                         System.exit(42);
                     }
@@ -268,7 +268,7 @@ public class HierarchyChecker {
             checkSuperAbstractMethods(classScope,
                     new ArrayList<>(),
                     !classScope.modifiers.contains("abstract")
-                            && classScope.type != INTERFACE);
+                            && classScope.classType != INTERFACE);
 
         }
     }
@@ -281,7 +281,7 @@ public class HierarchyChecker {
         seenMethods.addAll(classScope.methodTable);
 
         if (classScope.extendsTable != null) {
-            if (classScope.type == ClassScope.CLASS_TYPE.INTERFACE) {
+            if (classScope.classType == ClassScope.CLASS_TYPE.INTERFACE) {
                 checkInterfaceExtendsAbstractMethods(classScope, seenMethods, hasRealChild);
             } else {
                 checkClassExtendsAbstractMethods(classScope, seenMethods, hasRealChild);
@@ -338,7 +338,7 @@ public class HierarchyChecker {
 
                 final boolean foundSameSig = seenMethods.stream()
                         .filter(methodScope::equals)
-                        .anyMatch(c -> isClassAbstract || c.bodyBlock != null);
+                        .anyMatch(c -> isClassAbstract || c.body != null);
 
                 if (!foundSameSig && !isClassAbstract) {
                     System.err.println("Found class with unimplemented abstract method.");
@@ -380,7 +380,7 @@ public class HierarchyChecker {
     private void checkAbstractMethodsInNonAbstractClass() {
         for (final ClassScope javaClass : classTable) {
             if (javaClass.methodTable == null
-                    || javaClass.type == INTERFACE
+                    || javaClass.classType == INTERFACE
                     || javaClass.modifiers.contains("abstract")) continue;
 
             for (final MethodScope method : javaClass.methodTable) {

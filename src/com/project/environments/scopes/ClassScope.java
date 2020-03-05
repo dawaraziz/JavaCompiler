@@ -1,7 +1,8 @@
-package com.project.environments;
+package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
+import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.structure.Name.containsPrefixName;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
 
@@ -26,7 +27,7 @@ public class ClassScope extends Scope {
 
     public final String name;
     public final ASTHead ast;
-    public final CLASS_TYPE type;
+    public final CLASS_TYPE classType;
     public final Name packageName;
 
     public final ArrayList<String> modifiers;
@@ -46,6 +47,7 @@ public class ClassScope extends Scope {
         this.packageName = ast.getPackageName();
         this.imports = ast.getImports(this);
         this.modifiers = ast.getClassModifiers();
+        this.type = new Type(name, packageName);
 
         singleImportMap = new HashMap<>();
         onDemandImportMap = new HashMap<>();
@@ -53,17 +55,17 @@ public class ClassScope extends Scope {
 
         final ASTHead classDeclaration = ast.getClassDeclaration();
 
-        this.type = classDeclaration.getClassType();
+        this.classType = classDeclaration.getClassType();
 
         implementsTable = classDeclaration.getClassInterfaces();
 
-        if (this.type == CLASS_TYPE.INTERFACE) {
+        if (this.classType == CLASS_TYPE.INTERFACE) {
             extendsTable = classDeclaration.getInterfaceSuperInterfaces();
         } else {
             extendsTable = classDeclaration.getClassSuperClass();
         }
 
-        if (this.type == CLASS_TYPE.CLASS) {
+        if (this.classType == CLASS_TYPE.CLASS) {
             if (!this.name.equals("Object")
                     || this.packageName == null
                     || !this.packageName.isJavaLang()) {
@@ -182,7 +184,7 @@ public class ClassScope extends Scope {
 
     private Boolean containsMethod(final MethodScope methodScope) {
         for (final MethodScope method : methodTable) {
-            final boolean signatureMatch = method.sameSignature(methodScope);
+            final boolean signatureMatch = method.equals(methodScope);
             final boolean returnsMatch = method.type.equals(methodScope.type);
 
             if (signatureMatch && !returnsMatch) {
@@ -204,7 +206,7 @@ public class ClassScope extends Scope {
     }
 
     @Override
-    boolean isInitCheck(final String variableName) {
+    public boolean isVariableNameFree(final String variableName) {
         return false;
     }
 
@@ -215,7 +217,7 @@ public class ClassScope extends Scope {
      */
     public void generateImportMaps(final ArrayList<ClassScope> classTable) {
         for (final ImportScope importScope : imports) {
-            if (importScope.type == SINGLE) {
+            if (importScope.importType == SINGLE) {
                 final String simpleName = importScope.getSimpleName();
                 final Name packageName = importScope.getPackageName();
 
@@ -291,7 +293,8 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void linkTypes() {
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         linkSuperTypes();
         linkImplementsTypes();
         linkFieldsTypes();
@@ -307,7 +310,7 @@ public class ClassScope extends Scope {
         }
 
         for (final ConstructorScope constructorScope : constructorTable) {
-            constructorScope.linkTypes();
+            constructorScope.linkTypesToQualifiedNames(this);
         }
     }
 
@@ -404,18 +407,15 @@ public class ClassScope extends Scope {
     }
 
     private void linkMethodParameters() {
-        if (methodTable == null) return;
-
-        for (final MethodScope methodScope : methodTable) {
-            methodScope.linkParameters();
-        }
+        if (methodTable != null) methodTable.forEach(c -> c.linkTypesToQualifiedNames(this));
     }
 
     private void linkFieldsTypes() {
-        if (fieldTable == null) return;
+        if (fieldTable != null) fieldTable.forEach(c -> c.linkTypesToQualifiedNames(this));
+    }
 
-        for (final FieldScope fieldScope : fieldTable) {
-            fieldScope.linkTypes();
-        }
+    @Override
+    public void checkTypeSoundness() {
+
     }
 }

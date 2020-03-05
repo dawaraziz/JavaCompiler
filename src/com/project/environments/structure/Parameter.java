@@ -1,6 +1,6 @@
 package com.project.environments.structure;
 
-import com.project.environments.ClassScope;
+import com.project.environments.scopes.ClassScope;
 
 public class Parameter {
     public final Type type;
@@ -12,7 +12,7 @@ public class Parameter {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         } else if (!(obj instanceof Parameter)) {

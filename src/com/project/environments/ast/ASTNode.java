@@ -31,10 +31,6 @@ public class ASTNode {
         return false;
     }
 
-    public boolean parentIsLexeme(final String lex) {
-        return parent != null && parent.lexeme.equals(lex);
-    }
-
     public boolean within(final String lex) {
         if (parent == null) return false;
 

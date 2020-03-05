@@ -1,39 +1,30 @@
-package com.project.environments;
+package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.statements.Statement;
 import com.project.environments.structure.Parameter;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ConstructorScope extends Scope {
-    public final String name;
-    public final ASTHead ast;
-
     public final ArrayList<String> modifiers;
     public final ArrayList<Parameter> parameters;
-    public final ASTHead bodyBlock;
-
-    public final BlockScope startScope;
+    public final Statement body;
 
     ConstructorScope(final ASTHead constructor, final ClassScope classScope) {
-        bodyBlock = constructor.getConstructorBlock();
+        this.ast = constructor;
+        this.parentScope = classScope;
+        this.name = constructor.getConstructorName();
+        this.type = classScope.type;
+
         modifiers = constructor.getConstructorModifiers().get(0);
         parameters = constructor.getMethodParameters();
-        parentScope = classScope;
-
-        name = constructor.getConstructorName();
-        ast = constructor;
-
-        if (bodyBlock != null) {
-            startScope = new BlockScope(bodyBlock, this);
-        } else {
-            startScope = null;
-        }
+        body = Statement.generateStatementScope(constructor.getConstructorBlock(), this);
     }
 
     @Override
-    boolean isInitCheck(final String variableName) {
+    public boolean isVariableNameFree(final String variableName) {
         if (parameters == null) return false;
 
         for (final Parameter parameter : parameters) {
@@ -44,19 +35,16 @@ public class ConstructorScope extends Scope {
         return false;
     }
 
-    public void linkTypes() {
-        if (!(parentScope instanceof ClassScope)) {
-            System.err.println("Found constructor with non-class scope parent; aborting!");
-            System.exit(42);
-        }
-
-        final ClassScope parent = (ClassScope) parentScope;
-
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         if (parameters == null) return;
 
-        for (final Parameter param : parameters) {
-            param.linkType(parent);
-        }
+        parameters.forEach(c -> c.linkType(rootClass));
+    }
+
+    @Override
+    public void checkTypeSoundness() {
+        body.checkTypeSoundness();
     }
 
     @Override

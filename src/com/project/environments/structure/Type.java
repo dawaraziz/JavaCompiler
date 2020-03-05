@@ -1,8 +1,10 @@
 package com.project.environments.structure;
 
-import com.project.environments.ClassScope;
+import com.project.environments.scopes.ClassScope;
 
 import java.util.ArrayList;
+
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 
 public class Type {
     public enum PRIM_TYPE {
@@ -25,6 +27,13 @@ public class Type {
     public final PRIM_TYPE prim_type;
     public Name name;
     public final boolean isArray;
+
+    public Type(final String simpleName, final Name packageName) {
+        isArray = false;
+        prim_type = VAR;
+
+        name = Name.generateFullyQualifiedName(simpleName, packageName);
+    }
 
     public Type(final ArrayList<String> typeLexemes) {
         if (typeLexemes.contains("[") && typeLexemes.contains("]")) {
@@ -94,10 +103,9 @@ public class Type {
     }
 
     public void linkType(final ClassScope classScope) {
-        if (prim_type == PRIM_TYPE.VAR) {
-            if (name.getPackageName() == null) {
-                name = classScope.findImportedType(name.getSimpleName());
-            }
-        }
+        // We don't care about primitive types or already qualified names.
+        if (prim_type != VAR || name.getPackageName() != null) return;
+
+        name = classScope.findImportedType(name.getSimpleName());
     }
 }

@@ -1,6 +1,6 @@
 package com.project.linker;
 
-import com.project.environments.ClassScope;
+import com.project.environments.scopes.ClassScope;
 
 import java.util.ArrayList;
 

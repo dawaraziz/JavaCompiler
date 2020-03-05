@@ -1,10 +1,10 @@
 package com.project.environments.ast;
 
-import com.project.environments.ClassScope;
-import com.project.environments.ImportScope;
 import com.project.environments.ast.structure.CharacterLiteralHolder;
 import com.project.environments.ast.structure.IntegerLiteralHolder;
 import com.project.environments.ast.structure.StringLiteralHolder;
+import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ImportScope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
@@ -18,12 +18,14 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static com.project.environments.ClassScope.CLASS_TYPE;
-import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
-import static com.project.environments.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.ast.ASTNode.lexemesToStringList;
 import static com.project.environments.ast.structure.IntegerLiteralHolder.ParentType.OTHER;
 import static com.project.environments.ast.structure.IntegerLiteralHolder.ParentType.UNARY;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE;
+import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.ON_DEMAND;
+import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.scanner.structure.Kind.CURLY_BRACKET_CLOSE;
+import static com.project.scanner.structure.Kind.CURLY_BRACKET_OPEN;
 
 public class ASTHead {
 
@@ -45,6 +47,7 @@ public class ASTHead {
     public final static String NATIVE = "native";
 
     // CLASS LEXEMES
+    private final static String CONSTRUCTOR_BODY = "CONSTRUCTORBODY";
     private final static String CLASS_DECLARATION = "CLASSDECLARATION";
     private final static String INTERFACE_DECLARATION = "INTERFACEDECLARATION";
     private final static String INTERFACES = "INTERFACES";
@@ -73,6 +76,7 @@ public class ASTHead {
 
     // STATEMENT LEXEMES
     public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
+    private final static String LOCAL_VARIABLE_DECLARATION = "LOCALVARIABLEDECLARATION";
 
     private final static String IF_THEN_STATEMENT = "IFTHENSTATEMENT";
     private final static String IF_THEN_ELSE_STATEMENT = "IFTHENELSESTATEMENT";
@@ -391,8 +395,19 @@ public class ASTHead {
         return nameNodes.get(0).children.get(0).lexeme;
     }
 
-    public ArrayList<ArrayList<String>> getFieldModifiers() {
+    public ArrayList<ArrayList<String>> getAllFieldModifiers() {
         return getModifiers(headNode.findNodesWithLexeme(FIELD_DECLARATION));
+    }
+
+    public ArrayList<String> getFieldModifiers() {
+        final ArrayList<ArrayList<String>> modifiers = getModifiers(headNode.findNodesWithLexeme(FIELD_DECLARATION));
+
+        if (modifiers.size() != 1) {
+            System.err.println("Encountered field with incorrect modifiers; Aborting!");
+            System.exit(42);
+        }
+
+        return modifiers.get(0);
     }
 
     public int getFieldCount() {
@@ -616,11 +631,12 @@ public class ASTHead {
 
     // SCOPE FUNCTIONS
     public boolean isBlock() {
-        return headNode.lexeme.equals(BLOCK);
+        return headNode.lexeme.equals(BLOCK) || headNode.lexeme.equals(CONSTRUCTOR_BODY);
     }
 
     public boolean isDefinition() {
-        return headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION_STATEMENT);
+        return headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION_STATEMENT)
+                || headNode.lexeme.equals(LOCAL_VARIABLE_DECLARATION);
     }
 
     public boolean isIfStatement() {
@@ -645,5 +661,50 @@ public class ASTHead {
 
     public ArrayList<ASTNode> getQualifiedNameNodes() {
         return headNode.findNodesWithLexeme("QUALIFIEDNAME");
+    }
+
+    public boolean isEmptyStatement() {
+        return headNode.lexeme.equals("EMPTYSTATEMENT");
+    }
+
+    public boolean isReturnStatement() {
+        return headNode.lexeme.equals("RETURNSTATEMENT");
+    }
+
+    public boolean isExpressionStatement() {
+        return headNode.lexeme.equals("EXPRESSIONSTATEMENT");
+    }
+
+    public ASTHead getChild(final int index) {
+        if (index >= headNode.children.size()) {
+            System.err.println("Requesting node child beyond index; aborting!");
+            System.exit(42);
+        }
+
+        return new ASTHead(headNode.children.get(index));
+    }
+
+    public ArrayList<ASTHead> getChildren() {
+        return headNode.children.stream()
+                .map(ASTHead::new)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public String getLexeme() {
+        return headNode.lexeme;
+    }
+
+    public Kind getKind() {
+        return headNode.kind;
+    }
+
+    public void stripBracesFromBlock() {
+        if (headNode.children.size() > 3
+                && headNode.children.get(0).kind == CURLY_BRACKET_CLOSE
+                && headNode.children.get(headNode.children.size() - 1).kind == CURLY_BRACKET_OPEN) {
+            headNode.children.remove(0);
+            headNode.children.remove(headNode.children.size() - 1);
+            stripBracesFromBlock();
+        }
     }
 }

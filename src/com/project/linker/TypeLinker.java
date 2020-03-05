@@ -1,7 +1,7 @@
 package com.project.linker;
 
-import com.project.environments.ClassScope;
-import com.project.environments.ImportScope;
+import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ImportScope;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.structure.Name;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Stack;
 
-import static com.project.environments.ImportScope.IMPORT_TYPE.ON_DEMAND;
+import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.ON_DEMAND;
 
 public class TypeLinker {
 
@@ -260,7 +260,7 @@ public class TypeLinker {
                 importsAndSelf.add(new ImportScope(ON_DEMAND, javaClass.packageName, null));
 
                 for (final ImportScope importScope : importsAndSelf) {
-                    if (importScope.type.equals(ON_DEMAND)) {
+                    if (importScope.importType.equals(ON_DEMAND)) {
                         final String importPackage = importScope.name.getQualifiedName();
                         final PackageScope pkgScope = packages.get(importPackage);
 

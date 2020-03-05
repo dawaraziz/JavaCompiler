@@ -11,7 +11,7 @@ import static com.project.environments.ast.ASTHead.PUBLIC;
 
 public class FieldModifierWeeder {
     public static void weed(final ASTHead astHead) {
-        final ArrayList<ArrayList<String>> fieldModifiers = astHead.getFieldModifiers();
+        final ArrayList<ArrayList<String>> fieldModifiers = astHead.getAllFieldModifiers();
 
         // If we're missing a modifier list, it must have no access modifier.
         if (fieldModifiers.size() != astHead.getFieldCount()) {

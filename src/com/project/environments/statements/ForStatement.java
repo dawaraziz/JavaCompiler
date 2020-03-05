@@ -1,0 +1,75 @@
+package com.project.environments.statements;
+
+import com.project.environments.ast.ASTHead;
+import com.project.environments.expressions.Expression;
+import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.Scope;
+
+public class ForStatement extends Statement {
+    Scope forInit;
+    Expression forExpression;
+    Expression forUpdate;
+    final Statement forBody;
+
+    public ForStatement(final ASTHead head, final Scope parentScope) {
+        this.ast = head;
+        this.parentScope = parentScope;
+        this.name = null;
+        this.type = null;
+
+        for (int i = head.getChildren().size() - 1; i >= 3; --i) {
+            if (head.getChild(i).getLexeme().equals("(")
+                    && head.getChild(i - 2).getLexeme().equals(";")
+                    && head.getChild(i - 1).getKind() == null) {
+                final ASTHead forInitHead = head.getChild(i - 1);
+                if (forInitHead.getLexeme().equals("LOCALVARIABLEDECLARATION")) {
+                    forInit = Statement.generateStatementScope(forInitHead, this);
+                } else {
+                    forInit = Expression.generateExpressionScope(forInitHead, this);
+                }
+            } else if (head.getChild(i).getLexeme().equals(";")
+                    && head.getChild(i - 2).getLexeme().equals(";")
+                    && head.getChild(i - 1).getKind() == null) {
+                forExpression = Expression.generateExpressionScope(head.getChild(i - 1), this);
+            } else if (head.getChild(i).getLexeme().equals(";")
+                    && head.getChild(i - 2).getLexeme().equals(")")
+                    && head.getChild(i - 1).getKind() == null) {
+                forUpdate = Expression.generateExpressionScope(head.getChild(i - 1), this);
+            }
+        }
+
+        forBody = Statement.generateStatementScope(head.getChild(0), this);
+    }
+
+    @Override
+    public boolean isVariableNameFree(final String variableName) {
+        if (forInit != null
+                && forInit.isVariableNameFree(variableName)) {
+            return true;
+        } else {
+            return parentScope.isVariableNameFree(variableName);
+        }
+    }
+
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+        if (forInit != null) forInit.linkTypesToQualifiedNames(rootClass);
+        if (forExpression != null) forExpression.linkTypesToQualifiedNames(rootClass);
+        if (forUpdate != null) forUpdate.linkTypesToQualifiedNames(rootClass);
+        if (forBody != null) forBody.linkTypesToQualifiedNames(rootClass);
+    }
+
+    @Override
+    public void checkTypeSoundness() {
+        // TODO: Uncomment when expression types are implemented.
+//        if (forExpression != null && forExpression.type.prim_type != BOOLEAN) {
+//            System.err.println("Encountered non-boolean for expression.");
+//            System.exit(42);
+//        }
+
+        if (forInit != null) forInit.checkTypeSoundness();
+        if (forExpression != null) forExpression.checkTypeSoundness();
+        if (forUpdate != null) forUpdate.checkTypeSoundness();
+        if (forBody != null) forBody.checkTypeSoundness();
+    }
+}

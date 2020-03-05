@@ -1,13 +1,13 @@
 package com.project;
 
-import com.project.environments.ClassScope;
 import com.project.environments.ast.ASTHead;
+import com.project.environments.scopes.ClassScope;
 import com.project.hierarchy.HierarchyChecker;
+import com.project.linker.PackageScope;
+import com.project.linker.TypeLinker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.JavaScanner;
-import com.project.linker.PackageScope;
-import com.project.linker.TypeLinker;
 import com.project.weeders.AbstractMethodWeeder;
 import com.project.weeders.ClassModifierWeeder;
 import com.project.weeders.ClassNameWeeder;
@@ -67,7 +67,7 @@ public class Main {
         // Link all types to their fully qualified name.
         for (final ClassScope classScope : classTable) {
             classScope.generateImportMaps(classTable);
-            classScope.linkTypes();
+            classScope.linkTypesToQualifiedNames(null);
         }
 
         // Checks for duplicate classes.
@@ -97,7 +97,7 @@ public class Main {
 
         // Generates the methods that every interface specially has from the Object class.
         for (final ClassScope classScope : classTable) {
-            if (classScope.type == ClassScope.CLASS_TYPE.INTERFACE) {
+            if (classScope.classType == ClassScope.CLASS_TYPE.INTERFACE) {
                 classScope.generateObjectMethods(objectScope.methodTable);
             }
         }

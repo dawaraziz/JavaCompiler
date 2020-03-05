@@ -163,7 +163,4 @@ public class Name {
                 && fullyQualifiedName.get(1).equals("java");
     }
 
-    public boolean isDefault() {
-        return fullyQualifiedName.size() == 1 && fullyQualifiedName.get(0).equals("default#");
-    }
 }
