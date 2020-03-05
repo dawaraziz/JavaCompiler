@@ -68,6 +68,7 @@ public class Main {
         for (final ClassScope classScope : classTable) {
             classScope.generateImportMaps(classTable);
             classScope.linkTypesToQualifiedNames(null);
+            classScope.checkTypeSoundness();
         }
 
         // Checks for duplicate classes.

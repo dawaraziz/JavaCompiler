@@ -35,6 +35,12 @@ public class Type {
         name = Name.generateFullyQualifiedName(simpleName, packageName);
     }
 
+    public Type(final Type type, boolean isArray) {
+        this.prim_type = type.prim_type;
+        this.name = type.name;
+        this.isArray = isArray;
+    }
+
     public Type(final ArrayList<String> typeLexemes) {
         if (typeLexemes.contains("[") && typeLexemes.contains("]")) {
             isArray = true;

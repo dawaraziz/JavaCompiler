@@ -24,8 +24,7 @@ import static com.project.environments.ast.structure.IntegerLiteralHolder.Parent
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.ON_DEMAND;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
-import static com.project.scanner.structure.Kind.CURLY_BRACKET_CLOSE;
-import static com.project.scanner.structure.Kind.CURLY_BRACKET_OPEN;
+import static com.project.scanner.structure.Kind.*;
 
 public class ASTHead {
 
@@ -706,5 +705,13 @@ public class ASTHead {
             headNode.children.remove(headNode.children.size() - 1);
             stripBracesFromBlock();
         }
+    }
+
+    public boolean isExpressionName() {
+        return headNode.kind == EXPRESSIONNAME;
+    }
+
+    public boolean isArrayAccessExpression() {
+        return headNode.lexeme.equals("ARRAYACCESS");
     }
 }
