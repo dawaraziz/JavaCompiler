@@ -132,7 +132,7 @@ public class Main {
 
         // Checks that the class hierarchy is correct.
         final HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
-        hCheck.cycleDetected();
+        hCheck.checkSuperCycles();
         hCheck.followsClassHierarchyRules();
         hCheck.followsMethodHierarchyRules();
 

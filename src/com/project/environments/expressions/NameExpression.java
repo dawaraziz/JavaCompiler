@@ -15,16 +15,16 @@ public class NameExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-       nameClass = new Name(lexemesToStringList(head.unsafeGetHeadNode().getLeafNodes()));
+        nameClass = new Name(lexemesToStringList(head.unsafeGetHeadNode().getLeafNodes()));
     }
 
     @Override
-    public boolean isVariableNameFree(String variableName) {
+    public boolean isVariableNameFree(final String variableName) {
         return parentScope.isVariableNameFree(variableName);
     }
 
     @Override
-    public void linkTypesToQualifiedNames(ClassScope rootClass) {
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         // TODO:
     }
 
@@ -32,7 +32,7 @@ public class NameExpression extends Expression {
     public void checkTypeSoundness() {
     }
 
-    public boolean isExpressionName() {
+    boolean isExpressionName() {
         return ast.isExpressionName();
     }
 }

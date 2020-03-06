@@ -4,6 +4,7 @@ import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ASTNode {
     public Kind kind;
@@ -14,6 +15,17 @@ public class ASTNode {
     ASTNode(final ParserSymbol symbol) {
         this.kind = symbol.kind;
         this.lexeme = symbol.lexeme;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ASTNode astNode = (ASTNode) o;
+        return kind == astNode.kind &&
+                Objects.equals(lexeme, astNode.lexeme) &&
+                Objects.equals(parent, astNode.parent) &&
+                Objects.equals(children, astNode.children);
     }
 
     public String toString() {
@@ -39,10 +51,6 @@ public class ASTNode {
         } else {
             return parent.within(lex);
         }
-    }
-
-    public void defaultToTypeName() {
-        kind = Kind.TYPENAME;
     }
 
     public ArrayList<ASTNode> findNodesWithLexeme(final String... lexemes) {

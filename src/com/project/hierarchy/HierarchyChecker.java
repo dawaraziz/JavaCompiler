@@ -23,7 +23,7 @@ public class HierarchyChecker {
         this.classMap = classMap;
     }
 
-    public void cycleDetected() {
+    public void checkSuperCycles() {
         for (final ClassScope classScope : classTable) {
 
             final String className = classScope.packageName

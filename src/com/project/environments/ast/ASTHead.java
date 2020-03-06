@@ -233,23 +233,23 @@ public class ASTHead {
     }
 
     public HashSet<String> getUsedTypeNames() {
-        final HashSet<String> res = new HashSet<>();
-        final Stack<ASTNode> stack = new Stack<>();
-        stack.add(headNode);
-        while (!stack.empty()) {
-            final ASTNode curr = stack.pop();
-            if (curr.withinLexeme("CLASSBODY")) {
-                // If qualified name with first child a typename (last part of qualified name)
-                if (curr.lexeme.equals("QUALIFIEDNAME") && curr.children.get(0).kind == Kind.TYPENAME) {
-                    res.add(curr.stringFromChildren());
-                }
-                if (curr.kind == Kind.TYPENAME && !curr.withinLexeme("QUALIFIEDNAME")) {
-                    res.add(curr.lexeme);
-                }
+        final HashSet<String> ret = new HashSet<>();
+
+        if (headNode.withinLexeme("CLASSBODY")) {
+            // If qualified name with first child a typename (last part of qualified name)
+            if (headNode.lexeme.equals("QUALIFIEDNAME")
+                    && headNode.children.get(0).kind == Kind.TYPENAME) {
+                ret.add(headNode.stringFromChildren());
             }
-            stack.addAll(curr.children);
+            if (headNode.kind == Kind.TYPENAME
+                    && !headNode.withinLexeme("QUALIFIEDNAME")) {
+                ret.add(headNode.lexeme);
+            }
         }
-        return res;
+
+        getChildren().forEach(c-> ret.addAll(c.getUsedTypeNames()));
+
+        return ret;
     }
 
 
