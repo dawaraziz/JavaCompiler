@@ -80,4 +80,9 @@ public class MethodScope extends Scope {
     public void checkTypeSoundness() {
         body.checkTypeSoundness();
     }
+
+    public boolean checkIdentifierAgainstParameters(final String identifier) {
+        return parameters.stream()
+                .anyMatch(c -> c.name.getSimpleName().equals(identifier));
+    }
 }

@@ -24,7 +24,12 @@ import static com.project.environments.ast.structure.IntegerLiteralHolder.Parent
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.ON_DEMAND;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
-import static com.project.scanner.structure.Kind.*;
+import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
+import static com.project.scanner.structure.Kind.CURLY_BRACKET_CLOSE;
+import static com.project.scanner.structure.Kind.CURLY_BRACKET_OPEN;
+import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
+import static com.project.scanner.structure.Kind.PACKAGENAME;
+import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class ASTHead {
 
@@ -247,7 +252,7 @@ public class ASTHead {
             }
         }
 
-        getChildren().forEach(c-> ret.addAll(c.getUsedTypeNames()));
+        getChildren().forEach(c -> ret.addAll(c.getUsedTypeNames()));
 
         return ret;
     }
@@ -713,5 +718,36 @@ public class ASTHead {
 
     public boolean isArrayAccessExpression() {
         return headNode.lexeme.equals("ARRAYACCESS");
+    }
+
+    public void classifyAsExpressionName() {
+        if (headNode.kind != AMBIGUOUSNAME) {
+            System.err.println("Trying to reclassify non-ambigious name; aborting!");
+            System.exit(42);
+        }
+
+        headNode.kind = EXPRESSIONNAME;
+    }
+
+    public void classifyAsTypeName() {
+        if (headNode.kind != AMBIGUOUSNAME) {
+            System.err.println("Trying to reclassify non-ambigious name; aborting!");
+            System.exit(42);
+        }
+
+        headNode.kind = TYPENAME;
+    }
+
+    public void classifyAsPackageName() {
+        if (headNode.kind != AMBIGUOUSNAME) {
+            System.err.println("Trying to reclassify non-ambigious name; aborting!");
+            System.exit(42);
+        }
+
+        headNode.kind = PACKAGENAME;
+    }
+
+    public ASTHead getLeftmostChild() {
+        return getChild(headNode.children.size() - 1);
     }
 }

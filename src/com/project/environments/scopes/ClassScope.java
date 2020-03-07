@@ -16,6 +16,8 @@ import static com.project.environments.structure.Name.generateFullyQualifiedName
 
 public class ClassScope extends Scope {
 
+    static ClassScope duplicateHolderScope = new ClassScope();
+
     public enum CLASS_TYPE {
         INTERFACE,
         CLASS
@@ -25,7 +27,6 @@ public class ClassScope extends Scope {
     private final Map<String, ClassScope> onDemandImportMap;
     private final Map<String, ClassScope> inPackageImportMap;
 
-    public final String name;
     public final ASTHead ast;
     public final CLASS_TYPE classType;
     public final Name packageName;
@@ -39,7 +40,7 @@ public class ClassScope extends Scope {
 
     public final ArrayList<MethodScope> methodTable;
     public final ArrayList<ConstructorScope> constructorTable;
-    private final ArrayList<FieldScope> fieldTable;
+    public final ArrayList<FieldScope> fieldTable;
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -91,6 +92,27 @@ public class ClassScope extends Scope {
         this.usedTypeNames = ast.getUsedTypeNames().stream()
                 .map(Name::new)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ClassScope() {
+        singleImportMap = null;
+        onDemandImportMap = null;
+        inPackageImportMap = null;
+
+        ast = null;
+        classType = null;
+        packageName = null;
+
+        modifiers = null;
+        imports = null;
+        usedTypeNames = null;
+
+        implementsTable = null;
+        extendsTable = null;
+
+        methodTable = null;
+        constructorTable = null;
+        fieldTable = null;
     }
 
     public boolean isJavaLangObject() {
@@ -264,11 +286,11 @@ public class ClassScope extends Scope {
                         final String simpleName = classScope.name;
 
                         // We can have duplicates in our on-demand imports, but we can't use them.
-                        // We'll put the import to a null if we find it, so we error out if we use it.
+                        // We'll put the import to a special scope if we find it, so we error out if we use it.
                         // Again, we make sure it's not exactly the same class.
                         if (onDemandImportMap.containsKey(simpleName)
                                 && !onDemandImportMap.get(simpleName).packageName.equals(packageName)) {
-                            onDemandImportMap.replace(simpleName, null);
+                            onDemandImportMap.replace(simpleName, duplicateHolderScope);
                         } else {
                             onDemandImportMap.put(simpleName, classScope);
                         }
@@ -417,5 +439,30 @@ public class ClassScope extends Scope {
     @Override
     public void checkTypeSoundness() {
 
+    }
+
+    public boolean checkIdentifier(final String identifier) {
+        return this.name.equals(identifier);
+    }
+
+    public boolean checkIdentifierAgainstSingleImports(final String identifier) {
+        return singleImportMap.get(identifier) != null;
+    }
+
+    public boolean checkIdentifierAgainstPackageImports(final String identifier) {
+        return inPackageImportMap.get(identifier) != null;
+    }
+
+    public boolean checkIdentifierAgainstOnDemandImports(final String identifier) {
+        final ClassScope scope = onDemandImportMap.get(identifier);
+
+        // We need to do this to identify duplicates. If we previously IDed a
+        // duplicate, the map has a special scope in it.
+        if (scope == duplicateHolderScope) {
+            System.err.println("Requested on-demand import with non-singular resolution.");
+            System.exit(42);
+        }
+
+        return onDemandImportMap.get(identifier) != null;
     }
 }

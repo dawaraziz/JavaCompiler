@@ -37,4 +37,8 @@ public class FieldScope extends Scope {
 //            System.exit(42);
 //        }
     }
+
+    public boolean checkIdentifier(final String identifier) {
+        return identifier.equals(name);
+    }
 }

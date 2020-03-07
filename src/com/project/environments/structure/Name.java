@@ -29,6 +29,10 @@ public class Name {
         fullyQualifiedName = new ArrayList<>();
     }
 
+    public boolean isSimpleName() {
+        return fullyQualifiedName.size() == 1;
+    }
+
     public boolean isNotSimpleName() {
         final boolean notSimple = this.getQualifiedName().contains(".");
         System.out.println("Is there a dot? guaranteed " + notSimple + " in " + this.getQualifiedName());
@@ -163,4 +167,11 @@ public class Name {
                 && fullyQualifiedName.get(1).equals("java");
     }
 
+    public String getLeftmostName() {
+        return fullyQualifiedName.get(fullyQualifiedName.size() - 1);
+    }
+
+    public ArrayList<String> getNameList() {
+        return fullyQualifiedName;
+    }
 }

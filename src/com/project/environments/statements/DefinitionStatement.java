@@ -78,4 +78,8 @@ public class DefinitionStatement extends Statement {
 
         statements.forEach(Scope::checkTypeSoundness);
     }
+
+    public boolean checkIdentifier(final String identifier) {
+        return identifier.equals(name);
+    }
 }
