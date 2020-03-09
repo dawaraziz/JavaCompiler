@@ -17,6 +17,11 @@ public class ASTNode {
         this.lexeme = symbol.lexeme;
     }
 
+    ASTNode(final Kind kind, final String lexeme) {
+        this.kind = kind;
+        this.lexeme = lexeme;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

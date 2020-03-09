@@ -17,16 +17,20 @@ public class IfStatement extends Statement {
         this.parentScope = parentScope;
         this.name = null;
 
-        final boolean hasElse = head.unsafeGetHeadNode()
-                .getDirectChildrenWithLexemes("else").size() == 1;
+        final boolean hasElse = head.getChildren().size() > 5;
+
+        expression = generateExpressionScope(head.getChild(head.getChildren().size() - 3),
+                this);
+        ifBody = generateStatementScope(head.getChild(head.getChildren().size() - 5),
+                this);
 
         if (hasElse) {
-            expression = generateExpressionScope(head.getChild(4), this);
-            ifBody = generateStatementScope(head.getChild(2), this);
-            elseBody = generateStatementScope(head.getChild(0), this);
+            if (head.getChildren().size() == 7) {
+                elseBody = generateStatementScope(head.getChild(0), this);
+            } else {
+                elseBody = generateStatementScope(head.generateIfSubHead(), this);
+            }
         } else {
-            expression = generateExpressionScope(head.getChild(2), this);
-            ifBody = generateStatementScope(head.getChild(0), this);
             elseBody = null;
         }
     }

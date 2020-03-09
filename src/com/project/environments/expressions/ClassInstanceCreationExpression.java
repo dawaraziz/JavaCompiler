@@ -13,7 +13,7 @@ public class ClassInstanceCreationExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        if (head.getChildren().size() == 6) {
+        if (head.getChildren().size() == 5) {
             argList = generateExpressionScope(head.getChild(1), this);
             classType = generateExpressionScope(head.getChild(3), this);
         } else {

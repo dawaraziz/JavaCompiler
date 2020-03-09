@@ -4,6 +4,8 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
+import java.util.ArrayList;
+
 public class MethodInvocationExpression extends Expression {
     final Expression methodName;
     final Expression parameters;
@@ -13,11 +15,13 @@ public class MethodInvocationExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        if (ast.getChildren().size() == 4) {
-            methodName = generateExpressionScope(head.getChild(3), this);
+        methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+
+        if (ast.getChildren().size() > 4) {
+            parameters = generateExpressionScope(head.generateMethodSubHead(), this);
+        } else if (ast.getChildren().size() == 4) {
             parameters = generateExpressionScope(head.getChild(1), this);
         } else {
-            methodName = generateExpressionScope(head.getChild(2), this);
             parameters = null;
         }
     }
