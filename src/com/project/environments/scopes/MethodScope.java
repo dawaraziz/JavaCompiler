@@ -74,6 +74,8 @@ public class MethodScope extends Scope {
         if (parameters == null) return;
 
         parameters.forEach(c -> c.linkType(rootClass));
+
+        if (body != null) body.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override

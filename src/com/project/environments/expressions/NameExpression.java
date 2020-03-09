@@ -2,25 +2,46 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.FieldScope;
+import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
-import com.project.environments.structure.Name;
+import com.project.environments.statements.DefinitionStatement;
 import com.project.scanner.structure.Kind;
 
-import java.util.ArrayList;
-
-import static com.project.environments.ast.ASTNode.lexemesToStringList;
-import static java.util.Collections.reverse;
+import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
+import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
+import static com.project.scanner.structure.Kind.METHODNAME;
+import static com.project.scanner.structure.Kind.PACKAGENAME;
+import static com.project.scanner.structure.Kind.PACKAGEORTYPENAME;
+import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class NameExpression extends Expression {
-    final Name nameClass;
+    final String nameLexeme;
+    Kind nameKind;
 
-    public NameExpression(final ASTHead head, final Scope parentScope) {
+    final NameExpression qualifier;
+
+    Scope namePointer;
+
+    NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
 
-        nameClass = new Name(lexemesToStringList(head.unsafeGetHeadNode().getLeafNodes()));
+        if (ast.getChildren().size() == 0) {
+            nameLexeme = head.getLexeme();
+            nameKind = head.getKind();
+            qualifier = null;
+        } else if (ast.getChildren().size() == 1) {
+            nameLexeme = head.getChild(0).getLexeme();
+            nameKind = head.getChild(0).getKind();
+            qualifier = null;
+        } else {
+            nameLexeme = head.getChild(head.getChildren().size() - 1).getLexeme();
+            nameKind = head.getChild(head.getChildren().size() - 1).getKind();
+            qualifier = new NameExpression(head.generateNameSubHead(), this);
+        }
     }
 
     @Override
@@ -30,106 +51,184 @@ public class NameExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+        if (qualifier != null) qualifier.linkTypesToQualifiedNames(rootClass);
 
-        // First, let's try to disambiguate any AmbiguousNames.
-        if (nameClass.isSimpleName()) {
-            disambiguateSimpleName(nameClass.getSimpleName(), ast);
+        // First, reclassify any ambiguous names.
+        if (qualifier == null) {
+            resolveLeftMostAmbiguousName();
         } else {
-            final ArrayList<String> nameList = nameClass.getNameList();
-            reverse(nameList);
+            disambiguateInternalQualifiedName();
+        }
 
-            final StringBuilder fullName = new StringBuilder(nameList.get(0));
-
-            disambiguateSimpleName(fullName.toString(), ast.getLeftmostChild());
-
-            for (int i = 1; i < nameList.size(); ++i) {
-                final int index = ast.getChildren().size() - 1 - (i * 2);
-                final int previousIndex = index + 2;
-
-                disambiguateQualifiedName(fullName.toString(),
-                        nameList.get(i),
-                        ast.getChild(index),
-                        ast.getChild(previousIndex).getKind());
-
-                fullName.append(nameList.get(i));
+        // Then, reclassify any choice names.
+        if (nameKind == PACKAGEORTYPENAME) {
+            if (getParentClass().checkIdentifier(nameLexeme)) {
+                nameKind = TYPENAME;
+            } else {
+                nameKind = PACKAGENAME;
             }
         }
+
+        // Then, we try to classify and clarify what each name points to.
+        if (qualifier == null) {
+            classifySimpleName();
+        } else {
+            classifyQualifiedName();
+        }
+
+        if (namePointer == null) {
+            System.err.println("Could not identify name pointer; aborting!");
+            System.exit(42);
+        }
+
+        type = namePointer.type;
     }
 
-    /**
-     * https://web.archive.org/web/20120105104400/http://java.sun.com/docs/books/jls/second_edition/html/names.doc.html#44352
-     */
-    private void disambiguateSimpleName(final String ambiguousName, final ASTHead nodeHead) {
+    private void classifySimpleName() {
+        final ClassScope parentClass = getParentClass();
+
+        if (nameKind == PACKAGENAME) {
+            if (!parentClass.checkIfPackageExists(nameLexeme)) {
+                System.err.println("Found invalid package name.");
+                System.exit(42);
+            }
+        } else if (ast.getKind() == TYPENAME) {
+            namePointer = parentClass.resolveSimpleTypeName(nameLexeme);
+        } else if (ast.getKind() == EXPRESSIONNAME) {
+
+            // First, check if we can find it in our method declaration.
+            if (getParentMethod() != null) {
+                final DefinitionStatement statement = getDefinitionScope(nameLexeme);
+
+                if (statement != null) {
+                    namePointer = statement;
+                    return;
+                }
+
+                final MethodScope method = getParentMethod();
+                if (method.checkIdentifierAgainstParameters(nameLexeme)) {
+                    namePointer = method;
+                    return;
+                }
+            }
+
+            // Then check if we can find it in our class declaration.
+            final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
+            if (fieldScope != null) {
+                namePointer = fieldScope;
+            }
+        } else if (ast.getKind() == METHODNAME) {
+            System.err.println("Crud!");
+            System.exit(42);
+        }
+
+    }
+
+    private void classifyQualifiedName() {
+
+        final ClassScope parentClass = getParentClass();
+        final String qualifierName = getQualifierName();
+
+        if (nameKind == PACKAGENAME) {
+            if (!parentClass.isNamePrefixOfPackage(getQualifiedName())) {
+                System.err.println("Found non-prefix package name.");
+                System.exit(42);
+            }
+        } else if (nameKind == TYPENAME) {
+            if (qualifier.nameKind == TYPENAME) {
+                System.err.println("Found type qualified typename. JOOS ILLEGAL!");
+                System.exit(42);
+            } else if (qualifier.nameKind == PACKAGENAME) {
+                final ClassScope classScope = parentClass.getClassFromPackage(qualifierName, nameLexeme);
+                if (classScope == null) {
+                    System.err.println("Could not identify package qualified type name");
+                    System.exit(42);
+                }
+                namePointer = classScope;
+            } else {
+                System.err.println("Found non package qualified typename.");
+                System.exit(42);
+            }
+        }
+
+        System.err.println("Crud!");
+        System.exit(42);
+
+    }
+
+    private void resolveLeftMostAmbiguousName() {
+        if (nameKind != AMBIGUOUSNAME) return;
 
         // Check if we can find the name as a field, parameter, or local definition.
-        if (getParentClass().checkIdentifierAgainstFields(ambiguousName)
-                || getParentMethod().checkIdentifierAgainstParameters(ambiguousName)
-                || getParentLocalDefinitions().stream().anyMatch(c -> c.checkIdentifier(ambiguousName))) {
-            nodeHead.classifyAsExpressionName();
+        if (getParentClass().checkIdentifierAgainstFields(nameLexeme)
+                || getParentMethod().checkIdentifierAgainstParameters(nameLexeme)
+                || getParentLocalDefinitions().stream().anyMatch(c -> c.checkIdentifier(nameLexeme))) {
+            nameKind = EXPRESSIONNAME;
 
             // Check if our parent class either is or single imports the name.
-        } else if (getParentClass().checkIdentifier(ambiguousName)
-                || getParentClass().checkIdentifierAgainstSingleImports(ambiguousName)) {
-            nodeHead.classifyAsTypeName();
+        } else if (getParentClass().checkIdentifier(nameLexeme)
+                || getParentClass().checkIdentifierAgainstSingleImports(nameLexeme)) {
+            nameKind = TYPENAME;
         }
 
         // Check if we can find the name in our package.
-        else if (getParentClass().checkIdentifierAgainstPackageImports(ambiguousName)) {
-            nodeHead.classifyAsTypeName();
+        else if (getParentClass().checkIdentifierAgainstPackageImports(nameLexeme)) {
+            nameKind = TYPENAME;
         }
 
         // Check if the name appears one on-demand import.
         // If it appears in more than one, this exits as an error.
-        else if (getParentClass().checkIdentifierAgainstOnDemandImports(ambiguousName)) {
-            nodeHead.classifyAsTypeName();
+        else if (getParentClass().checkIdentifierAgainstOnDemandImports(nameLexeme)) {
+            nameKind = TYPENAME;
         }
 
         // Otherwise, it's a PackageName.
         else {
-            nodeHead.classifyAsPackageName();
+            nameKind = PACKAGENAME;
         }
     }
 
-    private void disambiguateQualifiedName(final String previousName,
-                                           final String ambiguousName,
-                                           final ASTHead nodeHead,
-                                           final Kind previousKind) {
+    private void disambiguateInternalQualifiedName() {
+        if (nameKind != AMBIGUOUSNAME) return;
+
+        final String qualifierName = getQualifierName();
+
         // Need to take entire name on the left.
-        if (previousKind == Kind.PACKAGENAME) {
-            final PackageScope packageScope = getParentClass().packageMap.get(previousName);
+        if (qualifier.nameKind == Kind.PACKAGENAME) {
+            final PackageScope packageScope = getParentClass().packageMap.get(qualifierName);
 
             if (packageScope != null
-                    && packageScope.classes.stream().anyMatch(c -> c.name.equals(ambiguousName))) {
-                nodeHead.classifyAsTypeName();
+                    && packageScope.classes.stream().anyMatch(c -> c.name.equals(nameLexeme))) {
+                nameKind = TYPENAME;
             } else {
-                nodeHead.classifyAsPackageName();
+                nameKind = PACKAGENAME;
             }
-        } else if (previousKind == Kind.TYPENAME) {
-            final ClassScope matchingClass = getParentClass().findClass(previousName);
+        } else if (qualifier.nameKind == Kind.TYPENAME) {
+            final ClassScope matchingClass = getParentClass().findClass(qualifierName);
 
             if (matchingClass == null) {
                 System.err.println("Could not find typename for ambiguous type name.");
                 System.exit(42);
             }
 
-            if (matchingClass.checkIdentifierAgainstFields(ambiguousName)
-                    || matchingClass.checkIdentifierAgainstMethods(ambiguousName)) {
-                nodeHead.classifyAsExpressionName();
+            if (matchingClass.checkIdentifierAgainstFields(nameLexeme)
+                    || matchingClass.checkIdentifierAgainstMethods(nameLexeme)) {
+                nameKind = EXPRESSIONNAME;
             } else {
                 System.err.println("Could not reclassify ambiguous typename.");
                 System.exit(42);
             }
-        } else if (previousKind == Kind.EXPRESSIONNAME) {
-            final ClassScope matchingClass = getParentClass().findClass(previousName);
+        } else if (qualifier.nameKind == Kind.EXPRESSIONNAME) {
+            final ClassScope matchingClass = getParentClass().findClass(qualifierName);
 
             if (matchingClass == null) {
                 System.err.println("Could not find typename for ambiguous expression name.");
                 System.exit(42);
             }
 
-            if (matchingClass.checkIdentifierAgainstFields(ambiguousName)
-                    || matchingClass.checkIdentifierAgainstMethods(ambiguousName)) {
-                nodeHead.classifyAsExpressionName();
+            if (matchingClass.checkIdentifierAgainstFields(nameLexeme)
+                    || matchingClass.checkIdentifierAgainstMethods(nameLexeme)) {
+                nameKind = EXPRESSIONNAME;
             } else {
                 System.err.println("Could not reclassify ambiguous expression name.");
                 System.exit(42);
@@ -146,5 +245,21 @@ public class NameExpression extends Expression {
 
     boolean isExpressionName() {
         return ast.isNameExpr();
+    }
+
+    private String getQualifierName() {
+        if (qualifier != null) {
+            return qualifier.getQualifiedName();
+        } else {
+            return null;
+        }
+    }
+
+    private String getQualifiedName() {
+        if (qualifier != null) {
+            return nameLexeme + "." + qualifier.getQualifiedName();
+        } else {
+            return nameLexeme;
+        }
     }
 }

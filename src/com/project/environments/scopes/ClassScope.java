@@ -499,4 +499,58 @@ public class ClassScope extends Scope {
         }
         return null;
     }
+
+    public boolean isTypeInScope(final String identifier) {
+        return checkIdentifier(identifier)
+                || checkIdentifierAgainstSingleImports(identifier)
+                || checkIdentifierAgainstOnDemandImports(identifier)
+                || checkIdentifierAgainstPackageImports(identifier);
+    }
+
+    public boolean isTypeInPackageScope(final Name packageName, final String simpleName) {
+        final PackageScope packageScope = packageMap.get(packageName.getQualifiedName());
+        return packageScope != null && packageScope.containsClass(simpleName);
+    }
+
+    public boolean checkIfPackageExists(final String identifier) {
+        return packageMap.get(identifier) != null;
+    }
+
+    public Scope resolveSimpleTypeName(final String identifier) {
+        if (checkIdentifier(identifier)) {
+            return this;
+        } else if (checkIdentifierAgainstSingleImports(identifier)) {
+            return singleImportMap.get(identifier);
+        } else if (checkIdentifierAgainstPackageImports(identifier)) {
+            return inPackageImportMap.get(identifier);
+        } else if (checkIdentifierAgainstOnDemandImports(identifier)) {
+            return onDemandImportMap.get(identifier);
+        } else {
+            System.err.println("Could not resolve type name.");
+            System.exit(42);
+            return null;
+        }
+    }
+
+    public FieldScope getIdentifierFromFields(final String identifier) {
+        for (final FieldScope fieldScope : fieldTable) {
+            if (fieldScope.checkIdentifier(identifier)) return fieldScope;
+        }
+        return null;
+    }
+
+    public boolean isNamePrefixOfPackage(final String prefix) {
+        for (final String packageName : packageMap.keySet()) {
+            if (packageName.startsWith(prefix)) return true;
+        }
+        return false;
+    }
+
+    public ClassScope getClassFromPackage(final String packageName, final String simpleName) {
+        final PackageScope packageScope = packageMap.get(packageName);
+
+        if (packageScope == null) return null;
+
+        return packageScope.getClass(simpleName);
+    }
 }

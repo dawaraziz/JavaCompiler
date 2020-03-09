@@ -40,12 +40,12 @@ public class ReturnStatement extends Statement {
         }
 
         // TODO: Uncomment when expression types are implemented.
-        if (parentMethod.type.prim_type == VOID && expression != null) {
-            System.err.println("Encountered non-void return in void method.");
-            System.exit(42);
-        } else if (expression == null || !expression.type.equals(parentMethod.type)) {
-            System.err.println("Encountered return with incorrect type.");
-            System.exit(42);
-        }
+//        if (parentMethod.type.prim_type == VOID && expression != null) {
+//            System.err.println("Encountered non-void return in void method.");
+//            System.exit(42);
+//        } else if (expression == null || !expression.type.equals(parentMethod.type)) {
+//            System.err.println("Encountered return with incorrect type.");
+//            System.exit(42);
+//        }
     }
 }

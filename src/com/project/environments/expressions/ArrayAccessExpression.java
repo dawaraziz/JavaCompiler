@@ -38,12 +38,11 @@ public class ArrayAccessExpression extends Expression {
         LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
 
-        if (!LHS.type.isArray) {
-            System.err.println("Found array access with non-array LHS.");
-            System.exit(42);
-        }
-
-        this.type = new Type(LHS.type, false);
+//        if (!LHS.type.isArray) {
+//            System.err.println("Found array access with non-array LHS.");
+//            System.exit(42);
+//        }
+//        this.type = new Type(LHS.type, false);
     }
 
     @Override

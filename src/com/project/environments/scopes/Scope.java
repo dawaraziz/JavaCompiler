@@ -51,6 +51,7 @@ public abstract class Scope {
     }
 
     protected MethodScope getParentMethod() {
+        if (parentScope == null) return null;
         if (this instanceof MethodScope) {
             return (MethodScope) this;
         } else {
@@ -76,5 +77,17 @@ public abstract class Scope {
         } else {
             return parentScope.getParentClass();
         }
+    }
+
+    protected DefinitionStatement getDefinitionScope(String identifier) {
+        if (this instanceof DefinitionStatement) {
+            if (this.name.equals(identifier)) {
+                return (DefinitionStatement) this;
+            }
+        }
+
+        if (parentScope == null) return null;
+
+        return parentScope.getDefinitionScope(identifier);
     }
 }
