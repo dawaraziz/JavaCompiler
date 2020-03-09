@@ -822,7 +822,7 @@ public class ASTHead {
 
     public ASTHead generateNameSubHead() {
         final ASTNode replacementNode = new ASTNode(null, "SUBQUALIFIEDNAME");
-        replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 2));
+        replacementNode.children.addAll(headNode.children.subList(2, headNode.children.size()));
         return new ASTHead(replacementNode);
     }
 }

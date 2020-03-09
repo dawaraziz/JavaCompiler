@@ -3,12 +3,15 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.FieldScope;
-import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.statements.DefinitionStatement;
+import com.project.environments.structure.Parameter;
 import com.project.scanner.structure.Kind;
 
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
 import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
 import static com.project.scanner.structure.Kind.METHODNAME;
@@ -38,8 +41,8 @@ public class NameExpression extends Expression {
             nameKind = head.getChild(0).getKind();
             qualifier = null;
         } else {
-            nameLexeme = head.getChild(head.getChildren().size() - 1).getLexeme();
-            nameKind = head.getChild(head.getChildren().size() - 1).getKind();
+            nameLexeme = head.getChild(0).getLexeme();
+            nameKind = head.getChild(0).getKind();
             qualifier = new NameExpression(head.generateNameSubHead(), this);
         }
     }
@@ -92,9 +95,9 @@ public class NameExpression extends Expression {
                 System.err.println("Found invalid package name.");
                 System.exit(42);
             }
-        } else if (ast.getKind() == TYPENAME) {
+        } else if (nameKind == TYPENAME) {
             namePointer = parentClass.resolveSimpleTypeName(nameLexeme);
-        } else if (ast.getKind() == EXPRESSIONNAME) {
+        } else if (nameKind == EXPRESSIONNAME) {
 
             // First, check if we can find it in our method declaration.
             if (getParentMethod() != null) {
@@ -105,9 +108,10 @@ public class NameExpression extends Expression {
                     return;
                 }
 
-                final MethodScope method = getParentMethod();
-                if (method.checkIdentifierAgainstParameters(nameLexeme)) {
-                    namePointer = method;
+                final Parameter parameter = getParentMethod()
+                        .getParameterFromIdentifier(nameLexeme);
+                if (parameter != null) {
+                    namePointer = parameter;
                     return;
                 }
             }
@@ -117,7 +121,7 @@ public class NameExpression extends Expression {
             if (fieldScope != null) {
                 namePointer = fieldScope;
             }
-        } else if (ast.getKind() == METHODNAME) {
+        } else if (nameKind == METHODNAME) {
             System.err.println("Crud!");
             System.exit(42);
         }
@@ -149,6 +153,51 @@ public class NameExpression extends Expression {
                 System.err.println("Found non package qualified typename.");
                 System.exit(42);
             }
+        } else if (nameKind == EXPRESSIONNAME) {
+            if (qualifier.nameKind == PACKAGENAME) {
+                System.err.println("Found package name qualified expression name.");
+                System.exit(42);
+            } else if (qualifier.nameKind == TYPENAME) {
+                if (parentClass.classType == CLASS) {
+                    final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
+
+                    if (fieldScope == null) {
+                        System.err.println("Found type name qualified expression name with no field.");
+                        System.exit(42);
+                    }
+
+                    namePointer = fieldScope;
+                } else if (parentClass.classType == INTERFACE) {
+                    final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
+
+                    if (fieldScope == null) {
+                        System.err.println("Found type name qualified expression name with no field.");
+                        System.exit(42);
+                    }
+
+                    namePointer = fieldScope;
+                }
+            } else if (qualifier.nameKind == EXPRESSIONNAME) {
+                if (qualifier.namePointer.type.prim_type != VAR) {
+                    System.err.println("Found prim type as qualifier.");
+                    System.exit(42);
+                }
+
+                final ClassScope classScope = parentClass
+                        .getClassFromPackage(qualifier.type.name.getPackageName().getQualifiedName(),
+                                qualifier.type.name.getSimpleName());
+
+                final FieldScope fieldScope = classScope.getIdentifierFromFields(nameLexeme);
+
+                if (fieldScope == null) {
+                    System.err.println("Found no field to type qualified expression name.");
+                    System.exit(42);
+                }
+
+                namePointer = fieldScope;
+            }
+        } else if (nameKind == METHODNAME) {
+
         }
 
         System.err.println("Crud!");

@@ -2,8 +2,8 @@ package com.project;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
-import com.project.hierarchy.HierarchyChecker;
 import com.project.environments.scopes.PackageScope;
+import com.project.hierarchy.HierarchyChecker;
 import com.project.linker.TypeLinker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
@@ -64,6 +64,24 @@ public class Main {
             classTable.add(new ClassScope(new File(fileName).getName().split("\\.")[0], AST));
         }
 
+        // Generate a set of all packages in the program.
+        final HashSet<String> packageSet = classTable.stream()
+                .map(c -> c.packageName.getQualifiedName())
+                .collect(Collectors.toCollection(HashSet::new));
+
+        // Creates a map of package scopes.
+        final HashMap<String, PackageScope> packageMap = new HashMap<>();
+        for (final String packageName : packageSet) {
+            final PackageScope packageScope = new PackageScope();
+            for (final ClassScope javaClass : classTable) {
+                if (packageName.equals(javaClass.packageName.getQualifiedName()))
+                    packageScope.addClass(javaClass);
+            }
+            packageMap.put(packageName, packageScope);
+        }
+
+        classTable.forEach(c -> c.packageMap.putAll(packageMap));
+
         // Link all types to their fully qualified name.
         for (final ClassScope classScope : classTable) {
             classScope.generateImportMaps(classTable);
@@ -111,24 +129,6 @@ public class Main {
                             .getDefaultlessQualifiedName(),
                     classScope);
         }
-
-        // Generate a set of all packages in the program.
-        final HashSet<String> packageSet = classTable.stream()
-                .map(c -> c.packageName.getQualifiedName())
-                .collect(Collectors.toCollection(HashSet::new));
-
-        // Creates a map of package scopes.
-        final HashMap<String, PackageScope> packageMap = new HashMap<>();
-        for (final String packageName : packageSet) {
-            final PackageScope packageScope = new PackageScope();
-            for (final ClassScope javaClass : classTable) {
-                if (packageName.equals(javaClass.packageName.getQualifiedName()))
-                    packageScope.addClass(javaClass);
-            }
-            packageMap.put(packageName, packageScope);
-        }
-
-        classTable.forEach(c -> c.packageMap.putAll(packageMap));
 
         TypeLinker.link(classTable, packageMap);
 
