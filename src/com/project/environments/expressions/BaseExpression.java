@@ -47,7 +47,7 @@ public class BaseExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         if (LHS != null && LHS.type != RHS.type) {
-            System.err.println("Unsound type");
+            System.err.println("Unsound type: Base Expression");
             System.exit(42);
         }
     }

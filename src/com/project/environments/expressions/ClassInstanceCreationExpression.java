@@ -34,6 +34,6 @@ public class ClassInstanceCreationExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-
+        //TODO: Check that parameters match a constructor
     }
 }

@@ -33,6 +33,6 @@ public class PrimaryNoNewArrayExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-
+        nextExpr.checkTypeSoundness();
     }
 }

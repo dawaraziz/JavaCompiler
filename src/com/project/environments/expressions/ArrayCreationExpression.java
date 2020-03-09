@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 
 public class ArrayCreationExpression extends Expression {
     final Expression type;
@@ -36,6 +37,11 @@ public class ArrayCreationExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-        // TODO:
+        // TODO: Check whether parameters match constructor
+
+        if (dimensions.type.prim_type != Type.PRIM_TYPE.INT) {
+            System.err.println("Unsound Type: Array Creation");
+            System.exit(42);
+        }
     }
 }

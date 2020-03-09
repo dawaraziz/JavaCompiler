@@ -31,5 +31,7 @@ public class CastExpression extends Expression{
 
     @Override
     public void checkTypeSoundness() {
+        cast.checkTypeSoundness();
+        unary.checkTypeSoundness();
     }
 }

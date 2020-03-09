@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 
 public class UnaryExpression extends Expression {
 
@@ -29,6 +30,9 @@ public class UnaryExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-
+        if (RHS.type.prim_type != Type.PRIM_TYPE.INT) {
+            System.err.println("Unsound type: Unary");
+            System.exit(42);
+        }
     }
 }
