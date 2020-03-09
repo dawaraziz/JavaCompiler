@@ -56,4 +56,8 @@ abstract public class Expression extends Scope {
         nodes.add(expression);
         return generateExpressionScope(nodes, parentScope).get(0);
     }
+
+    public boolean isLiteralExpression() {
+        return this instanceof LiteralExpression;
+    }
 }

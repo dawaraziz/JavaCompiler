@@ -5,6 +5,9 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
+import static com.project.environments.expressions.LiteralExpression.LITERAL_TYPE.INTEGER_LITERAL;
+
+
 public class UnaryExpression extends Expression {
 
     final Expression RHS;
@@ -31,8 +34,10 @@ public class UnaryExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         if (RHS.type.prim_type != Type.PRIM_TYPE.INT) {
-            System.err.println("Unsound type: Unary");
-            System.exit(42);
+            if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literal_type != INTEGER_LITERAL) {
+                    System.err.println("Unsound type: Unary");
+                    System.exit(42);
+            }
         }
     }
 }

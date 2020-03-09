@@ -17,7 +17,7 @@ public class LiteralExpression extends Expression {
     }
 
     final ASTHead literal;
-    final LITERAL_TYPE literal_type;
+    public final LITERAL_TYPE literal_type;
 
 
     LiteralExpression(final ASTHead head, final Scope parentScope) {
