@@ -25,6 +25,7 @@ public class Type {
     static final private String VOID_LEXEME = "void";
 
     public final PRIM_TYPE prim_type;
+
     public Name name;
     public final boolean isArray;
 
@@ -87,6 +88,10 @@ public class Type {
             prim_type = PRIM_TYPE.VAR;
             name = new Name(typeLexemes);
         }
+    }
+
+    public boolean isString() {
+        return prim_type == VAR && name.equals("String");
     }
 
     @Override

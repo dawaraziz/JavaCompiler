@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 
 public class AdditiveExpression extends Expression {
     final Expression LHS;
@@ -36,9 +37,15 @@ public class AdditiveExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-        if (LHS != null && LHS.type != RHS.type) {
-            System.err.println("Unsound type");
-            System.exit(42);
+        if (LHS != null) {
+            if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
+                    (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
+
+            }
+            else if (LHS.type != RHS.type) {
+                System.err.println("Unsound type: Additive");
+                System.exit(42);
+            }
         }
     }
 }
