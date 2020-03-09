@@ -28,6 +28,8 @@ public class Type {
 
     public Name name;
     public final boolean isArray;
+    
+
 
     public Type(final String simpleName, final Name packageName) {
         isArray = false;
