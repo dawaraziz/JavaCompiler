@@ -28,7 +28,7 @@ public class ConstructorScope extends Scope {
         if (parameters == null) return false;
 
         for (final Parameter parameter : parameters) {
-            if (parameter.name.getSimpleName().equals(variableName)) {
+            if (parameter.name.equals(variableName)) {
                 return true;
             }
         }

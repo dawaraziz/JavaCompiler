@@ -59,7 +59,7 @@ public class MethodScope extends Scope {
         if (parameters == null) return false;
 
         for (final Parameter parameter : parameters) {
-            if (parameter.name.getSimpleName().equals(variableName)) {
+            if (parameter.name.equals(variableName)) {
                 return true;
             }
         }
@@ -85,10 +85,17 @@ public class MethodScope extends Scope {
 
     public boolean checkIdentifierAgainstParameters(final String identifier) {
         return parameters.stream()
-                .anyMatch(c -> c.name.getSimpleName().equals(identifier));
+                .anyMatch(c -> c.name.equals(identifier));
     }
 
     boolean checkIdentifier(final String identifier) {
         return this.name.equals(identifier);
+    }
+
+    public Parameter getParameterFromIdentifier(final String identifier) {
+        for (final Parameter parameter : parameters) {
+            if (parameter.name.equals(identifier)) return parameter;
+        }
+        return null;
     }
 }
