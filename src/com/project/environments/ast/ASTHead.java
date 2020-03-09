@@ -3,6 +3,7 @@ package com.project.environments.ast;
 import com.project.environments.ast.structure.CharacterLiteralHolder;
 import com.project.environments.ast.structure.IntegerLiteralHolder;
 import com.project.environments.ast.structure.StringLiteralHolder;
+import com.project.environments.expressions.PrimaryNoNewArrayExpression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.ImportScope;
 import com.project.environments.structure.Name;
@@ -81,6 +82,8 @@ public class ASTHead {
     private final static String EXPRESSION = "EXPRESSION";
     private final static String ADDITIVE_EXPRESSION = "ADDITIVEEXPRESSION";
     private final static String UNARY_EXPRESSION_NOT_PLUS_MINUS = "UNARYEXPRESSIONNOTPLUSMINUS";
+    private final static String PRIMARY_NO_NEW_ARRAY = "PRIMARYNONEWARRAY";
+    private final static String CLASS_INSTANCE_CREATION_EXPRESSION = "CLASSINSTANCECREATIONEXPRESSION";
 
     // STATEMENT LEXEMES
     public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
@@ -683,6 +686,10 @@ public class ASTHead {
                 headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 
+    public boolean isPrimaryNoNewArrayExpr() {
+        return headNode.lexeme.equals(PRIMARY_NO_NEW_ARRAY);
+    }
+
     public ArrayList<ASTNode> getVariableIDNodes() {
         return headNode.findNodesWithKinds(Kind.VARIABLE_ID);
     }
@@ -796,5 +803,9 @@ public class ASTHead {
 
     public boolean isArrayCreationExpr() {
         return headNode.lexeme.equals("ARRAYCREATIONEXPRESSION");
+    }
+
+    public boolean isClassInstanceCreationExpr() {
+        return headNode.lexeme.equals(CLASS_INSTANCE_CREATION_EXPRESSION);
     }
 }

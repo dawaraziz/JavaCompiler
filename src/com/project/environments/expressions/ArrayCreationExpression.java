@@ -8,7 +8,7 @@ public class ArrayCreationExpression extends Expression {
     final Expression type;
     final Expression dimensions;
 
-    ArrayCreationExpression(final ASTHead head, final Scope parentScope) {
+    public ArrayCreationExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
