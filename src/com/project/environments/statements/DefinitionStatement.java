@@ -38,7 +38,7 @@ public class DefinitionStatement extends Statement {
                 .findNodesWithLexeme(VARIABLE_DECLARATOR_ID).get(0)
                 .children.get(0).lexeme;
 
-        if (parentScope.isVariableNameFree(name)) {
+        if (parentScope.isVariableNameUsed(name)) {
             System.err.println("Encountered duplicate variable in scope.");
             System.exit(42);
         }
@@ -53,11 +53,11 @@ public class DefinitionStatement extends Statement {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         if (name.equals(variableName)) {
             return true;
         } else {
-            return parentScope.isVariableNameFree(variableName);
+            return parentScope.isVariableNameUsed(variableName);
         }
     }
 

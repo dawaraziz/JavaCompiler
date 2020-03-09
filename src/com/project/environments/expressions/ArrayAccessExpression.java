@@ -29,8 +29,8 @@ public class ArrayAccessExpression extends Expression {
 
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(final String variableName) {
+        return true;
     }
 
     @Override

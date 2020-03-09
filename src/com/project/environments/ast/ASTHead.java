@@ -28,7 +28,9 @@ import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
 import static com.project.scanner.structure.Kind.CURLY_BRACKET_CLOSE;
 import static com.project.scanner.structure.Kind.CURLY_BRACKET_OPEN;
 import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
+import static com.project.scanner.structure.Kind.METHODNAME;
 import static com.project.scanner.structure.Kind.PACKAGENAME;
+import static com.project.scanner.structure.Kind.PACKAGEORTYPENAME;
 import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class ASTHead {
@@ -100,7 +102,6 @@ public class ASTHead {
     // IMPORTS
     private final static String TYPE_IMPORT_ON_DEMAND_DECLARATION = "TYPEIMPORTONDEMANDDECLARATION";
     private final static String SINGLE_TYPE_IMPORT_DECLARATION = "SINGLETYPEIMPORTDECLARATION";
-
 
 
     private final static ArrayList<String> safeCull;
@@ -443,7 +444,13 @@ public class ASTHead {
             return null;
         }
 
-        return new ASTHead(initializers.get(0));
+        final ASTHead initializer = new ASTHead(initializers.get(0));
+
+        if (initializer.getChildren().size() == 3) {
+            return initializer.getChild(0);
+        } else {
+            return null;
+        }
     }
 
     public Type getFieldType() {
@@ -729,8 +736,14 @@ public class ASTHead {
         }
     }
 
-    public boolean isExpressionName() {
-        return headNode.kind == EXPRESSIONNAME;
+    public boolean isNameExpr() {
+        return headNode.kind == EXPRESSIONNAME
+                || headNode.kind == TYPENAME
+                || headNode.kind == METHODNAME
+                || headNode.kind == PACKAGEORTYPENAME
+                || headNode.kind == AMBIGUOUSNAME
+                || headNode.kind == PACKAGENAME
+                || headNode.lexeme.equals("QUALIFIEDNAME");
     }
 
     public boolean isArrayAccessExpression() {
@@ -766,5 +779,22 @@ public class ASTHead {
 
     public ASTHead getLeftmostChild() {
         return getChild(headNode.children.size() - 1);
+    }
+
+    public boolean isLiteralExpr() {
+        return headNode.lexeme.equals("LITERAL");
+    }
+
+    public boolean isTypeExpr() {
+        return headNode.lexeme.equals("INTEGRALTYPE")
+                || headNode.lexeme.equals("PRIMITIVETYPE");
+    }
+
+    public boolean isMethodInvocationExpr() {
+        return headNode.lexeme.equals("METHODINVOCATION");
+    }
+
+    public boolean isArrayCreationExpr() {
+        return headNode.lexeme.equals("ARRAYCREATIONEXPRESSION");
     }
 }

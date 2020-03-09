@@ -13,8 +13,8 @@ public class EmptyStatement extends Statement {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(final String variableName) {
+        return parentScope.isVariableNameUsed(variableName);
     }
 
     @Override

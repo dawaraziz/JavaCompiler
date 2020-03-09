@@ -24,8 +24,8 @@ public class NameExpression extends Expression {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(final String variableName) {
+        return false;
     }
 
     @Override
@@ -145,6 +145,6 @@ public class NameExpression extends Expression {
     }
 
     boolean isExpressionName() {
-        return ast.isExpressionName();
+        return ast.isNameExpr();
     }
 }

@@ -24,8 +24,8 @@ public class AdditiveExpression extends Expression {
 
 
     @Override
-    public boolean isVariableNameFree(String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(String variableName) {
+        return false;
     }
 
     @Override

@@ -12,7 +12,7 @@ public abstract class Scope {
     public Scope parentScope;
     public Type type;
 
-    public abstract boolean isVariableNameFree(final String variableName);
+    public abstract boolean isVariableNameUsed(final String variableName);
 
     public abstract void linkTypesToQualifiedNames(final ClassScope rootClass);
 

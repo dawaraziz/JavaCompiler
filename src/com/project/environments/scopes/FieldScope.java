@@ -20,7 +20,7 @@ public class FieldScope extends Scope {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         return false;
     }
 

@@ -1,8 +1,7 @@
 package com.project.environments.expressions;
 
-import com.project.environments.scopes.Scope;
 import com.project.environments.ast.ASTHead;
-import com.project.environments.statements.*;
+import com.project.environments.scopes.Scope;
 
 import java.util.ArrayList;
 
@@ -24,9 +23,19 @@ abstract public class Expression extends Scope {
                 childScopes.add(new CastExpression(expression, parentScope));
             } else if (expression.isAdditiveExpr()) {
                 childScopes.add(new AdditiveExpression(expression, parentScope));
-            } else if (expression.isUnaryExpr()){
+            } else if (expression.isUnaryExpr()) {
                 childScopes.add(new UnaryExpression(expression, parentScope));
-            }else {
+            } else if (expression.isLiteralExpr()) {
+                childScopes.add(new LiteralExpression(expression, parentScope));
+            } else if (expression.isTypeExpr()) {
+                childScopes.add(new TypeExpression(expression, parentScope));
+            } else if (expression.isNameExpr()) {
+                childScopes.add(new NameExpression(expression, parentScope));
+            } else if (expression.isMethodInvocationExpr()) {
+                childScopes.add(new MethodInvocationExpression(expression, parentScope));
+            } else if (expression.isArrayCreationExpr()) {
+                childScopes.add(new ArrayCreationExpression(expression, parentScope));
+            } else {
                 childScopes.add(new BaseExpression(expression, parentScope));
             }
         }

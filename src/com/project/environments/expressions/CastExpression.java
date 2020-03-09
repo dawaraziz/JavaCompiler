@@ -19,8 +19,8 @@ public class CastExpression extends Expression{
     }
 
     @Override
-    public boolean isVariableNameFree(String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(String variableName) {
+        return true;
     }
 
     @Override

@@ -15,14 +15,14 @@ public class ExpressionStatement extends Statement {
         this.parentScope = parentScope;
         this.name = null;
 
-        expression = generateExpressionScope(head, this);
+        expression = generateExpressionScope(head.getChild(1), this);
 
         if (expression != null) this.type = expression.type;
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
-        return parentScope.isVariableNameFree(variableName);
+    public boolean isVariableNameUsed(final String variableName) {
+        return parentScope.isVariableNameUsed(variableName);
     }
 
     @Override

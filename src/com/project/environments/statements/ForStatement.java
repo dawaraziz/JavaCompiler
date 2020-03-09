@@ -42,12 +42,12 @@ public class ForStatement extends Statement {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         if (forInit != null
-                && forInit.isVariableNameFree(variableName)) {
+                && forInit.isVariableNameUsed(variableName)) {
             return true;
         } else {
-            return parentScope.isVariableNameFree(variableName);
+            return parentScope.isVariableNameUsed(variableName);
         }
     }
 

@@ -55,7 +55,7 @@ public class MethodScope extends Scope {
     }
 
     @Override
-    public boolean isVariableNameFree(final String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         if (parameters == null) return false;
 
         for (final Parameter parameter : parameters) {
