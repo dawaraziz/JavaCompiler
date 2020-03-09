@@ -3,7 +3,7 @@ package com.project;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.hierarchy.HierarchyChecker;
-import com.project.linker.PackageScope;
+import com.project.environments.scopes.PackageScope;
 import com.project.linker.TypeLinker;
 import com.project.parser.JavaParser;
 import com.project.parser.structure.ParserSymbol;
@@ -127,6 +127,8 @@ public class Main {
             }
             packageMap.put(packageName, packageScope);
         }
+
+        classTable.forEach(c -> c.packageMap.putAll(packageMap));
 
         TypeLinker.link(classTable, packageMap);
 

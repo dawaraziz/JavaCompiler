@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.ImportScope;
+import com.project.environments.scopes.PackageScope;
 import com.project.environments.structure.Name;
 
 import java.util.ArrayList;

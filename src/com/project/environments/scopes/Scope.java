@@ -34,6 +34,22 @@ public abstract class Scope {
         return ret;
     }
 
+    protected ArrayList<MethodScope> getParentMethodList() {
+        final ArrayList<MethodScope> ret = new ArrayList<>();
+
+        if (this instanceof MethodScope) {
+            ret.add((MethodScope) this);
+        }
+
+        if (this instanceof ClassScope) {
+            ((ClassScope) this).fieldTable.forEach(c -> ret.addAll(c.getParentMethodList()));
+        }
+
+        ret.addAll(parentScope.getParentMethodList());
+
+        return ret;
+    }
+
     protected MethodScope getParentMethod() {
         if (this instanceof MethodScope) {
             return (MethodScope) this;

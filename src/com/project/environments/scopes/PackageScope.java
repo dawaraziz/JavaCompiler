@@ -1,17 +1,15 @@
-package com.project.linker;
-
-import com.project.environments.scopes.ClassScope;
+package com.project.environments.scopes;
 
 import java.util.ArrayList;
 
 public class PackageScope {
-    final ArrayList<ClassScope> classes = new ArrayList<>();
+    public final ArrayList<ClassScope> classes = new ArrayList<>();
 
     public void addClass(final ClassScope classScope) {
         classes.add(classScope);
     }
 
-    boolean containsClass(final String className) {
+    public boolean containsClass(final String className) {
         return classes.stream().anyMatch(c -> c.name.equals(className));
     }
 }

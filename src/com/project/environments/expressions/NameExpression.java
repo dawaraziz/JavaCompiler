@@ -2,6 +2,7 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Name;
 import com.project.scanner.structure.Kind;
@@ -37,15 +38,20 @@ public class NameExpression extends Expression {
             final ArrayList<String> nameList = nameClass.getNameList();
             reverse(nameList);
 
-            disambiguateSimpleName(nameList.get(0), ast.getLeftmostChild());
+            final StringBuilder fullName = new StringBuilder(nameList.get(0));
+
+            disambiguateSimpleName(fullName.toString(), ast.getLeftmostChild());
 
             for (int i = 1; i < nameList.size(); ++i) {
                 final int index = ast.getChildren().size() - 1 - (i * 2);
                 final int previousIndex = index + 2;
 
-                disambiguateQualifiedName(nameList.get(i),
+                disambiguateQualifiedName(fullName.toString(),
+                        nameList.get(i),
                         ast.getChild(index),
                         ast.getChild(previousIndex).getKind());
+
+                fullName.append(nameList.get(i));
             }
         }
     }
@@ -56,7 +62,7 @@ public class NameExpression extends Expression {
     private void disambiguateSimpleName(final String ambiguousName, final ASTHead nodeHead) {
 
         // Check if we can find the name as a field, parameter, or local definition.
-        if (getParentFields().stream().anyMatch(c -> c.checkIdentifier(ambiguousName))
+        if (getParentClass().checkIdentifierAgainstFields(ambiguousName)
                 || getParentMethod().checkIdentifierAgainstParameters(ambiguousName)
                 || getParentLocalDefinitions().stream().anyMatch(c -> c.checkIdentifier(ambiguousName))) {
             nodeHead.classifyAsExpressionName();
@@ -84,18 +90,54 @@ public class NameExpression extends Expression {
         }
     }
 
-    private void disambiguateQualifiedName(final String ambiguousName,
+    private void disambiguateQualifiedName(final String previousName,
+                                           final String ambiguousName,
                                            final ASTHead nodeHead,
                                            final Kind previousKind) {
         // Need to take entire name on the left.
         if (previousKind == Kind.PACKAGENAME) {
+            final PackageScope packageScope = getParentClass().packageMap.get(previousName);
 
+            if (packageScope != null
+                    && packageScope.classes.stream().anyMatch(c -> c.name.equals(ambiguousName))) {
+                nodeHead.classifyAsTypeName();
+            } else {
+                nodeHead.classifyAsPackageName();
+            }
         } else if (previousKind == Kind.TYPENAME) {
+            final ClassScope matchingClass = getParentClass().findClass(previousName);
 
+            if (matchingClass == null) {
+                System.err.println("Could not find typename for ambiguous type name.");
+                System.exit(42);
+            }
+
+            if (matchingClass.checkIdentifierAgainstFields(ambiguousName)
+                    || matchingClass.checkIdentifierAgainstMethods(ambiguousName)) {
+                nodeHead.classifyAsExpressionName();
+            } else {
+                System.err.println("Could not reclassify ambiguous typename.");
+                System.exit(42);
+            }
         } else if (previousKind == Kind.EXPRESSIONNAME) {
+            final ClassScope matchingClass = getParentClass().findClass(previousName);
 
+            if (matchingClass == null) {
+                System.err.println("Could not find typename for ambiguous expression name.");
+                System.exit(42);
+            }
+
+            if (matchingClass.checkIdentifierAgainstFields(ambiguousName)
+                    || matchingClass.checkIdentifierAgainstMethods(ambiguousName)) {
+                nodeHead.classifyAsExpressionName();
+            } else {
+                System.err.println("Could not reclassify ambiguous expression name.");
+                System.exit(42);
+            }
+        } else {
+            System.err.println("Ambiguous name type is wrong; aborting!");
+            System.exit(42);
         }
-        // TODO:
     }
 
     @Override

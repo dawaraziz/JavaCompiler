@@ -85,4 +85,8 @@ public class MethodScope extends Scope {
         return parameters.stream()
                 .anyMatch(c -> c.name.getSimpleName().equals(identifier));
     }
+
+    boolean checkIdentifier(final String identifier) {
+        return this.name.equals(identifier);
+    }
 }

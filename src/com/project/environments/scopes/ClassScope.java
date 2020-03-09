@@ -16,7 +16,7 @@ import static com.project.environments.structure.Name.generateFullyQualifiedName
 
 public class ClassScope extends Scope {
 
-    static ClassScope duplicateHolderScope = new ClassScope();
+    private static final ClassScope duplicateHolderScope = new ClassScope();
 
     public enum CLASS_TYPE {
         INTERFACE,
@@ -26,6 +26,10 @@ public class ClassScope extends Scope {
     private final Map<String, ClassScope> singleImportMap;
     private final Map<String, ClassScope> onDemandImportMap;
     private final Map<String, ClassScope> inPackageImportMap;
+
+    public final ArrayList<ClassScope> classTable;
+
+    public final Map<String, PackageScope> packageMap;
 
     public final ASTHead ast;
     public final CLASS_TYPE classType;
@@ -49,10 +53,12 @@ public class ClassScope extends Scope {
         this.imports = ast.getImports(this);
         this.modifiers = ast.getClassModifiers();
         this.type = new Type(name, packageName);
+        this.packageMap = new HashMap<>();
 
         singleImportMap = new HashMap<>();
         onDemandImportMap = new HashMap<>();
         inPackageImportMap = new HashMap<>();
+        classTable = new ArrayList<>();
 
         final ASTHead classDeclaration = ast.getClassDeclaration();
 
@@ -98,6 +104,8 @@ public class ClassScope extends Scope {
         singleImportMap = null;
         onDemandImportMap = null;
         inPackageImportMap = null;
+        packageMap = null;
+        classTable = null;
 
         ast = null;
         classType = null;
@@ -313,6 +321,8 @@ public class ClassScope extends Scope {
                 inPackageImportMap.put(classScope.name, classScope);
             }
         }
+
+        this.classTable.addAll(classTable);
     }
 
     @Override
@@ -464,5 +474,29 @@ public class ClassScope extends Scope {
         }
 
         return onDemandImportMap.get(identifier) != null;
+    }
+
+    public boolean checkIdentifierAgainstFields(final String identifier) {
+        for (final FieldScope fieldScope : fieldTable) {
+            if (fieldScope.checkIdentifier(identifier)) return true;
+        }
+        return false;
+    }
+
+    public boolean checkIdentifierAgainstMethods(final String identifier) {
+        for (final MethodScope methodScope : methodTable) {
+            if (methodScope.checkIdentifier(identifier)) return true;
+        }
+        return false;
+    }
+
+    public ClassScope findClass(final String fullName) {
+        for (final ClassScope classScope : classTable) {
+            if (Name.generateFullyQualifiedName(classScope.name, classScope.packageName)
+                    .getQualifiedName().equals(fullName)) {
+                return classScope;
+            }
+        }
+        return null;
     }
 }
