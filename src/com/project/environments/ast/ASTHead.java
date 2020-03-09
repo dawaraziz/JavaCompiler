@@ -78,6 +78,7 @@ public class ASTHead {
     private final static String CAST_EXPRESSION = "CASTEXPRESSION";
     private final static String EXPRESSION = "EXPRESSION";
     private final static String ADDITIVE_EXPRESSION = "ADDITIVEEXPRESSION";
+    private final static String UNARY_EXPRESSION_NOT_PLUS_MINUS = "UNARYEXPRESSIONNOTPLUSMINUS";
 
     // STATEMENT LEXEMES
     public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
@@ -668,6 +669,11 @@ public class ASTHead {
 
     public boolean isCastExpr() {
         return headNode.lexeme.equals(CAST_EXPRESSION);
+    }
+
+    public boolean isUnaryExpr() {
+        return headNode.lexeme.equals(UNARY_EXPRESSION) ||
+                headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 
     public ArrayList<ASTNode> getVariableIDNodes() {
