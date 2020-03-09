@@ -77,6 +77,7 @@ public class ASTHead {
     private final static String UNARY_EXPRESSION = "UNARYEXPRESSION";
     private final static String CAST_EXPRESSION = "CASTEXPRESSION";
     private final static String EXPRESSION = "EXPRESSION";
+    private final static String ADDITIVE_EXPRESSION = "ADDITIVEEXPRESSION";
 
     // STATEMENT LEXEMES
     public final static String LOCAL_VARIABLE_DECLARATION_STATEMENT = "LOCALVARIABLEDECLARATIONSTATEMENT";
@@ -98,6 +99,8 @@ public class ASTHead {
     // IMPORTS
     private final static String TYPE_IMPORT_ON_DEMAND_DECLARATION = "TYPEIMPORTONDEMANDDECLARATION";
     private final static String SINGLE_TYPE_IMPORT_DECLARATION = "SINGLETYPEIMPORTDECLARATION";
+
+
 
     private final static ArrayList<String> safeCull;
 
@@ -657,6 +660,14 @@ public class ASTHead {
     public boolean isForStatement() {
         return headNode.lexeme.equals(FOR_STATEMENT)
                 || headNode.lexeme.equals(FOR_STATEMENT_NO_SHORT_IF);
+    }
+
+    public boolean isAdditiveExpr() {
+        return headNode.lexeme.equals(ADDITIVE_EXPRESSION);
+    }
+
+    public boolean isCastExpr() {
+        return headNode.lexeme.equals(CAST_EXPRESSION);
     }
 
     public ArrayList<ASTNode> getVariableIDNodes() {
