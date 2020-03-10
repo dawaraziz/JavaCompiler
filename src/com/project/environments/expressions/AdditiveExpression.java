@@ -33,20 +33,25 @@ public class AdditiveExpression extends Expression {
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
         if (LHS != null) LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
+        this.type = RHS.type;
     }
 
     @Override
     public void checkTypeSoundness() {
+        RHS.checkTypeSoundness();
         if (LHS != null) {
+            LHS.checkTypeSoundness();
             if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
                     (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
 
             }
-            else if (LHS.type != RHS.type) {
+            else if (!LHS.type.equals(RHS.type)) {
                 System.err.println("Unsound type: Additive");
                 System.exit(42);
             }
         }
+
+
         this.type = RHS.type;
     }
 }

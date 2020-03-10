@@ -47,8 +47,10 @@ public class BaseExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         if (LHS != null) {
+            LHS.checkTypeSoundness();
+            RHS.checkTypeSoundness();
             if (!this.ast.getChild(1).getLexeme().equals("COMMA")) {
-                if (LHS.type != RHS.type) {
+                if (!LHS.type.equals(RHS.type)) {
                     // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
 
                     System.err.println("Unsound type: Base Expression, differing types");
@@ -56,6 +58,7 @@ public class BaseExpression extends Expression {
                 }
             }
             this.type = this.LHS.type;
+            this.type = this.RHS.type;
         }
         else this.type = this.singular.type;
     }

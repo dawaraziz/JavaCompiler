@@ -37,6 +37,7 @@ public class ArrayAccessExpression extends Expression {
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
+        this.type = LHS.type;
 
 //        if (!LHS.type.isArray) {
 //            System.err.println("Found array access with non-array LHS.");

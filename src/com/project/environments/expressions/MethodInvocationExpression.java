@@ -80,7 +80,7 @@ public class MethodInvocationExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         this.methodName.checkTypeSoundness();
-        this.argumentExpression.checkTypeSoundness();
+        if (this.argumentExpression != null) this.argumentExpression.checkTypeSoundness();
         // TODO:
     }
 }

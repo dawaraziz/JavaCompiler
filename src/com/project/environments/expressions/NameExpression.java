@@ -24,7 +24,7 @@ public class NameExpression extends Expression {
     private Kind nameKind;
     boolean isArrayLength;
 
-    private final NameExpression qualifier;
+    private NameExpression qualifier;
 
     private Scope namePointer;
 
@@ -336,6 +336,13 @@ public class NameExpression extends Expression {
     }
 
     public Type getQualifierType() {
+        if (qualifier == null) {
+            Scope temp = this.parentScope;
+            while (temp.parentScope != null) {
+                temp = temp.parentScope;
+            }
+            return temp.type;
+        }
         return qualifier.type;
     }
 }
