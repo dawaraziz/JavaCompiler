@@ -856,4 +856,8 @@ public class ASTHead {
         replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
         return new ASTHead(replacementNode);
     }
+
+    public boolean isArgumentListExpr() {
+        return headNode.lexeme.equals("ARGUMENTLIST");
+    }
 }

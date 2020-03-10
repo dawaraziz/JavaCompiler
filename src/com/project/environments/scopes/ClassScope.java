@@ -1,6 +1,7 @@
 package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.expressions.Expression;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
@@ -581,6 +582,17 @@ public class ClassScope extends Scope {
         if (packageScope == null) return null;
 
         return packageScope.getClass(simpleName);
+    }
+
+    public MethodScope getMethodWithIdentifierAndParameters(final String identifier,
+                                                            final ArrayList<Expression> parameters) {
+
+        // First, we inspect ourselves.
+        for (MethodScope method : methodTable) {
+
+        }
+
+        return null;
     }
 
     public Type generateType() {

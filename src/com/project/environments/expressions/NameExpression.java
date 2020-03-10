@@ -3,15 +3,12 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.FieldScope;
-import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
-
-import java.util.ArrayList;
 
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
@@ -30,7 +27,7 @@ public class NameExpression extends Expression {
     private final NameExpression qualifier;
 
     private Scope namePointer;
-    
+
     NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
@@ -86,8 +83,10 @@ public class NameExpression extends Expression {
 
         if (nameLexeme.equals("length")) {
             isArrayLength = true;
-        } else if (namePointer == null && type == null
-                && nameKind != PACKAGENAME) {
+        } else if (namePointer == null
+                && type == null
+                && nameKind != PACKAGENAME
+                && nameKind != METHODNAME) {
             System.err.println("Could not identify name pointer; aborting!");
             System.exit(42);
         } else {
@@ -130,19 +129,6 @@ public class NameExpression extends Expression {
             final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
             if (fieldScope != null) {
                 namePointer = fieldScope;
-            }
-        } else if (nameKind == METHODNAME) {
-            ArrayList<MethodScope> methods = getParentClass().getAllMethods();
-            boolean found = false;
-            for (MethodScope method : methods) {
-                if (method.name.equals(nameLexeme)) {
-                    found = true;
-                    namePointer = method;
-                }
-            }
-            if (!found) {
-                System.err.println("Method name resolution not implemented!");
-                System.exit(42);
             }
         }
     }
@@ -219,42 +205,7 @@ public class NameExpression extends Expression {
 
                 namePointer = fieldScope;
             }
-        } else if (nameKind == METHODNAME) {
-            System.err.println("Method name resolution not implemented!");
-            System.exit(42);
-
-//            if (qualifier.nameKind == PACKAGENAME) {
-//                System.err.println("Found package name qualified method name.");
-//                System.exit(42);
-//            } else {
-//                final MethodScope scope = resolveMethod();
-//            }
-//
-//            System.err.println("Crud!");
-//            System.exit(42);
         }
-    }
-
-    private MethodScope resolveMethod() {
-        final String methodName = nameLexeme;
-        final MethodInvocationExpression invocation = getMethodInvocation();
-
-        // First, determine the expected properties of the method.
-        if (qualifier != null) {
-            if (qualifier.nameKind == EXPRESSIONNAME) {
-
-            } else if (qualifier.nameKind == TYPENAME) {
-
-            } else {
-                System.err.println("Found non expression or type method name qualifier.");
-                System.exit(42);
-            }
-        } else {
-
-        }
-
-
-        return null;
     }
 
     private void resolveLeftMostAmbiguousName() {
@@ -350,7 +301,7 @@ public class NameExpression extends Expression {
         return ast.isNameExpr();
     }
 
-    private String getQualifierName() {
+    public String getQualifierName() {
         if (qualifier != null) {
             return qualifier.getQualifiedName();
         } else {
@@ -370,5 +321,21 @@ public class NameExpression extends Expression {
         return getParentClass().getClassFromPackage(
                 qualifier.type.name.getPackageName().getQualifiedName(),
                 qualifier.type.name.getSimpleName());
+    }
+
+    boolean isMethodName() {
+        return nameKind == METHODNAME;
+    }
+
+    public String getNameLexeme() {
+        return nameLexeme;
+    }
+
+    public Kind getQualifierKind() {
+        return qualifier.nameKind;
+    }
+
+    public Type getQualifierType() {
+        return qualifier.type;
     }
 }
