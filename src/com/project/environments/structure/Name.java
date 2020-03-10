@@ -46,6 +46,15 @@ public class Name {
         return name;
     }
 
+    public static Name generateStringName() {
+        final Name newName = new Name();
+        newName.fullyQualifiedName.add("Object");
+        newName.fullyQualifiedName.add("lang");
+        newName.fullyQualifiedName.add("java");
+        return newName;
+    }
+
+
     public static Name generateLangImportName() {
         final Name name = new Name();
         name.fullyQualifiedName.add("lang");
