@@ -31,9 +31,26 @@ public class Type {
     public Name name;
     public final boolean isArray;
 
+    static public Type generateStringType() {
+        final Type newType = new Type();
+        newType.name = Name.generateStringName();
+        return newType;
+    }
+
+    private Type() {
+        prim_type = VAR;
+        isArray = false;
+    }
+
     public Type (final PRIM_TYPE prim_type) {
         this.prim_type = prim_type;
-        this.name = null;
+
+        if (prim_type == VAR) {
+            this.name = new Name("null");
+        } else {
+            this.name = null;
+        }
+
         this.isArray = false;
         this.literal_type = null;
     }
