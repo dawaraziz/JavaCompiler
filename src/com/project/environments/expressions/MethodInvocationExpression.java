@@ -13,9 +13,14 @@ public class MethodInvocationExpression extends Expression {
     MethodInvocationExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
-        this.name = null;
 
-        methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+        if (head.getChildren().size() > 0) {
+            this.methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+            this.name = null;
+        } else {
+            this.methodName = null;
+            this.name = head.getLexeme();
+        }
 
         if (ast.getChildren().size() > 4) {
             parameters = generateExpressionScope(head.generateMethodSubHead(), this);

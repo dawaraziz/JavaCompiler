@@ -50,7 +50,7 @@ public class BaseExpression extends Expression {
             if (!this.ast.getChild(1).getLexeme().equals("COMMA")) {
                 if (LHS.type != RHS.type) {
                     if (LHS.isLiteralExpression() && RHS.isLiteralExpression()) {
-                        if (((LiteralExpression) LHS).literal_type != ((LiteralExpression) RHS).literal_type) {
+                        if (((LiteralExpression) LHS).literal_kind != ((LiteralExpression) RHS).literal_kind) {
                             System.err.println("Unsound type: Base Expression, differing literal types");
                             System.exit(42);
                         }

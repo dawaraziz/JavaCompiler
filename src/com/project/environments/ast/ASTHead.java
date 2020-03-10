@@ -745,11 +745,13 @@ public class ASTHead {
     public boolean isNameExpr() {
         return headNode.kind == EXPRESSIONNAME
                 || headNode.kind == TYPENAME
-                || headNode.kind == METHODNAME
                 || headNode.kind == PACKAGEORTYPENAME
                 || headNode.kind == AMBIGUOUSNAME
-                || headNode.kind == PACKAGENAME
-                || headNode.lexeme.equals("QUALIFIEDNAME");
+                || headNode.kind == PACKAGENAME;
+    }
+
+    public boolean isQualifiedNameExpr() {
+        return headNode.lexeme.equals("QUALIFIEDNAME");
     }
 
     public boolean isArrayAccessExpression() {
@@ -797,7 +799,7 @@ public class ASTHead {
     }
 
     public boolean isMethodInvocationExpr() {
-        return headNode.lexeme.equals("METHODINVOCATION");
+        return headNode.lexeme.equals("METHODINVOCATION") || headNode.kind == Kind.METHODNAME;
     }
 
     public boolean isArrayCreationExpr() {

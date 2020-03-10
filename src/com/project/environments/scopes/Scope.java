@@ -2,6 +2,7 @@ package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.statements.DefinitionStatement;
+import com.project.environments.statements.ForStatement;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
@@ -83,6 +84,14 @@ public abstract class Scope {
         if (this instanceof DefinitionStatement) {
             if (this.name.equals(identifier)) {
                 return (DefinitionStatement) this;
+            }
+        }
+
+        if (parentScope instanceof ForStatement) {
+            if ((((ForStatement) parentScope).forInit != null) && ((ForStatement) parentScope).forInit.name != null) {
+                if (((ForStatement) parentScope).forInit.name.equals(identifier)) {
+                    return (DefinitionStatement) ((ForStatement) parentScope).forInit;
+                }
             }
         }
 

@@ -6,7 +6,7 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
 public class ForStatement extends Statement {
-    Scope forInit;
+    public Scope forInit;
     Expression forExpression;
     Expression forUpdate;
     final Statement forBody;

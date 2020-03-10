@@ -6,6 +6,7 @@ import com.project.environments.scopes.FieldScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.statements.DefinitionStatement;
+import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.scanner.structure.Kind;
 
@@ -26,6 +27,12 @@ public class NameExpression extends Expression {
     final NameExpression qualifier;
 
     Scope namePointer;
+
+    NameExpression(final ASTHead head ,final NameExpression parentName) {
+        this.qualifier = parentName;
+        this.parentScope = parentName.parentScope;
+        this.nameLexeme = head.getLexeme();
+    }
 
     NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
@@ -306,7 +313,7 @@ public class NameExpression extends Expression {
 
     private String getQualifiedName() {
         if (qualifier != null) {
-            return nameLexeme + "." + qualifier.getQualifiedName();
+            return qualifier.getQualifiedName() + "." + nameLexeme;
         } else {
             return nameLexeme;
         }
