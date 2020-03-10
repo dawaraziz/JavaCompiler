@@ -23,6 +23,7 @@ public class ArrayTypeExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+        typeName.linkTypesToQualifiedNames(rootClass);
         type = new Type(typeName.type, true);
     }
 

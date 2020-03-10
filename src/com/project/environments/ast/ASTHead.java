@@ -821,6 +821,12 @@ public class ASTHead {
         return new ASTHead(replacementNode);
     }
 
+    public ASTHead generatePrimaryMethodSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "METHODINVOCATION");
+        replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 4));
+        return new ASTHead(replacementNode);
+    }
+
     public ASTHead generateIfSubHead() {
         final ASTNode replacementNode = new ASTNode(null, "IFTHENELSESTATEMENT");
         replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 6));
@@ -840,6 +846,12 @@ public class ASTHead {
         } else {
             replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 3));
         }
+        return new ASTHead(replacementNode);
+    }
+
+    public ASTHead generateClassInstanceSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "CLASSINSTANCECREATIONEXPRESSION");
+        replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
         return new ASTHead(replacementNode);
     }
 }

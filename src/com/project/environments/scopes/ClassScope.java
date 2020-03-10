@@ -502,22 +502,6 @@ public class ClassScope extends Scope {
         return null;
     }
 
-    public boolean isTypeInScope(final String identifier) {
-        return checkIdentifier(identifier)
-                || checkIdentifierAgainstSingleImports(identifier)
-                || checkIdentifierAgainstOnDemandImports(identifier)
-                || checkIdentifierAgainstPackageImports(identifier);
-    }
-
-    public boolean isTypeInPackageScope(final Name packageName, final String simpleName) {
-        final PackageScope packageScope = packageMap.get(packageName.getQualifiedName());
-        return packageScope != null && packageScope.containsClass(simpleName);
-    }
-
-    public boolean checkIfPackageExists(final String identifier) {
-        return packageMap.get(identifier) != null;
-    }
-
     public Scope resolveSimpleTypeName(final String identifier) {
         if (checkIdentifier(identifier)) {
             return this;
@@ -554,5 +538,9 @@ public class ClassScope extends Scope {
         if (packageScope == null) return null;
 
         return packageScope.getClass(simpleName);
+    }
+
+    public Type generateType() {
+        return new Type(name, packageName);
     }
 }
