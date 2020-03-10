@@ -33,10 +33,10 @@ public class UnaryExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         if (RHS.type.prim_type != Type.PRIM_TYPE.INT) {
-            if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literal_kind != Kind.INTEGER_LITERAL) {
+            //if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literal_kind != Kind.INTEGER_LITERAL) {
                     System.err.println("Unsound type: Unary");
                     System.exit(42);
-            }
+            //}
         }
     }
 }
