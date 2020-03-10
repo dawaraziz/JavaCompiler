@@ -28,8 +28,12 @@ public class Type {
 
     public Name name;
     public final boolean isArray;
-    
 
+    public Type (final PRIM_TYPE prim_type) {
+        this.prim_type = prim_type;
+        this.name = null;
+        this.isArray = false;
+    }
 
     public Type(final String simpleName, final Name packageName) {
         isArray = false;
@@ -38,7 +42,7 @@ public class Type {
         name = Name.generateFullyQualifiedName(simpleName, packageName);
     }
 
-    public Type(final Type type, boolean isArray) {
+    public Type(final Type type, final boolean isArray) {
         this.prim_type = type.prim_type;
         this.name = type.name;
         this.isArray = isArray;
@@ -93,7 +97,8 @@ public class Type {
     }
 
     public boolean isString() {
-        return prim_type == VAR && name.equals("String");
+        return prim_type == VAR
+                && name.getSimpleName().equals("String");
     }
 
     @Override
@@ -113,6 +118,10 @@ public class Type {
         } else {
             return this.prim_type == other.prim_type && this.isArray == other.isArray;
         }
+    }
+
+    public boolean isReferenceType() {
+        return prim_type == VAR || isArray;
     }
 
     public void linkType(final ClassScope classScope) {

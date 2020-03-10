@@ -4,12 +4,20 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
-import com.project.scanner.structure.Kind;
 
 public class LiteralExpression extends Expression {
 
+    public enum LITERAL_TYPE {
+        TRUE,
+        FALSE,
+        NULL,
+        STRING_LITERAL,
+        INTEGER_LITERAL,
+        CHARACTER_LITERAL
+    }
+
     final ASTHead literal;
-    public final Kind literal_kind;
+//    final LITERAL_TYPE literal_type;
 
 
     LiteralExpression(final ASTHead head, final Scope parentScope) {
@@ -19,17 +27,19 @@ public class LiteralExpression extends Expression {
 
         literal = head.getChild(0);
 
-        Kind kind = literal.getKind();
-
-        if ((kind == Kind.INTEGER_LITERAL) || (kind == Kind.STRING_LITERAL) || (kind == Kind.CHARACTER_LITERAL) ||
-        (kind == Kind.NULL) || (kind == Kind.TRUE) || (kind == Kind.FALSE)) {
-            this.literal_kind = kind;
-        }
-        else {
-            this.literal_kind = null;
-            System.err.println("Could not ID literal!");
-            System.exit(42);
-        }
+//        String lexeme = literal.getLexeme();
+//
+//        if (lexeme.equals("INTEGER_LITERAL")) this.literal_type = LITERAL_TYPE.INTEGER_LITERAL;
+//        else if (lexeme.equals("STRING_LITERAL")) this.literal_type = LITERAL_TYPE.STRING_LITERAL;
+//        else if (lexeme.equals("CHARACTER_LITERAL")) this.literal_type = LITERAL_TYPE.CHARACTER_LITERAL;
+//        else if (lexeme.equals("NULL")) this.literal_type = LITERAL_TYPE.NULL;
+//        else if (lexeme.equals("TRUE")) this.literal_type = LITERAL_TYPE.TRUE;
+//        else if (lexeme.equals("FALSE")) this.literal_type = LITERAL_TYPE.FALSE;
+//        else {
+//            this.literal_type = null;
+//            System.err.println("Could not ID literal!");
+//            System.exit(42);
+//        }
     }
 
     @Override

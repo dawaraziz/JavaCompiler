@@ -71,9 +71,7 @@ public class MethodScope extends Scope {
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         type.linkType(rootClass);
 
-        if (parameters == null) return;
-
-        parameters.forEach(c -> c.linkType(rootClass));
+        if (parameters != null) parameters.forEach(c -> c.linkType(rootClass));
 
         if (body != null) body.linkTypesToQualifiedNames(rootClass);
     }
@@ -84,6 +82,8 @@ public class MethodScope extends Scope {
     }
 
     public boolean checkIdentifierAgainstParameters(final String identifier) {
+        if (parameters == null) return false;
+
         return parameters.stream()
                 .anyMatch(c -> c.name.equals(identifier));
     }
@@ -93,6 +93,8 @@ public class MethodScope extends Scope {
     }
 
     public Parameter getParameterFromIdentifier(final String identifier) {
+        if (parameters == null) return null;
+
         for (final Parameter parameter : parameters) {
             if (parameter.name.equals(identifier)) return parameter;
         }

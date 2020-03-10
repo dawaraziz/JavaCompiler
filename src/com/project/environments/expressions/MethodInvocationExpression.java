@@ -32,6 +32,7 @@ public class MethodInvocationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+        System.err.println("Hit unimplemented method name!");
         // TODO:
     }
 

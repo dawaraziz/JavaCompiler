@@ -1,6 +1,7 @@
 package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.expressions.MethodInvocationExpression;
 import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.ForStatement;
 import com.project.environments.structure.Type;
@@ -67,7 +68,7 @@ public abstract class Scope {
             ret.add((DefinitionStatement) this);
         }
 
-        ret.addAll(parentScope.getParentLocalDefinitions());
+        if (parentScope != null) ret.addAll(parentScope.getParentLocalDefinitions());
 
         return ret;
     }
@@ -80,10 +81,16 @@ public abstract class Scope {
         }
     }
 
-    protected DefinitionStatement getDefinitionScope(String identifier) {
+    protected DefinitionStatement getDefinitionScope(final String identifier) {
         if (this instanceof DefinitionStatement) {
             if (this.name.equals(identifier)) {
                 return (DefinitionStatement) this;
+            }
+        } else if (this instanceof ForStatement) {
+            if (((ForStatement) this).forInit instanceof DefinitionStatement) {
+                if (((ForStatement) this).forInit.name.equals(identifier)) {
+                    return (DefinitionStatement) ((ForStatement) this).forInit;
+                }
             }
         }
 
@@ -98,5 +105,13 @@ public abstract class Scope {
         if (parentScope == null) return null;
 
         return parentScope.getDefinitionScope(identifier);
+    }
+
+    protected MethodInvocationExpression getMethodInvocation() {
+        if (this instanceof MethodInvocationExpression) {
+            return (MethodInvocationExpression) this;
+        } else {
+            return parentScope.getMethodInvocation();
+        }
     }
 }
