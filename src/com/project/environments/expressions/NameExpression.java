@@ -7,12 +7,10 @@ import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.statements.DefinitionStatement;
-import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
@@ -32,13 +30,7 @@ public class NameExpression extends Expression {
     private final NameExpression qualifier;
 
     private Scope namePointer;
-
-    NameExpression(final ASTHead head ,final NameExpression parentName) {
-        this.qualifier = parentName;
-        this.parentScope = parentName.parentScope;
-        this.nameLexeme = head.getLexeme();
-    }
-
+    
     NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
