@@ -16,9 +16,12 @@ public class ClassInstanceCreationExpression extends Expression {
         if (head.getChildren().size() == 5) {
             argList = generateExpressionScope(head.getChild(1), this);
             classType = generateExpressionScope(head.getChild(3), this);
-        } else {
+        } else if (head.getChildren().size() == 4) {
             argList = null;
             classType = generateExpressionScope(head.getChild(2), this);
+        } else {
+            argList = generateExpressionScope(head.generateClassInstanceSubHead(), this);
+            classType = generateExpressionScope(head.getChild(head.getChildren().size() - 2), this);
         }
     }
 
