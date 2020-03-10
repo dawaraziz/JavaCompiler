@@ -23,12 +23,12 @@ public class ClassInstanceCreationExpression extends Expression {
     }
 
     @Override
-    public boolean isVariableNameUsed(String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         return false;
     }
 
     @Override
-    public void linkTypesToQualifiedNames(ClassScope rootClass) {
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
 
     }
 

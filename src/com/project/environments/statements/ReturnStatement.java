@@ -18,8 +18,8 @@ public class ReturnStatement extends Statement {
         this.name = null;
 
         expression = (head.getChildren().size() == 2)
-                ? generateExpressionScope(head.getChild(1), this)
-                : null;
+                ? null
+                : generateExpressionScope(head.getChild(1), this);
     }
 
     @Override
