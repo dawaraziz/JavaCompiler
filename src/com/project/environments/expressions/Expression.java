@@ -62,4 +62,6 @@ abstract public class Expression extends Scope {
     public boolean isLiteralExpression() {
         return this instanceof LiteralExpression;
     }
+
+    public boolean isQualifiedNameExpression() { return this instanceof QualifiedNameExpression;}
 }

@@ -747,7 +747,8 @@ public class ASTHead {
                 || headNode.kind == TYPENAME
                 || headNode.kind == PACKAGEORTYPENAME
                 || headNode.kind == AMBIGUOUSNAME
-                || headNode.kind == PACKAGENAME;
+                || headNode.kind == PACKAGENAME
+                || headNode.kind == METHODNAME;
     }
 
     public boolean isQualifiedNameExpr() {
@@ -799,7 +800,7 @@ public class ASTHead {
     }
 
     public boolean isMethodInvocationExpr() {
-        return headNode.lexeme.equals("METHODINVOCATION") || headNode.kind == Kind.METHODNAME;
+        return headNode.lexeme.equals("METHODINVOCATION");
     }
 
     public boolean isArrayCreationExpr() {
