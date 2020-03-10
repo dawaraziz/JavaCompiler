@@ -28,7 +28,8 @@ public class PrimaryNoNewArrayExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
-
+        nextExpr.linkTypesToQualifiedNames(rootClass);
+        this.type = nextExpr.type;
     }
 
     @Override

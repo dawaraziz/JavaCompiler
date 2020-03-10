@@ -47,5 +47,6 @@ public class AdditiveExpression extends Expression {
                 System.exit(42);
             }
         }
+        this.type = RHS.type;
     }
 }

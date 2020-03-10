@@ -138,7 +138,7 @@ public class NameExpression extends Expression {
             }
         } else if (nameKind == METHODNAME) {
             System.err.println("Method name resolution not implemented!");
-            System.exit(42);
+//            System.exit(42);
         }
     }
 

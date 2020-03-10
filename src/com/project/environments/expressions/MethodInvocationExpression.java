@@ -32,12 +32,16 @@ public class MethodInvocationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+        this.parameters.linkTypesToQualifiedNames(rootClass);
+        this.methodName.linkTypesToQualifiedNames(rootClass);
         System.err.println("Hit unimplemented method name!");
         // TODO:
     }
 
     @Override
     public void checkTypeSoundness() {
+        this.methodName.checkTypeSoundness();
+        this.parameters.checkTypeSoundness();
         // TODO:
     }
 }
