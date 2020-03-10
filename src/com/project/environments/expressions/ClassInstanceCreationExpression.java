@@ -32,11 +32,14 @@ public class ClassInstanceCreationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-
+        this.classType.linkTypesToQualifiedNames(rootClass);
+        this.argList.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override
     public void checkTypeSoundness() {
+        this.argList.checkTypeSoundness();
+        this.classType.checkTypeSoundness();
         //TODO: Check that parameters match a constructor
     }
 }

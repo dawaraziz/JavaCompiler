@@ -681,7 +681,11 @@ public class ASTHead {
     }
 
     public boolean isUnaryExpr() {
-        return headNode.lexeme.equals(UNARY_EXPRESSION) ||
+        return headNode.lexeme.equals(UNARY_EXPRESSION);
+    }
+
+    public boolean isUnaryNotPlusMinusExpr() {
+        return
                 headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 

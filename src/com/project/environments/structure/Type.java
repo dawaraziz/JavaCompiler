@@ -1,6 +1,7 @@
 package com.project.environments.structure;
 
 import com.project.environments.scopes.ClassScope;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class Type {
     static final private String VOID_LEXEME = "void";
 
     public final PRIM_TYPE prim_type;
+    public final Kind literal_type;
 
     public Name name;
     public final boolean isArray;
@@ -38,6 +40,7 @@ public class Type {
     private Type() {
         prim_type = VAR;
         isArray = false;
+        literal_type = null;
     }
 
     public Type (final PRIM_TYPE prim_type) {
@@ -50,11 +53,20 @@ public class Type {
         }
 
         this.isArray = false;
+        this.literal_type = null;
+    }
+
+    public Type(final Kind literal_type) {
+        this.literal_type = literal_type;
+        this.prim_type = null;
+        this.name = null;
+        this.isArray = false;
     }
 
     public Type(final String simpleName, final Name packageName) {
         isArray = false;
         prim_type = VAR;
+        this.literal_type = null;
 
         name = Name.generateFullyQualifiedName(simpleName, packageName);
     }
@@ -63,9 +75,11 @@ public class Type {
         this.prim_type = type.prim_type;
         this.name = type.name;
         this.isArray = isArray;
+        this.literal_type = null;
     }
 
     public Type(final ArrayList<String> typeLexemes) {
+        this.literal_type = null;
         if (typeLexemes.contains("[") && typeLexemes.contains("]")) {
             isArray = true;
             typeLexemes.remove("[");
@@ -130,10 +144,14 @@ public class Type {
 
         final Type other = (Type) obj;
 
-        if (this.name != null) {
-            return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name);
+        if (this.literal_type == null) {
+            if (this.name != null) {
+                return this.prim_type == other.prim_type && this.isArray == other.isArray && this.name.equals(other.name);
+            } else {
+                return this.prim_type == other.prim_type && this.isArray == other.isArray;
+            }
         } else {
-            return this.prim_type == other.prim_type && this.isArray == other.isArray;
+            return this.literal_type == other.literal_type;
         }
     }
 

@@ -23,6 +23,8 @@ abstract public class Expression extends Scope {
                 childScopes.add(new CastExpression(expression, parentScope));
             } else if (expression.isAdditiveExpr()) {
                 childScopes.add(new AdditiveExpression(expression, parentScope));
+            } else if (expression.isUnaryNotPlusMinusExpr()) {
+                childScopes.add(new UnaryNotPlusMinusExpr(expression, parentScope));
             } else if (expression.isUnaryExpr()) {
                 childScopes.add(new UnaryExpression(expression, parentScope));
             } else if (expression.isLiteralExpr()) {

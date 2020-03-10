@@ -49,19 +49,14 @@ public class BaseExpression extends Expression {
         if (LHS != null) {
             if (!this.ast.getChild(1).getLexeme().equals("COMMA")) {
                 if (LHS.type != RHS.type) {
-                    if (LHS.isLiteralExpression() && RHS.isLiteralExpression()) {
-                        if (((LiteralExpression) LHS).literalKind != ((LiteralExpression) RHS).literalKind) {
-                            System.err.println("Unsound type: Base Expression, differing literal types");
-                            System.exit(42);
-                        }
-                    } else {
-                        // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
+                    // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
 
-                        System.err.println("Unsound type: Base Expression, differing types");
-                        System.exit(42);
-                    }
+                    System.err.println("Unsound type: Base Expression, differing types");
+                    System.exit(42);
                 }
             }
+            this.type = this.LHS.type;
         }
+        this.type = this.singular.type;
     }
 }

@@ -11,3 +11,4 @@ public class foo extends bar implements baz {
     public foo() {}
 
 }
+
