@@ -57,6 +57,6 @@ public class BaseExpression extends Expression {
             }
             this.type = this.LHS.type;
         }
-        this.type = this.singular.type;
+        else this.type = this.singular.type;
     }
 }
