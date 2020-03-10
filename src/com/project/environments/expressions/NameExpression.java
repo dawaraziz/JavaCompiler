@@ -24,6 +24,7 @@ import static com.project.scanner.structure.Kind.TYPENAME;
 public class NameExpression extends Expression {
     private final String nameLexeme;
     private Kind nameKind;
+    boolean isArrayLength;
 
     private final NameExpression qualifier;
 
@@ -87,9 +88,15 @@ public class NameExpression extends Expression {
             classifyQualifiedName();
         }
 
-        if (namePointer == null && type == null && nameKind != PACKAGENAME) {
+
+        if (nameLexeme.equals("length")) {
+            isArrayLength = true;
+        } else if (namePointer == null && type == null
+                && nameKind != PACKAGENAME) {
             System.err.println("Could not identify name pointer; aborting!");
             System.exit(42);
+        } else {
+            isArrayLength = false;
         }
 
         if (type == null && namePointer != null) type = namePointer.type;

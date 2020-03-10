@@ -41,6 +41,8 @@ abstract public class Expression extends Scope {
                 childScopes.add(new PrimaryNoNewArrayExpression(expression, parentScope));
             } else if (expression.isClassInstanceCreationExpr()) {
                 childScopes.add(new ClassInstanceCreationExpression(expression, parentScope));
+            } else if (expression.isArrayTypeExpr()) {
+                childScopes.add(new ArrayTypeExpression(expression, parentScope));
             } else {
                 childScopes.add(new BaseExpression(expression, parentScope));
             }
