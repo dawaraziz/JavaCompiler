@@ -4,7 +4,6 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class QualifiedNameExpression extends Expression {
@@ -16,7 +15,7 @@ public class QualifiedNameExpression extends Expression {
         names.add(new NameExpression(head.getChild(head.getChildren().size()-1), this));
         int j = 0;
 
-        for (int i = head.getChildren().size()-2; i > 0; --i) {
+        for (int i = head.getChildren().size()-2; i >= 0; --i) {
             if ((i % 2) == 1) continue;
 
             this.currExpr = new NameExpression(head.getChild(i), names.get(j));
@@ -25,7 +24,6 @@ public class QualifiedNameExpression extends Expression {
             names.add(this.currExpr);
         }
 
-        names.add(generateExpressionScope(head.getChild(0), this));
     }
 
     @Override
