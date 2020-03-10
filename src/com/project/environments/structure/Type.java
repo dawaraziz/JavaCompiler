@@ -40,6 +40,7 @@ public class Type {
     private Type() {
         prim_type = VAR;
         isArray = false;
+        literal_type = null;
     }
 
     public Type (final PRIM_TYPE prim_type) {
