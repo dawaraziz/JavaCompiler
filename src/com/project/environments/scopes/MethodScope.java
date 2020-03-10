@@ -78,7 +78,7 @@ public class MethodScope extends Scope {
 
     @Override
     public void checkTypeSoundness() {
-        body.checkTypeSoundness();
+        if (body != null) body.checkTypeSoundness();
     }
 
     public boolean checkIdentifierAgainstParameters(final String identifier) {

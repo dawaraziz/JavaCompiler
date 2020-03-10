@@ -85,8 +85,8 @@ public class Main {
         // Link all types to their fully qualified name.
         for (final ClassScope classScope : classTable) {
             classScope.generateImportMaps(classTable);
-            classScope.linkTypesToQualifiedNames(null);
-            classScope.checkTypeSoundness();
+//            classScope.linkTypesToQualifiedNames(null);
+//            classScope.checkTypeSoundness();
         }
 
         // Checks for duplicate classes.
@@ -128,6 +128,18 @@ public class Main {
                             .generateAppendedPackageName(classScope.name)
                             .getDefaultlessQualifiedName(),
                     classScope);
+        }
+
+        for (final ClassScope classScope : classTable) {
+            classScope.setClassMap(classMap);
+        }
+
+        for (final ClassScope classScope : classTable) {
+            classScope.linkTypesToQualifiedNames(null);
+        }
+
+        for (final ClassScope classScope : classTable) {
+            classScope.checkTypeSoundness();
         }
 
         TypeLinker.link(classTable, packageMap);

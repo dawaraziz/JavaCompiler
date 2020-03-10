@@ -12,6 +12,9 @@ import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
@@ -137,8 +140,18 @@ public class NameExpression extends Expression {
                 namePointer = fieldScope;
             }
         } else if (nameKind == METHODNAME) {
-            System.err.println("Method name resolution not implemented!");
-//            System.exit(42);
+            ArrayList<MethodScope> methods = getParentClass().getAllMethods();
+            boolean found = false;
+            for (MethodScope method : methods) {
+                if (method.name.equals(nameLexeme)) {
+                    found = true;
+                    namePointer = method;
+                }
+            }
+            if (!found) {
+                System.err.println("Method name resolution not implemented!");
+                System.exit(42);
+            }
         }
     }
 

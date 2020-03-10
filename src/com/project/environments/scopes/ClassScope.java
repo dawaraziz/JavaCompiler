@@ -4,10 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
@@ -28,6 +25,7 @@ public class ClassScope extends Scope {
     private final Map<String, ClassScope> inPackageImportMap;
 
     public final ArrayList<ClassScope> classTable;
+    public HashMap<String, ClassScope> classMap;
 
     public final Map<String, PackageScope> packageMap;
 
@@ -212,6 +210,10 @@ public class ClassScope extends Scope {
         }
     }
 
+    public void setClassMap(HashMap<String, ClassScope> classMap) {
+        this.classMap = classMap;
+    }
+
     private Boolean containsMethod(final MethodScope methodScope) {
         for (final MethodScope method : methodTable) {
             final boolean signatureMatch = method.equals(methodScope);
@@ -335,6 +337,42 @@ public class ClassScope extends Scope {
         linkMethodParameters();
     }
 
+    public ArrayList<MethodScope> getAllMethods() {
+        final ArrayList<MethodScope> inheritedMethods = new ArrayList<>();
+        inheritedMethods.addAll(this.methodTable);
+
+        final Stack<ClassScope> classes = new Stack<>();
+        classes.push(this);
+
+        while (!classes.isEmpty()) {
+            final ClassScope curClass = classes.pop();
+            inheritedMethods.addAll(getMethods(curClass.extendsTable, classes));
+        }
+
+        return inheritedMethods;
+    }
+
+    private ArrayList<MethodScope> getMethods(final ArrayList<Name> superList,
+                                              final Stack<ClassScope> classes) {
+        final ArrayList<MethodScope> methods = new ArrayList<>();
+
+        if (superList == null) return methods;
+
+        for (final Name superName : superList) {
+            final ClassScope superClass = classMap.get(superName.getDefaultlessQualifiedName());
+
+            if (superClass == null) continue;
+
+            classes.push(superClass);
+
+            if (superClass.methodTable != null) {
+                methods.addAll(superClass.methodTable);
+            }
+        }
+
+        return methods;
+    }
+
     private void linkConstructorTypes() {
         if (constructorTable == null) {
             System.err.println("Found no constructor for class " + name + ".");
@@ -450,7 +488,12 @@ public class ClassScope extends Scope {
 
     @Override
     public void checkTypeSoundness() {
-
+        for (FieldScope fieldScope : fieldTable) {
+            fieldScope.checkTypeSoundness();
+        }
+        for (MethodScope methodScope : methodTable) {
+            methodScope.checkTypeSoundness();
+        }
     }
 
     public boolean checkIdentifier(final String identifier) {
