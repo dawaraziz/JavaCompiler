@@ -752,12 +752,10 @@ public class ASTHead {
                 || headNode.kind == PACKAGEORTYPENAME
                 || headNode.kind == AMBIGUOUSNAME
                 || headNode.kind == PACKAGENAME
-                || headNode.kind == METHODNAME;
+                || headNode.kind == METHODNAME
+                || headNode.lexeme.equals("QUALIFIEDNAME");
     }
 
-    public boolean isQualifiedNameExpr() {
-        return headNode.lexeme.equals("QUALIFIEDNAME");
-    }
 
     public boolean isArrayAccessExpression() {
         return headNode.lexeme.equals("ARRAYACCESS");

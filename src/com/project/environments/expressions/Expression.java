@@ -33,8 +33,6 @@ abstract public class Expression extends Scope {
                 childScopes.add(new TypeExpression(expression, parentScope));
             } else if (expression.isNameExpr()) {
                 childScopes.add(new NameExpression(expression, parentScope));
-            } else if (expression.isQualifiedNameExpr()) {
-                childScopes.add(new QualifiedNameExpression(expression, parentScope));
             } else if (expression.isMethodInvocationExpr()) {
                 childScopes.add(new MethodInvocationExpression(expression, parentScope));
             } else if (expression.isArrayCreationExpr()) {
@@ -66,6 +64,4 @@ abstract public class Expression extends Scope {
     public boolean isLiteralExpression() {
         return this instanceof LiteralExpression;
     }
-
-    public boolean isQualifiedNameExpression() { return this instanceof QualifiedNameExpression;}
 }
