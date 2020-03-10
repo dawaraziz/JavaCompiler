@@ -15,19 +15,18 @@ import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
 import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
-import static com.project.scanner.structure.Kind.INT;
 import static com.project.scanner.structure.Kind.METHODNAME;
 import static com.project.scanner.structure.Kind.PACKAGENAME;
 import static com.project.scanner.structure.Kind.PACKAGEORTYPENAME;
 import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class NameExpression extends Expression {
-    final String nameLexeme;
-    Kind nameKind;
+    private final String nameLexeme;
+    private Kind nameKind;
 
-    final NameExpression qualifier;
+    private final NameExpression qualifier;
 
-    Scope namePointer;
+    private Scope namePointer;
 
     NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
@@ -81,19 +80,19 @@ public class NameExpression extends Expression {
             classifyQualifiedName();
         }
 
-        if (namePointer == null && type == null) {
+        if (namePointer == null && type == null && nameKind != PACKAGENAME) {
             System.err.println("Could not identify name pointer; aborting!");
             System.exit(42);
         }
 
-        if (type == null) type = namePointer.type;
+        if (type == null && namePointer != null) type = namePointer.type;
     }
 
     private void classifySimpleName() {
         final ClassScope parentClass = getParentClass();
 
         if (nameKind == PACKAGENAME) {
-            if (!parentClass.checkIfPackageExists(nameLexeme)) {
+            if (!parentClass.isNamePrefixOfPackage(nameLexeme)) {
                 System.err.println("Found invalid package name.");
                 System.exit(42);
             }
@@ -124,7 +123,7 @@ public class NameExpression extends Expression {
                 namePointer = fieldScope;
             }
         } else if (nameKind == METHODNAME) {
-            System.err.println("Crud!");
+            System.err.println("Method name resolution not implemented!");
             System.exit(42);
         }
     }
@@ -159,8 +158,10 @@ public class NameExpression extends Expression {
                 System.err.println("Found package name qualified expression name.");
                 System.exit(42);
             } else if (qualifier.nameKind == TYPENAME) {
-                if (parentClass.classType == CLASS) {
-                    final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
+                final ClassScope qualifyingClass = getResolvedType();
+
+                if (qualifyingClass.classType == CLASS) {
+                    final FieldScope fieldScope = qualifyingClass.getIdentifierFromFields(nameLexeme);
 
                     if (fieldScope == null) {
                         System.err.println("Found type name qualified expression name with no field.");
@@ -168,8 +169,8 @@ public class NameExpression extends Expression {
                     }
 
                     namePointer = fieldScope;
-                } else if (parentClass.classType == INTERFACE) {
-                    final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
+                } else if (qualifyingClass.classType == INTERFACE) {
+                    final FieldScope fieldScope = qualifyingClass.getIdentifierFromFields(nameLexeme);
 
                     if (fieldScope == null) {
                         System.err.println("Found type name qualified expression name with no field.");
@@ -200,15 +201,18 @@ public class NameExpression extends Expression {
                 namePointer = fieldScope;
             }
         } else if (nameKind == METHODNAME) {
-            if (qualifier.nameKind == PACKAGENAME) {
-                System.err.println("Found package name qualified method name.");
-                System.exit(42);
-            } else {
-                final MethodScope scope = resolveMethod();
-            }
-
-            System.err.println("Crud!");
+            System.err.println("Method name resolution not implemented!");
             System.exit(42);
+
+//            if (qualifier.nameKind == PACKAGENAME) {
+//                System.err.println("Found package name qualified method name.");
+//                System.exit(42);
+//            } else {
+//                final MethodScope scope = resolveMethod();
+//            }
+//
+//            System.err.println("Crud!");
+//            System.exit(42);
         }
     }
 

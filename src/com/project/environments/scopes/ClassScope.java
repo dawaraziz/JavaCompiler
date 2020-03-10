@@ -389,7 +389,9 @@ public class ClassScope extends Scope {
 
         // Check if a prefix of our name itself resolves to a type.
         for (Name prefix = name.getPackageName(); prefix != null; prefix = prefix.getPackageName()) {
-            if (getImportedType(prefix.getSimpleName()) != null) {
+            final Name possibleConflict = getImportedType(prefix.getSimpleName());
+
+            if (possibleConflict != null && possibleConflict.getPackageName() == prefix.getPackageName()) {
                 System.err.println("Prefix of type was itself type.");
                 System.exit(42);
             }

@@ -15,8 +15,6 @@ import static com.project.environments.ast.ASTNode.lexemesToStringList;
 import static com.project.environments.expressions.Expression.generateExpressionScope;
 
 public class DefinitionStatement extends Statement {
-    public final Type type;
-
     final Expression initialization;
     final ArrayList<Statement> statements;
 

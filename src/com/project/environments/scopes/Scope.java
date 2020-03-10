@@ -68,7 +68,7 @@ public abstract class Scope {
             ret.add((DefinitionStatement) this);
         }
 
-        ret.addAll(parentScope.getParentLocalDefinitions());
+        if (parentScope != null) ret.addAll(parentScope.getParentLocalDefinitions());
 
         return ret;
     }
