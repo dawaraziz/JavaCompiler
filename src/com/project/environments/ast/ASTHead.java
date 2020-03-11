@@ -681,11 +681,7 @@ public class ASTHead {
     }
 
     public boolean isUnaryExpr() {
-        return headNode.lexeme.equals(UNARY_EXPRESSION);
-    }
-
-    public boolean isUnaryNotPlusMinusExpr() {
-        return
+        return headNode.lexeme.equals(UNARY_EXPRESSION) ||
                 headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 
@@ -752,10 +748,12 @@ public class ASTHead {
                 || headNode.kind == PACKAGEORTYPENAME
                 || headNode.kind == AMBIGUOUSNAME
                 || headNode.kind == PACKAGENAME
-                || headNode.kind == METHODNAME
-                || headNode.lexeme.equals("QUALIFIEDNAME");
+                || headNode.kind == METHODNAME;
     }
 
+    public boolean isQualifiedNameExpr() {
+        return headNode.lexeme.equals("QUALIFIEDNAME");
+    }
 
     public boolean isArrayAccessExpression() {
         return headNode.lexeme.equals("ARRAYACCESS");
@@ -855,9 +853,5 @@ public class ASTHead {
         final ASTNode replacementNode = new ASTNode(null, "CLASSINSTANCECREATIONEXPRESSION");
         replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
         return new ASTHead(replacementNode);
-    }
-
-    public boolean isArgumentListExpr() {
-        return headNode.lexeme.equals("ARGUMENTLIST");
     }
 }
