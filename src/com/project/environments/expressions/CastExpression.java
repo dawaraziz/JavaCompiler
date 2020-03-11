@@ -38,6 +38,7 @@ public class CastExpression extends Expression{
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
         if (cast != null) cast.linkTypesToQualifiedNames(rootClass);
         if (unary != null) unary.linkTypesToQualifiedNames(rootClass);
+        this.type = cast.type;
     }
 
     @Override
