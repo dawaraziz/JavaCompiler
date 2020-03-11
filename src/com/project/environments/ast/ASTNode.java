@@ -2,9 +2,13 @@ package com.project.environments.ast;
 
 import com.project.parser.structure.ParserSymbol;
 import com.project.scanner.structure.Kind;
+import resources.Pair;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Stack;
 
 public class ASTNode {
     public Kind kind;
@@ -73,6 +77,43 @@ public class ASTNode {
 
         return nodesWithLexeme;
     }
+
+    public ASTNode findFirstDirectChildNodeWithLexeme(final String lexeme) {
+        for (final ASTNode child : children) {
+            if (child.lexeme.equals(lexeme)){
+                return child;
+            }
+        }
+        return null;
+    }
+
+    public ASTNode findFirstDirectChildNodeWithKind(final Kind kind) {
+        for (final ASTNode child : children) {
+            if (child.kind.equals(kind)){
+                return child;
+            }
+        }
+        return null;
+    }
+
+    // Once we find a direct child with a kind 'afterKind' we will recurse its siblings after for any of kind target
+    public ArrayList<ASTNode> findChildKindsAfterNodeWithKind(final Kind target, final Kind afterKind) {
+        ArrayList<ASTNode> nodes = new ArrayList();
+        boolean found = false;
+        for (int i = children.size()-1; i >= 0; i--) {
+            ASTNode child = children.get(i);
+            //Once we have found a direct child with the kind we can search recursively for the target nodes
+            if (child.kind == afterKind){
+                found = true;
+            }
+            if (found){
+                // Recurse through this child to find targets
+                nodes.addAll(child.findNodesWithKinds(target));
+            }
+        }
+        return nodes;
+    }
+
 
     public ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
         final ArrayList<ASTNode> nodesWithkind = new ArrayList<>();
@@ -156,5 +197,34 @@ public class ASTNode {
 
     public void setLexeme(final String lexeme) {
         this.lexeme = lexeme;
+    }
+
+    public boolean parentOneOfLexeme(final String... lexemes){
+        for (String lex : lexemes){
+            if (this.parent.lexeme.equals(lex)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    public void printAST() {
+        final Stack<Pair<ASTNode, Integer>> stack = new Stack<>();
+        stack.add(new Pair<>(this, 0));
+        while (!stack.empty()) {
+            final Pair<ASTNode, Integer> pair = stack.pop();
+            final ASTNode curr = pair.getO1();
+            final int level = pair.getO2();
+            for (int i = 0; i < level; i++) {
+                System.out.print("\t");
+            }
+            System.out.println(curr.lexeme + " : " + curr.kind + " : " + level);
+            for (final ASTNode child : curr.children) {
+                stack.add(new Pair<>(child, level + 1));
+            }
+        }
     }
 }

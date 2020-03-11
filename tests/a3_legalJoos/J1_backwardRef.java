@@ -2,6 +2,7 @@
 public class J1_backwardRef {
 	public int a = 2;
 	public int b = a + 121;
+	public int c = a + b + 121;
 	
 	public J1_backwardRef() {
 	}
