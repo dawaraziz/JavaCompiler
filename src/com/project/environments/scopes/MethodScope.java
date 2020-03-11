@@ -67,12 +67,14 @@ public class MethodScope extends Scope {
         return false;
     }
 
-    @Override
-    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+    public void linkTypes(ClassScope rootClass) {
         type.linkType(rootClass);
 
         if (parameters != null) parameters.forEach(c -> c.linkType(rootClass));
+    }
 
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         if (body != null) body.linkTypesToQualifiedNames(rootClass);
     }
 

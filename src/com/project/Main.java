@@ -131,6 +131,16 @@ public class Main {
         }
 
         for (final ClassScope classScope : classTable) {
+            classScope.linkSuperTypes();
+            classScope.linkImplementsTypes();
+            classScope.linkMethodTypes();
+        }
+
+        for (final ClassScope classScope : classTable) {
+            classScope.linkFieldsTypes();
+        }
+
+        for (final ClassScope classScope : classTable) {
             classScope.setClassMap(classMap);
         }
 

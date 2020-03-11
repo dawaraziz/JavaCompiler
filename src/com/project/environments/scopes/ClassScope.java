@@ -334,10 +334,6 @@ public class ClassScope extends Scope {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-        linkSuperTypes();
-        linkImplementsTypes();
-        linkFieldsTypes();
-
         linkConstructorTypes();
         linkMethodParameters();
     }
@@ -390,7 +386,7 @@ public class ClassScope extends Scope {
     }
 
 
-    private void linkSuperTypes() {
+    public void linkSuperTypes() {
         if (extendsTable == null) return;
 
         for (int i = 0; i < extendsTable.size(); ++i) {
@@ -403,7 +399,13 @@ public class ClassScope extends Scope {
         }
     }
 
-    private void linkImplementsTypes() {
+    public void linkMethodTypes() {
+        if (this.methodTable != null) {
+            methodTable.forEach(c -> c.linkTypes(this));
+        }
+    }
+
+    public void linkImplementsTypes() {
         if (implementsTable == null) return;
 
         for (int i = 0; i < implementsTable.size(); ++i) {
@@ -487,7 +489,7 @@ public class ClassScope extends Scope {
         if (methodTable != null) methodTable.forEach(c -> c.linkTypesToQualifiedNames(this));
     }
 
-    private void linkFieldsTypes() {
+    public void linkFieldsTypes() {
         if (fieldTable != null) fieldTable.forEach(c -> c.linkTypesToQualifiedNames(this));
     }
 
@@ -592,7 +594,7 @@ public class ClassScope extends Scope {
                                                             final ArrayList<Expression> parameters) {
 
         // First, we inspect ourselves.
-        for (final MethodScope method : methodTable) {
+        for (final MethodScope method : getAllMethods()) {
             if (method.name.equals(identifier)) {
 
                 if (parameters.size() == 0 && method.parameters == null) {
@@ -605,9 +607,14 @@ public class ClassScope extends Scope {
                 if (parameters.size() != method.parameters.size()) continue;
                 boolean parametersMatch = true;
                 for (int i = 0; i < parameters.size(); ++i) {
-                    if (!(parameters.get(i).type.equals(method.parameters.get(i).type))) {
-                        parametersMatch = false;
-                        break;
+                    try {
+                        if (!(parameters.get(i).type.equals(method.parameters.get(i).type))) {
+                            parametersMatch = false;
+                            break;
+                        }
+                    } catch (NullPointerException e) {
+                        int a = 1;
+                        System.exit(42);
                     }
                 }
 
