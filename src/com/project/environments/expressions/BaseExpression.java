@@ -3,6 +3,8 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Name;
+import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
 public class BaseExpression extends Expression {
@@ -40,26 +42,87 @@ public class BaseExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
-        if (LHS != null) LHS.linkTypesToQualifiedNames(rootClass);
-        RHS.linkTypesToQualifiedNames(rootClass);
+        if (LHS != null) {
+            LHS.linkTypesToQualifiedNames(rootClass);
+            RHS.linkTypesToQualifiedNames(rootClass);
+            String exprType = this.ast.getLexeme();
+            switch (exprType) {
+                case "RELATIONALEXPRESSION":
+                case "EQUALITYEXPRESSION":
+                case "ANDEXPRESSION":
+                case "EXCLUSIVEOREXPRESSION":
+                case "CONDITIONALEXPRESSION":
+                case "CONDITIONALOREXPRESSION":
+                case "INCLUSIVEOREXPRESSION":
+                case "CONDITIONALANDEXPRESSION":
+                    this.type = new Type(Type.PRIM_TYPE.BOOLEAN);
+                    break;
+                case "MULTIPLICATIVEEXPRESSION":
+                    this.type = new Type(Type.PRIM_TYPE.INT);
+                    break;
+                case "SUBBASEEXPRESSION":
+                case "ASSIGNMENT":
+                    this.type = RHS.type;
+                    break;
+                default:
+                    System.err.println("Could not type Base Expr!");
+                    System.exit(42);
+            }
+        } else {
+            singular.linkTypesToQualifiedNames(rootClass);
+            this.type = singular.type;
+        }
     }
 
     @Override
     public void checkTypeSoundness() {
         if (LHS != null) {
+            LHS.checkTypeSoundness();
+            RHS.checkTypeSoundness();
             if (!this.ast.getChild(1).getLexeme().equals("COMMA")) {
-                if (LHS.type != RHS.type) {
-                    if (LHS.isLiteralExpression() && RHS.isLiteralExpression()) {
-                        if (((LiteralExpression) LHS).literalKind != ((LiteralExpression) RHS).literalKind) {
-                            System.err.println("Unsound type: Base Expression, differing literal types");
+                if (!LHS.type.equals(RHS.type)) {
+                    // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
+
+                    if (((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals(new Name("null")))) ^
+                            ((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals(new Name("null"))))) {
+                        this.type = new Type(Type.PRIM_TYPE.VAR);
+                        this.type.name = new Name("null");
+                        return;
+                    }
+
+                    else if ((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.prim_type == Type.PRIM_TYPE.VAR)) {
+                        Name firstName = LHS.type.name;
+                        Name secondName = RHS.type.name;
+
+                        ClassScope firstClass = this.getParentClass().classMap.get(firstName.getQualifiedName());
+                        ClassScope secondClass = this.getParentClass().classMap.get(secondName.getQualifiedName());
+                        boolean found = false;
+                        if (firstClass.extendsTable != null) {
+                            for (Name extendsName : firstClass.extendsTable) {
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                if (extendsClass.equals(secondClass)) found = true;
+                            }
+                        }
+                        if (secondClass.extendsTable != null) {
+                            for (Name extendsName : secondClass.extendsTable) {
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                if (extendsClass.equals(firstClass)) found = true;
+                            }
+                        }
+                        if (!found) {
+                            System.err.println("Unsound type: Base Expression, differing types");
                             System.exit(42);
                         }
-                    } else {
-                        // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
+                        else return;
+                    }
 
+//                    if (!((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals("null"))) &&
+//                            !((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals("null")))) {
                         System.err.println("Unsound type: Base Expression, differing types");
                         System.exit(42);
-                    }
+                    //}
+
+
                 }
             }
         }

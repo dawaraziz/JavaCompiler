@@ -36,8 +36,10 @@ public class CastExpression extends Expression{
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
-        if (cast != null) cast.linkTypesToQualifiedNames(rootClass);
+        cast.linkTypesToQualifiedNames(rootClass);
         if (unary != null) unary.linkTypesToQualifiedNames(rootClass);
+
+        type = cast.type;
     }
 
     @Override

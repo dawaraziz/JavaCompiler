@@ -67,18 +67,20 @@ public class MethodScope extends Scope {
         return false;
     }
 
-    @Override
-    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
+    public void linkTypes(ClassScope rootClass) {
         type.linkType(rootClass);
 
         if (parameters != null) parameters.forEach(c -> c.linkType(rootClass));
+    }
 
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         if (body != null) body.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override
     public void checkTypeSoundness() {
-        body.checkTypeSoundness();
+        if (body != null) body.checkTypeSoundness();
     }
 
     public boolean checkIdentifierAgainstParameters(final String identifier) {

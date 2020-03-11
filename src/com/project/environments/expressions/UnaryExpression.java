@@ -27,16 +27,18 @@ public class UnaryExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
+
         RHS.linkTypesToQualifiedNames(rootClass);
+        this.type = RHS.type;
     }
 
     @Override
     public void checkTypeSoundness() {
         if (RHS.type.prim_type != Type.PRIM_TYPE.INT) {
-            if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literalKind != INT) {
+            //if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literalKind != INT) {
                 System.err.println("Unsound type: Unary");
                 System.exit(42);
-            }
+            //}
         }
     }
 }

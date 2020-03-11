@@ -14,7 +14,10 @@ public class AdditiveExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        if (head.getChildren().size() == 2) {
+        if (head.getChildren().size() > 3) {
+            LHS = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+            RHS = generateExpressionScope(head.generateBaseSubHead(), this);
+        } else if (head.getChildren().size() == 2) {
             LHS = null;
             RHS = generateExpressionScope(head.getChild(0), this);
         } else {
@@ -33,16 +36,22 @@ public class AdditiveExpression extends Expression {
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
         if (LHS != null) LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
+        this.type = RHS.type;
     }
 
     @Override
     public void checkTypeSoundness() {
+        RHS.checkTypeSoundness();
         if (LHS != null) {
+            LHS.checkTypeSoundness();
             if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
                     (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
 
+            } else if ((LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.prim_type == Type.PRIM_TYPE.CHAR) ||
+                    (RHS.type.prim_type == Type.PRIM_TYPE.INT && LHS.type.prim_type == Type.PRIM_TYPE.CHAR)) {
+                this.type = new Type(Type.PRIM_TYPE.INT);
             }
-            else if (LHS.type != RHS.type) {
+            else if (!LHS.type.equals(RHS.type)) {
                 System.err.println("Unsound type: Additive");
                 System.exit(42);
             }

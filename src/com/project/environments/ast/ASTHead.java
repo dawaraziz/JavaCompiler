@@ -690,8 +690,11 @@ public class ASTHead {
     }
 
     public boolean isUnaryExpr() {
-        return headNode.lexeme.equals(UNARY_EXPRESSION) ||
-                headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
+        return headNode.lexeme.equals(UNARY_EXPRESSION);
+    }
+
+    public boolean isUnaryNotPlusMinusExpr() {
+        return headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 
     public boolean isPrimaryNoNewArrayExpr() {
@@ -757,12 +760,10 @@ public class ASTHead {
                 || headNode.kind == PACKAGEORTYPENAME
                 || headNode.kind == AMBIGUOUSNAME
                 || headNode.kind == PACKAGENAME
-                || headNode.kind == METHODNAME;
+                || headNode.kind == METHODNAME
+                || headNode.lexeme.equals("QUALIFIEDNAME");
     }
 
-    public boolean isQualifiedNameExpr() {
-        return headNode.lexeme.equals("QUALIFIEDNAME");
-    }
 
     public boolean isArrayAccessExpression() {
         return headNode.lexeme.equals("ARRAYACCESS");
@@ -830,9 +831,21 @@ public class ASTHead {
         return new ASTHead(replacementNode);
     }
 
+    public ASTHead generatePrimaryMethodSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "METHODINVOCATION");
+        replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 4));
+        return new ASTHead(replacementNode);
+    }
+
     public ASTHead generateIfSubHead() {
         final ASTNode replacementNode = new ASTNode(null, "IFTHENELSESTATEMENT");
         replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 6));
+        return new ASTHead(replacementNode);
+    }
+
+    public ASTHead generateBaseSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "SUBBASEEXPRESSION");
+        replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 2));
         return new ASTHead(replacementNode);
     }
 
@@ -850,5 +863,18 @@ public class ASTHead {
             replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 3));
         }
         return new ASTHead(replacementNode);
+    }
+
+    public ASTHead generateClassInstanceSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "CLASSINSTANCECREATIONEXPRESSION");
+        replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
+        return new ASTHead(replacementNode);
+    }
+    public boolean isArgumentListExpr() {
+        return headNode.lexeme.equals("ARGUMENTLIST");
+    }
+
+    public boolean isFieldAccessExpr() {
+        return headNode.lexeme.equals("FIELDACCESS");
     }
 }

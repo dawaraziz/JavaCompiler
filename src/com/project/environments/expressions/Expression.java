@@ -23,6 +23,8 @@ abstract public class Expression extends Scope {
                 childScopes.add(new CastExpression(expression, parentScope));
             } else if (expression.isAdditiveExpr()) {
                 childScopes.add(new AdditiveExpression(expression, parentScope));
+            } else if (expression.isUnaryNotPlusMinusExpr()) {
+                childScopes.add(new UnaryNotPlusMinusExpr(expression, parentScope));
             } else if (expression.isUnaryExpr()) {
                 childScopes.add(new UnaryExpression(expression, parentScope));
             } else if (expression.isLiteralExpr()) {
@@ -31,8 +33,6 @@ abstract public class Expression extends Scope {
                 childScopes.add(new TypeExpression(expression, parentScope));
             } else if (expression.isNameExpr()) {
                 childScopes.add(new NameExpression(expression, parentScope));
-            } else if (expression.isQualifiedNameExpr()) {
-                childScopes.add(new QualifiedNameExpression(expression, parentScope));
             } else if (expression.isMethodInvocationExpr()) {
                 childScopes.add(new MethodInvocationExpression(expression, parentScope));
             } else if (expression.isArrayCreationExpr()) {
@@ -43,6 +43,10 @@ abstract public class Expression extends Scope {
                 childScopes.add(new ClassInstanceCreationExpression(expression, parentScope));
             } else if (expression.isArrayTypeExpr()) {
                 childScopes.add(new ArrayTypeExpression(expression, parentScope));
+            } else if (expression.isArgumentListExpr()) {
+                childScopes.add(new ArgumentListExpression(expression, parentScope));
+            } else if (expression.isFieldAccessExpr()) {
+                childScopes.add(new FieldAccessExpression(expression, parentScope));
             } else {
                 childScopes.add(new BaseExpression(expression, parentScope));
             }
@@ -64,6 +68,4 @@ abstract public class Expression extends Scope {
     public boolean isLiteralExpression() {
         return this instanceof LiteralExpression;
     }
-
-    public boolean isQualifiedNameExpression() { return this instanceof QualifiedNameExpression;}
 }

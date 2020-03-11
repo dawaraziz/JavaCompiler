@@ -4,30 +4,29 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
-import com.project.scanner.structure.Kind;
 
 public class LiteralExpression extends Expression {
 
-    final Kind literalKind;
-    final String literalValue;
+    public enum LITERAL_TYPE {
+        TRUE,
+        FALSE,
+        NULL,
+        STRING_LITERAL,
+        INTEGER_LITERAL,
+        CHARACTER_LITERAL
+    }
+
+    final ASTHead literal;
+
 
     LiteralExpression(final ASTHead head, final Scope parentScope) {
-        this.ast = head.getChild(0);
+        this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
 
-        literalKind = ast.getKind();
-        literalValue = ast.getLexeme();
-    }
+        literal = head.getChild(0);
 
-    @Override
-    public boolean isVariableNameUsed(final String variableName) {
-        return false;
-    }
-
-    @Override
-    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-        switch (literalKind) {
+        switch (literal.getKind()) {
             case INTEGER_LITERAL:
                 type = new Type(Type.PRIM_TYPE.INT);
                 break;
@@ -48,6 +47,16 @@ public class LiteralExpression extends Expression {
                 System.err.println("Could not ID literal!");
                 System.exit(42);
         }
+
+    }
+
+    @Override
+    public boolean isVariableNameUsed(final String variableName) {
+        return false;
+    }
+
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
     }
 
     @Override

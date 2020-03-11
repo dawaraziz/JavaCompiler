@@ -16,9 +16,12 @@ public class ClassInstanceCreationExpression extends Expression {
         if (head.getChildren().size() == 5) {
             argList = generateExpressionScope(head.getChild(1), this);
             classType = generateExpressionScope(head.getChild(3), this);
-        } else {
+        } else if (head.getChildren().size() == 4) {
             argList = null;
             classType = generateExpressionScope(head.getChild(2), this);
+        } else {
+            argList = generateExpressionScope(head.generateClassInstanceSubHead(), this);
+            classType = generateExpressionScope(head.getChild(head.getChildren().size() - 2), this);
         }
     }
 
@@ -29,11 +32,14 @@ public class ClassInstanceCreationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-
+        this.classType.linkTypesToQualifiedNames(rootClass);
+        if (argList != null) this.argList.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override
     public void checkTypeSoundness() {
+        this.argList.checkTypeSoundness();
+        this.classType.checkTypeSoundness();
         //TODO: Check that parameters match a constructor
     }
 }
