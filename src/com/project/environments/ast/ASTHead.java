@@ -860,4 +860,8 @@ public class ASTHead {
     public boolean isArgumentListExpr() {
         return headNode.lexeme.equals("ARGUMENTLIST");
     }
+
+    public boolean isFieldAccessExpr() {
+        return headNode.lexeme.equals("FIELDACCESS");
+    }
 }

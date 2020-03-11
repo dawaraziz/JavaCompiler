@@ -96,6 +96,35 @@ public class NameExpression extends Expression {
         if (type == null && namePointer != null) type = namePointer.type;
     }
 
+    public void classifyExpressionNameWithType(final Type type) {
+        final ClassScope qualifyingClass = getParentClass()
+                .getClassFromPackage(type.name.getPackageName().getQualifiedName(),
+                        type.name.getSimpleName());
+
+
+        if (qualifyingClass.classType == CLASS) {
+            final FieldScope fieldScope = qualifyingClass.getIdentifierFromFields(nameLexeme);
+
+            if (fieldScope == null) {
+                System.err.println("Found type name qualified expression name with no field.");
+                System.exit(42);
+            }
+
+            namePointer = fieldScope;
+        } else if (qualifyingClass.classType == INTERFACE) {
+            final FieldScope fieldScope = qualifyingClass.getIdentifierFromFields(nameLexeme);
+
+            if (fieldScope == null) {
+                System.err.println("Found type name qualified expression name with no field.");
+                System.exit(42);
+            }
+
+            namePointer = fieldScope;
+        }
+
+        this.type = namePointer.type;
+    }
+
     private void classifySimpleName() {
         final ClassScope parentClass = getParentClass();
 
