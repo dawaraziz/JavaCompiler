@@ -36,10 +36,11 @@ public class MethodInvocationExpression extends Expression {
         if (argumentExpression != null) this.argumentExpression.linkTypesToQualifiedNames(rootClass);
         this.methodName.linkTypesToQualifiedNames(rootClass);
 
+
         final ArrayList<Expression> arguments = new ArrayList<>();
         if (argumentExpression instanceof ArgumentListExpression) {
             arguments.addAll(((ArgumentListExpression) argumentExpression).arguments);
-        } else {
+        } else if (argumentExpression != null) {
             arguments.add(argumentExpression);
         }
 
@@ -72,8 +73,20 @@ public class MethodInvocationExpression extends Expression {
         final MethodScope resolvedMethod;
         if (qualifier == null) {
             resolvedMethod = containingScope.getMethodWithIdentifierAndParameters(identifier, arguments);
+
+            if (resolvedMethod != null) {
+                type = resolvedMethod.type;
+                return;
+            }
         } else {
 
+            // Qualified name case.
+            resolvedMethod = containingScope.getMethodWithIdentifierAndParameters(identifier, arguments);
+
+            if (resolvedMethod != null) {
+                type = resolvedMethod.type;
+                return;
+            }
         }
     }
 

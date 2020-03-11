@@ -33,7 +33,7 @@ public class ArgumentListExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-
+        arguments.forEach(c -> c.linkTypesToQualifiedNames(rootClass));
     }
 
     @Override

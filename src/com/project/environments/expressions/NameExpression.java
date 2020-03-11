@@ -336,13 +336,7 @@ public class NameExpression extends Expression {
     }
 
     public Type getQualifierType() {
-        if (qualifier == null) {
-            Scope temp = this.parentScope;
-            while (temp.parentScope != null) {
-                temp = temp.parentScope;
-            }
-            return temp.type;
-        }
+        if (qualifier == null) return null;
         return qualifier.type;
     }
 }

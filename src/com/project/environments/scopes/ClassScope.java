@@ -5,7 +5,11 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
@@ -211,7 +215,7 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void setClassMap(HashMap<String, ClassScope> classMap) {
+    public void setClassMap(final HashMap<String, ClassScope> classMap) {
         this.classMap = classMap;
     }
 
@@ -489,10 +493,10 @@ public class ClassScope extends Scope {
 
     @Override
     public void checkTypeSoundness() {
-        for (FieldScope fieldScope : fieldTable) {
+        for (final FieldScope fieldScope : fieldTable) {
             fieldScope.checkTypeSoundness();
         }
-        for (MethodScope methodScope : methodTable) {
+        for (final MethodScope methodScope : methodTable) {
             methodScope.checkTypeSoundness();
         }
     }
@@ -588,8 +592,27 @@ public class ClassScope extends Scope {
                                                             final ArrayList<Expression> parameters) {
 
         // First, we inspect ourselves.
-        for (MethodScope method : methodTable) {
+        for (final MethodScope method : methodTable) {
+            if (method.name.equals(identifier)) {
 
+                if (parameters.size() == 0 && method.parameters == null) {
+                    return method;
+                } else if (method.parameters == null) {
+                    continue;
+                }
+
+                // Check if the parameters match up.
+                if (parameters.size() != method.parameters.size()) continue;
+                boolean parametersMatch = true;
+                for (int i = 0; i < parameters.size(); ++i) {
+                    if (!(parameters.get(i).type.equals(method.parameters.get(i).type))) {
+                        parametersMatch = false;
+                        break;
+                    }
+                }
+
+                if (parametersMatch) return method;
+            }
         }
 
         return null;
