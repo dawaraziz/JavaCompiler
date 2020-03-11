@@ -25,7 +25,15 @@ public class LiteralExpression extends Expression {
         this.name = null;
 
         literal = head.getChild(0);
+    }
 
+    @Override
+    public boolean isVariableNameUsed(final String variableName) {
+        return false;
+    }
+
+    @Override
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         switch (literal.getKind()) {
             case INTEGER_LITERAL:
                 type = new Type(Type.PRIM_TYPE.INT);
@@ -47,16 +55,6 @@ public class LiteralExpression extends Expression {
                 System.err.println("Could not ID literal!");
                 System.exit(42);
         }
-
-    }
-
-    @Override
-    public boolean isVariableNameUsed(final String variableName) {
-        return false;
-    }
-
-    @Override
-    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
     }
 
     @Override

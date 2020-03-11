@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 
 public class CastExpression extends Expression{
     final Expression cast;
@@ -39,7 +40,7 @@ public class CastExpression extends Expression{
         cast.linkTypesToQualifiedNames(rootClass);
         if (unary != null) unary.linkTypesToQualifiedNames(rootClass);
 
-        type = cast.type;
+        type = new Type(cast.type, isArrayCast);
     }
 
     @Override

@@ -47,6 +47,8 @@ abstract public class Expression extends Scope {
                 childScopes.add(new ArgumentListExpression(expression, parentScope));
             } else if (expression.isFieldAccessExpr()) {
                 childScopes.add(new FieldAccessExpression(expression, parentScope));
+            } else if (expression.isAssignmentExpr()) {
+                childScopes.add(new AssignmentExpression(expression, parentScope));
             } else {
                 childScopes.add(new BaseExpression(expression, parentScope));
             }

@@ -6,7 +6,7 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
 public class ArrayCreationExpression extends Expression {
-    final Expression type;
+    final Expression typeExpression;
     final Expression dimensions;
 
     public ArrayCreationExpression(final ASTHead head, final Scope parentScope) {
@@ -14,7 +14,7 @@ public class ArrayCreationExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        type = generateExpressionScope(head.getChild(1), this);
+        typeExpression = generateExpressionScope(head.getChild(1), this);
 
         final ASTHead dims = head.getChild(0);
 
@@ -32,8 +32,9 @@ public class ArrayCreationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-        type.linkTypesToQualifiedNames(rootClass);
+        typeExpression.linkTypesToQualifiedNames(rootClass);
         dimensions.linkTypesToQualifiedNames(rootClass);
+        type = new Type(typeExpression.type, true);
     }
 
     @Override

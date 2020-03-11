@@ -12,6 +12,8 @@ import com.project.scanner.structure.Kind;
 
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
+import static com.project.environments.structure.Type.PRIM_TYPE.INT;
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
 import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
 import static com.project.scanner.structure.Kind.METHODNAME;
@@ -97,6 +99,11 @@ public class NameExpression extends Expression {
     }
 
     public void classifyExpressionNameWithType(final Type type) {
+        if (nameLexeme.equals("length") && type.prim_type != VAR) {
+            this.type = new Type(INT);
+            return;
+        }
+
         final ClassScope qualifyingClass = getParentClass()
                 .getClassFromPackage(type.name.getPackageName().getQualifiedName(),
                         type.name.getSimpleName());
@@ -221,7 +228,7 @@ public class NameExpression extends Expression {
 
                 // Arrays have a special field called length.
                 if (qualifier.type.isArray && nameLexeme.equals("length")) {
-                    type = new Type(Type.PRIM_TYPE.INT);
+                    type = new Type(INT);
                     return;
                 }
 

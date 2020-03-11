@@ -761,4 +761,19 @@ public class ClassScope extends Scope {
     public Type generateType() {
         return new Type(name, packageName);
     }
+
+    public boolean isSubClassOf(final ClassScope LHSClass) {
+        if (LHSClass.equals(this)) return true;
+
+        if (extendsTable == null) return false;
+
+        for (final Name className : extendsTable) {
+            final ClassScope superClass = getClassFromPackage(className.getPackageString(),
+                    className.getSimpleName());
+
+            if (superClass.isSubClassOf(LHSClass)) return true;
+        }
+
+        return false;
+    }
 }
