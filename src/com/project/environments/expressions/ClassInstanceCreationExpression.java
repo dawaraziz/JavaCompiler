@@ -40,7 +40,7 @@ public class ClassInstanceCreationExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
-        this.argList.checkTypeSoundness();
+        if (argList != null) this.argList.checkTypeSoundness();
         this.classType.checkTypeSoundness();
         //TODO: Check that parameters match a constructor
     }

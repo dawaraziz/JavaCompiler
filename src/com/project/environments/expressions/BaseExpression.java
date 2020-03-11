@@ -72,6 +72,11 @@ public class BaseExpression extends Expression {
             singular.linkTypesToQualifiedNames(rootClass);
             this.type = singular.type;
         }
+
+        if (this.type == null) {
+            System.err.println("Could not type Base Expr after!");
+            System.exit(42);
+        }
     }
 
     @Override
