@@ -83,8 +83,8 @@ public class BaseExpression extends Expression {
                 if (!LHS.type.equals(RHS.type)) {
                     // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
 
-                    if (((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals("null"))) ^
-                            ((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals("null")))) {
+                    if (((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals(new Name("null")))) ^
+                            ((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals(new Name("null"))))) {
                         this.type = new Type(Type.PRIM_TYPE.VAR);
                         this.type.name = new Name("null");
                         return;
