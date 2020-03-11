@@ -176,7 +176,8 @@ public class HierarchyChecker {
                     if (!interfaceMethod.equals(superMethod)) continue;
 
                     if (interfaceMethod.modifiers.contains("public")
-                            && superMethod.modifiers.contains("protected")) {
+                            && superMethod.modifiers.contains("protected")
+                            && !javaClass.modifiers.contains("abstract")) {
                         System.err.println("Inherited protected method from super and public method from interface.");
                         System.exit(42);
                     }

@@ -100,7 +100,7 @@ public class NameExpression extends Expression {
     }
 
     public void classifyExpressionNameWithType(final Type type) {
-        if (nameLexeme.equals("length") && type.prim_type != VAR) {
+        if (nameLexeme.equals("length") && type.isArray) {
             this.type = new Type(INT);
             return;
         }
