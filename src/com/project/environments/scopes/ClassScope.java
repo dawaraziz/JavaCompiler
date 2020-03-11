@@ -1,9 +1,13 @@
 package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.ast.ASTNode;
 import com.project.environments.expressions.Expression;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
+import com.project.util.Triplet;
+import resources.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.structure.Name.containsPrefixName;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
+import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class ClassScope extends Scope {
 
@@ -501,6 +506,134 @@ public class ClassScope extends Scope {
         for (final MethodScope methodScope : methodTable) {
             methodScope.checkTypeSoundness();
         }
+
+        //Dealing with assignable
+        checkAssignments(ast);
+
+
+    }
+
+    public void checkAssignments(ASTHead astHead){
+        ASTNode ast = astHead.unsafeGetHeadNode();
+        ArrayList<ASTNode> declarations = ast.findNodesWithLexeme("LOCALVARIABLEDECLARATION", "FIELDDECLARATION");
+        System.out.println("CALUM: " + declarations.size() + " : " +  name);
+
+        // for each local variable declaration get the LHS type and RHS
+        for (ASTNode node : declarations){
+            // Boolean whether type array and its kind
+            Triplet<Boolean, Kind, String> lhs_type = getDeclarationLHSType(node);
+            Triplet<Boolean, Kind, String> rhs_type = getDeclarationRHSType(node);
+            System.out.println("Class: " + name);
+            System.out.println("GOT LHS: " + lhs_type);
+            System.out.println("GOT RHS: " + rhs_type);
+            System.out.println("EQUAL: " + lhs_type.equals(rhs_type));
+
+            if (!lhs_type.equals(rhs_type)){
+                System.err.println("LHS type of Declaration does not match RHS in: " + name);
+                System.exit(42);
+            }
+        }
+    }
+
+    // Takes a LOCALVARIABLEDECLARATION or FIELDDECLARATION node as input
+    public Triplet<Boolean, Kind, String> getDeclarationLHSType(ASTNode node){
+        ASTNode typeNode = null;
+        if (node.lexeme.equals("LOCALVARIABLEDECLARATION")) {
+            System.out.println("Local Variable Declaration");
+            typeNode = node.children.get(node.children.size() - 1);
+        }
+        else if (node.lexeme.equals("FIELDDECLARATION")) {
+            // assumes a field Declaration always has a modifier
+            System.out.println("Field Declaration");
+            typeNode = node.children.get(node.children.size()-2);
+        }
+        // An array type
+        if (typeNode.lexeme.equals("ARRAYTYPE")){
+            ASTNode nextNode =  typeNode.children.get(typeNode.children.size()-1);
+            // if array of integral type need to go one more level
+            if (nextNode.kind != TYPENAME){
+                Kind type = typeNode.children.get(typeNode.children.size()-1).kind;
+                return new Triplet(true, type, "");
+            }
+            else{
+                return new Triplet(true, TYPENAME, nextNode.lexeme);
+            }
+        }
+        // some object type
+        else if (typeNode.kind == TYPENAME){
+            return new Triplet<>(false, TYPENAME, typeNode.lexeme);
+        }
+        // Some primitive type
+        else {
+            Kind type = typeNode.children.get(typeNode.children.size()-1).kind;
+            return new Triplet<>(false, type, "");
+        }
+    }
+
+    public Kind translateType(Kind type){
+        if (type == Kind.INTEGER_LITERAL){
+            return Kind.INT;
+        }
+        if (type == Kind.FALSE || type == Kind.TRUE){
+            return Kind.BOOLEAN;
+        }
+        if (type == Kind.CHARACTER_LITERAL){
+            return Kind.CHAR;
+        }
+        return type;
+    }
+
+    // Takes a LOCALVARIABLEDECLARATION or FIELDDECLARATION node as input
+    public Triplet<Boolean, Kind, String> getDeclarationRHSType(ASTNode node){
+        // get variabledeclarator child
+        ASTNode varDecNode = node.findFirstDirectChildNodeWithLexeme("VARIABLEDECLARATOR");
+
+        if (varDecNode != null) {
+            // Figure out what after the = sign resolves to
+            ASTNode nodeAfterEquals = varDecNode.findFirstChildAfterChildWithKind(Kind.EQUAL);
+            System.out.println("Got: " + nodeAfterEquals);
+
+            // If a class instance
+            if (nodeAfterEquals.lexeme.equals("CLASSINSTANCECREATIONEXPRESSION")){
+                String objType = nodeAfterEquals.children.get(nodeAfterEquals.children.size()-2).lexeme;
+                return new Triplet<>(false, TYPENAME, objType);
+            }
+
+            // If a Literal Instance
+            if (nodeAfterEquals.lexeme.equals("LITERAL")){
+                Kind type = nodeAfterEquals.children.get(nodeAfterEquals.children.size()-1).kind;
+                type = translateType(type);
+                return new Triplet<>(false, type, "");
+            }
+
+            // If array creation expression
+            if (nodeAfterEquals.lexeme.equals("ARRAYCREATIONEXPRESSION")){
+                ASTNode innerTypeNode = nodeAfterEquals.children.get(nodeAfterEquals.children.size()-2);
+                if (innerTypeNode.kind != TYPENAME){
+                    Kind type = innerTypeNode.children.get(innerTypeNode.children.size()-1).kind;
+                    type = translateType(type);
+                    return new Triplet(true, type, "");
+                }
+                else{
+                    return new Triplet(true, TYPENAME, innerTypeNode.lexeme);
+                }
+            }
+
+            // Need to add multiplicative expression etc.
+            if (nodeAfterEquals.lexeme.equals("CASTEXPRESSION")) {
+                ASTNode innerTypeNode = nodeAfterEquals.children.get(nodeAfterEquals.children.size()-2);
+                if (innerTypeNode.kind != TYPENAME){
+                    Kind type = innerTypeNode.children.get(innerTypeNode.children.size()-1).kind;
+                    type = translateType(type);
+                    return new Triplet(false, type, "");
+                }
+                else{
+                    return new Triplet(false, TYPENAME, innerTypeNode.lexeme);
+                }
+            }
+
+        }
+        return new Triplet<>(false, null, "");
     }
 
     public boolean checkIdentifier(final String identifier) {
