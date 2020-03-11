@@ -33,7 +33,7 @@ public class ClassInstanceCreationExpression extends Expression {
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         this.classType.linkTypesToQualifiedNames(rootClass);
-        this.argList.linkTypesToQualifiedNames(rootClass);
+        if (argList != null) this.argList.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override
