@@ -94,18 +94,20 @@ public class BaseExpression extends Expression {
                         Name firstName = LHS.type.name;
                         Name secondName = RHS.type.name;
 
-                        ClassScope firstClass = this.getParentClass().classMap.get(firstName.getQualifiedName());
-                        ClassScope secondClass = this.getParentClass().classMap.get(secondName.getQualifiedName());
+                        ClassScope parentClass = this.getParentClass();
+
+                        ClassScope firstClass = parentClass.classMap.get(firstName.getDefaultlessQualifiedName());
+                        ClassScope secondClass = parentClass.classMap.get(secondName.getDefaultlessQualifiedName());
                         boolean found = false;
                         if (firstClass.extendsTable != null) {
                             for (Name extendsName : firstClass.extendsTable) {
-                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getDefaultlessQualifiedName());
                                 if (extendsClass.equals(secondClass)) found = true;
                             }
                         }
                         if (secondClass.extendsTable != null) {
                             for (Name extendsName : secondClass.extendsTable) {
-                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getDefaultlessQualifiedName());
                                 if (extendsClass.equals(firstClass)) found = true;
                             }
                         }
