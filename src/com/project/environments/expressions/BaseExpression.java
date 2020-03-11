@@ -90,6 +90,32 @@ public class BaseExpression extends Expression {
                         return;
                     }
 
+                    else if ((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.prim_type == Type.PRIM_TYPE.VAR)) {
+                        Name firstName = LHS.type.name;
+                        Name secondName = RHS.type.name;
+
+                        ClassScope firstClass = this.getParentClass().classMap.get(firstName.getQualifiedName());
+                        ClassScope secondClass = this.getParentClass().classMap.get(secondName.getQualifiedName());
+                        boolean found = false;
+                        if (firstClass.extendsTable != null) {
+                            for (Name extendsName : firstClass.extendsTable) {
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                if (extendsClass.equals(secondClass)) found = true;
+                            }
+                        }
+                        if (secondClass.extendsTable != null) {
+                            for (Name extendsName : secondClass.extendsTable) {
+                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getQualifiedName());
+                                if (extendsClass.equals(firstClass)) found = true;
+                            }
+                        }
+                        if (!found) {
+                            System.err.println("Unsound type: Base Expression, differing types");
+                            System.exit(42);
+                        }
+                        else return;
+                    }
+
 //                    if (!((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals("null"))) &&
 //                            !((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals("null")))) {
                         System.err.println("Unsound type: Base Expression, differing types");
