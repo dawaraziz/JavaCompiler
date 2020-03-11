@@ -78,7 +78,7 @@ public class FieldScope extends Scope {
             for(ASTNode name : culledNames){
                 System.out.println("check: "+ name.lexeme);
                 // If name wasn't previously declared as a field or it is the variable that is currently being declared fail
-                if (name.lexeme.equals(this.name) && !seenDeclarations.contains(name.lexeme)){
+                if (name.lexeme.equals(this.name) || !seenDeclarations.contains(name.lexeme)){
                         System.err.println("Expression Name " + name.lexeme + " used in RHS of field declaration that is declared as another field variable in " + rootClass.name);
                         System.exit(42);
                 }
