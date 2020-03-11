@@ -100,7 +100,7 @@ public class BaseExpression extends Expression {
                 final ClassScope LHSClass = parentClass.classMap.get(LHS.type.name.getDefaultlessQualifiedName());
                 final ClassScope RHSClass = parentClass.classMap.get(RHS.type.name.getDefaultlessQualifiedName());
 
-                if (!RHSClass.isSubClassOf(LHSClass)) {
+                if (!RHSClass.isSubClassOf(LHSClass) && !LHSClass.isSubClassOf(RHSClass)) {
                     System.err.println("Unsound type: Base Expression, differing types");
                     System.exit(42);
                 }

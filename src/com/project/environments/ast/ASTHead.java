@@ -865,11 +865,20 @@ public class ASTHead {
         return new ASTHead(replacementNode);
     }
 
+    public ASTHead generateSubHead(final int inclusiveStart,
+                                   final int exclusiveEnd,
+                                   final String lexeme) {
+        final ASTNode replacementNode = new ASTNode(null, lexeme);
+        replacementNode.children.addAll(headNode.children.subList(inclusiveStart, exclusiveEnd));
+        return new ASTHead(replacementNode);
+    }
+
     public ASTHead generateClassInstanceSubHead() {
         final ASTNode replacementNode = new ASTNode(null, "CLASSINSTANCECREATIONEXPRESSION");
         replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
         return new ASTHead(replacementNode);
     }
+
     public boolean isArgumentListExpr() {
         return headNode.lexeme.equals("ARGUMENTLIST");
     }

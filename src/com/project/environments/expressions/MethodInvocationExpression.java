@@ -8,6 +8,7 @@ import com.project.environments.scopes.Scope;
 import java.util.ArrayList;
 
 import static com.project.scanner.structure.Kind.DOT;
+import static com.project.scanner.structure.Kind.PAREN_OPEN;
 
 public class MethodInvocationExpression extends Expression {
     final Expression primaryExpression;
@@ -20,13 +21,33 @@ public class MethodInvocationExpression extends Expression {
         this.name = null;
 
         if (ast.getChild(ast.getChildren().size() - 2).getKind() == DOT) {
-            primaryExpression = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
-            methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 3), this);
             if (ast.getChildren().size() > 6) {
-                argumentExpression = generateExpressionScope(head.generatePrimaryMethodSubHead(), this);
+                int firstParens = -1;
+                for (int i = 0; i < head.getChildren().size(); ++i) {
+                    if (head.getChild(i).getKind().equals(PAREN_OPEN)) {
+                        firstParens = i;
+                        break;
+                    }
+                }
+
+                if (firstParens == -1) {
+                    System.err.println("Could not identify end of params; aborting!");
+                    System.exit(42);
+                }
+
+                argumentExpression = generateExpressionScope(head.generateSubHead(1,
+                        firstParens, "ARGUMENTLIST"), this);
+                methodName = generateExpressionScope(head.getChild(firstParens + 1), this);
+                primaryExpression = generateExpressionScope(head
+                        .generateSubHead(firstParens + 3,
+                                head.getChildren().size(), "METHODINVOCATION"), this);
             } else if (ast.getChildren().size() == 6) {
+                primaryExpression = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+                methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 3), this);
                 argumentExpression = generateExpressionScope(head.getChild(1), this);
             } else {
+                primaryExpression = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+                methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 3), this);
                 argumentExpression = null;
             }
         } else {
@@ -78,7 +99,7 @@ public class MethodInvocationExpression extends Expression {
 
         final String qualifier;
         if (primaryExpression != null) {
-            if (name.getQualifierType() != null)  {
+            if (name.getQualifierType() != null) {
                 System.err.println("Found primary method invocation with qualified name.");
                 System.exit(42);
             }
@@ -87,7 +108,11 @@ public class MethodInvocationExpression extends Expression {
             qualifier = name.getQualifierName();
         }
 
-        if (name.getQualifierType() != null
+        if (primaryExpression != null) {
+            containingScope = getParentClass().getClassFromPackage(
+                    primaryExpression.type.name.getPackageString(),
+                    primaryExpression.type.name.getSimpleName());
+        } else if (name.getQualifierType() != null
                 && name.getQualifierType().isReferenceType()) {
             containingScope = getParentClass().getClassFromPackage(
                     name.getQualifierType().name.getPackageString(),
@@ -105,6 +130,9 @@ public class MethodInvocationExpression extends Expression {
                 type = resolvedMethod.type;
                 return;
             }
+
+            System.err.println("Could not determine type of non-qualified method.");
+            System.exit(42);
         } else {
 
             // Qualified name case.
@@ -114,6 +142,9 @@ public class MethodInvocationExpression extends Expression {
                 type = resolvedMethod.type;
                 return;
             }
+
+            System.err.println("Could not determine type of qualified method.");
+            System.exit(42);
         }
     }
 
