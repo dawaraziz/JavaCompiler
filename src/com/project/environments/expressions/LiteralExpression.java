@@ -4,9 +4,6 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
-import com.project.scanner.structure.Kind;
-
-import static com.project.environments.expressions.LiteralExpression.LITERAL_TYPE.*;
 
 public class LiteralExpression extends Expression {
 

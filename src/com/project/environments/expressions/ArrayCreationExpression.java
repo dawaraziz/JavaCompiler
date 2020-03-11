@@ -32,7 +32,8 @@ public class ArrayCreationExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-        // TODO:
+        type.linkTypesToQualifiedNames(rootClass);
+        dimensions.linkTypesToQualifiedNames(rootClass);
     }
 
     @Override
