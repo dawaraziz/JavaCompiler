@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
 public class BaseExpression extends Expression {
@@ -40,8 +41,35 @@ public class BaseExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
-        if (LHS != null) LHS.linkTypesToQualifiedNames(rootClass);
-        RHS.linkTypesToQualifiedNames(rootClass);
+        if (LHS != null) {
+            LHS.linkTypesToQualifiedNames(rootClass);
+            RHS.linkTypesToQualifiedNames(rootClass);
+            String exprType = this.ast.getLexeme();
+            switch (exprType) {
+                case "RELATIONALEXPRESSION":
+                case "EQUALITYEXPRESSION":
+                case "ANDEXPRESSION":
+                case "EXCLUSIVEOREXPRESSION":
+                case "CONDITIONALEXPRESSION":
+                case "CONDITIONALOREXPRESSION":
+                case "INCLUSIVEOREXPRESSION":
+                case "CONDITIONALANDEXPRESSION":
+                    this.type = new Type(Type.PRIM_TYPE.BOOLEAN);
+                    break;
+                case "MULTIPLICATIVEEXPRESSION":
+                    this.type = new Type(Type.PRIM_TYPE.INT);
+                    break;
+                case "ASSIGNMENT":
+                    this.type = RHS.type;
+                    break;
+                default:
+                    System.err.println("Could not type Base Expr!");
+                    System.exit(42);
+            }
+        } else {
+            singular.linkTypesToQualifiedNames(rootClass);
+            this.type = singular.type;
+        }
     }
 
     @Override
@@ -57,9 +85,6 @@ public class BaseExpression extends Expression {
                     System.exit(42);
                 }
             }
-            this.type = this.LHS.type;
-            this.type = this.RHS.type;
         }
-        else this.type = this.singular.type;
     }
 }
