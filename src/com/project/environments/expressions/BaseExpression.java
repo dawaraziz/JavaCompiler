@@ -3,7 +3,6 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
-import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
@@ -45,8 +44,8 @@ public class BaseExpression extends Expression {
         if (LHS != null) {
             LHS.linkTypesToQualifiedNames(rootClass);
             RHS.linkTypesToQualifiedNames(rootClass);
-            String exprType = this.ast.getLexeme();
-            switch (exprType) {
+
+            switch (this.ast.getLexeme()) {
                 case "RELATIONALEXPRESSION":
                 case "EQUALITYEXPRESSION":
                 case "ANDEXPRESSION":
@@ -61,7 +60,6 @@ public class BaseExpression extends Expression {
                     this.type = new Type(Type.PRIM_TYPE.INT);
                     break;
                 case "SUBBASEEXPRESSION":
-                case "ASSIGNMENT":
                     this.type = RHS.type;
                     break;
                 default:
@@ -84,53 +82,31 @@ public class BaseExpression extends Expression {
         if (LHS != null) {
             LHS.checkTypeSoundness();
             RHS.checkTypeSoundness();
-            if (!this.ast.getChild(1).getLexeme().equals("COMMA")) {
-                if (!LHS.type.equals(RHS.type)) {
-                    // TODO: Possibly need to deal with case when we have INT and INTEGER_LITERAL etc
 
-                    if (((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals(new Name("null")))) ^
-                            ((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals(new Name("null"))))) {
-                        this.type = new Type(Type.PRIM_TYPE.VAR);
-                        this.type.name = new Name("null");
-                        return;
-                    }
+            if (this.ast.getChild(1).getLexeme().equals("COMMA")) {
+                System.err.println("Found comma in BaseExpression.");
+                System.exit(42);
+            }
 
-                    else if ((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.prim_type == Type.PRIM_TYPE.VAR)) {
-                        Name firstName = LHS.type.name;
-                        Name secondName = RHS.type.name;
+            if (LHS.type.equals(RHS.type)) return;
 
-                        ClassScope parentClass = this.getParentClass();
+            if (RHS.type.equals(Type.generateObjectType()) && LHS.type.isArray) {
 
-                        ClassScope firstClass = parentClass.classMap.get(firstName.getDefaultlessQualifiedName());
-                        ClassScope secondClass = parentClass.classMap.get(secondName.getDefaultlessQualifiedName());
-                        boolean found = false;
-                        if (firstClass.extendsTable != null) {
-                            for (Name extendsName : firstClass.extendsTable) {
-                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getDefaultlessQualifiedName());
-                                if (extendsClass.equals(secondClass)) found = true;
-                            }
-                        }
-                        if (secondClass.extendsTable != null) {
-                            for (Name extendsName : secondClass.extendsTable) {
-                                ClassScope extendsClass = this.getParentClass().classMap.get(extendsName.getDefaultlessQualifiedName());
-                                if (extendsClass.equals(firstClass)) found = true;
-                            }
-                        }
-                        if (!found) {
-                            System.err.println("Unsound type: Base Expression, differing types");
-                            System.exit(42);
-                        }
-                        else return;
-                    }
+            } else if ((LHS.type.isReferenceType() && RHS.type.isNullType())
+                    || (RHS.type.isReferenceType() && LHS.type.isNullType())) {
 
-//                    if (!((LHS.type.prim_type == Type.PRIM_TYPE.VAR) && (LHS.type.name.equals("null"))) &&
-//                            !((RHS.type.prim_type == Type.PRIM_TYPE.VAR) && (RHS.type.name.equals("null")))) {
-                        System.err.println("Unsound type: Base Expression, differing types");
-                        System.exit(42);
-                    //}
+            } else if (LHS.type.isReferenceType() && RHS.type.isReferenceType()) {
+                final ClassScope parentClass = this.getParentClass();
+                final ClassScope LHSClass = parentClass.classMap.get(LHS.type.name.getDefaultlessQualifiedName());
+                final ClassScope RHSClass = parentClass.classMap.get(RHS.type.name.getDefaultlessQualifiedName());
 
-
+                if (!RHSClass.isSubClassOf(LHSClass)) {
+                    System.err.println("Unsound type: Base Expression, differing types");
+                    System.exit(42);
                 }
+            } else {
+                System.err.println("Unsound type: Base Expression, differing types");
+                System.exit(42);
             }
         }
     }

@@ -5,6 +5,8 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
+import static com.project.environments.structure.Type.PRIM_TYPE.INT;
+
 public class AdditiveExpression extends Expression {
     final Expression LHS;
     final Expression RHS;
@@ -34,27 +36,29 @@ public class AdditiveExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
-        if (LHS != null) LHS.linkTypesToQualifiedNames(rootClass);
+        LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
-        this.type = RHS.type;
+
+        if (LHS.type.isNumericType() && RHS.type.isNumericType()) {
+            this.type = new Type(INT);
+        } else if (LHS.type.isString() || RHS.type.isString()) {
+            this.type = Type.generateStringType();
+        } else {
+            System.err.println("Could not determine AdditiveExpression type.");
+            System.exit(42);
+        }
     }
 
     @Override
     public void checkTypeSoundness() {
         RHS.checkTypeSoundness();
-        if (LHS != null) {
-            LHS.checkTypeSoundness();
-            if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
-                    (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
+        LHS.checkTypeSoundness();
 
-            } else if ((LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.prim_type == Type.PRIM_TYPE.CHAR) ||
-                    (RHS.type.prim_type == Type.PRIM_TYPE.INT && LHS.type.prim_type == Type.PRIM_TYPE.CHAR)) {
-                this.type = new Type(Type.PRIM_TYPE.INT);
-            }
-            else if (!LHS.type.equals(RHS.type)) {
-                System.err.println("Unsound type: Additive");
-                System.exit(42);
-            }
+        if (LHS.type.isString() || RHS.type.isString()) return;
+
+        if (!LHS.type.isNumericType() || !RHS.type.isNumericType()) {
+            System.err.println("Numeric additive expression is invalid.");
+            System.exit(42);
         }
     }
 }

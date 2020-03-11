@@ -48,7 +48,7 @@ public class Name {
 
     public static Name generateStringName() {
         final Name newName = new Name();
-        newName.fullyQualifiedName.add("Object");
+        newName.fullyQualifiedName.add("String");
         newName.fullyQualifiedName.add("lang");
         newName.fullyQualifiedName.add("java");
         return newName;

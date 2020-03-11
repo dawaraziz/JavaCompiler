@@ -877,4 +877,8 @@ public class ASTHead {
     public boolean isFieldAccessExpr() {
         return headNode.lexeme.equals("FIELDACCESS");
     }
+
+    public boolean isAssignmentExpr() {
+        return headNode.lexeme.equals("ASSIGNMENT");
+    }
 }

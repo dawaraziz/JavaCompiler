@@ -5,6 +5,10 @@ import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
+import static com.project.environments.structure.Type.PRIM_TYPE.BYTE;
+import static com.project.environments.structure.Type.PRIM_TYPE.CHAR;
+import static com.project.environments.structure.Type.PRIM_TYPE.INT;
+import static com.project.environments.structure.Type.PRIM_TYPE.SHORT;
 import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 
 public class Type {
@@ -37,13 +41,19 @@ public class Type {
         return newType;
     }
 
+    static public Type generateNullType() {
+        final Type newType = new Type(Type.PRIM_TYPE.VAR);
+        newType.name = new Name("null");
+        return newType;
+    }
+
     private Type() {
         prim_type = VAR;
         isArray = false;
         literal_type = null;
     }
 
-    public Type (final PRIM_TYPE prim_type) {
+    public Type(final PRIM_TYPE prim_type) {
         this.prim_type = prim_type;
 
         if (prim_type == VAR) {
@@ -165,4 +175,26 @@ public class Type {
 
         name = classScope.findImportedType(name.getSimpleName());
     }
+
+    public static Type generateObjectType() {
+        final Type retType = new Type();
+        retType.name = Name.generateObjectExtendsName();
+        return retType;
+    }
+
+    public boolean isNullType() {
+        return generateNullType().name.equals(name);
+    }
+
+    public boolean isNumericType() {
+        return prim_type == INT || prim_type == CHAR
+                || prim_type == BYTE || prim_type == SHORT;
+    }
+
+    public boolean isSmallerNumericType(final Type type) {
+        return (prim_type == BYTE && type.prim_type == BYTE)
+                || (prim_type == SHORT && (type.prim_type == BYTE || type.prim_type == SHORT))
+                || (prim_type == INT && type.isNumericType());
+    }
+
 }

@@ -38,17 +38,11 @@ public class ArrayAccessExpression extends Expression {
         LHS.linkTypesToQualifiedNames(rootClass);
         RHS.linkTypesToQualifiedNames(rootClass);
         this.type = new Type(LHS.type, false);
-
-//        if (!LHS.type.isArray) {
-//            System.err.println("Found array access with non-array LHS.");
-//            System.exit(42);
-//        }
-//        this.type = new Type(LHS.type, false);
     }
 
     @Override
     public void checkTypeSoundness() {
-        if (RHS.type.prim_type != INT) {
+        if (!RHS.type.isNumericType()) {
             System.err.println("Found array access with non-integer RHS.");
             System.exit(42);
         }
