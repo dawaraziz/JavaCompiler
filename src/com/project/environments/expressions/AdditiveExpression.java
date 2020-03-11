@@ -47,13 +47,14 @@ public class AdditiveExpression extends Expression {
             if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
                     (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
 
-            } else if (!LHS.type.equals(RHS.type)) {
+            } else if ((LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.prim_type == Type.PRIM_TYPE.CHAR) ||
+                    (RHS.type.prim_type == Type.PRIM_TYPE.INT && LHS.type.prim_type == Type.PRIM_TYPE.CHAR)) {
+                this.type = new Type(Type.PRIM_TYPE.INT);
+            }
+            else if (!LHS.type.equals(RHS.type)) {
                 System.err.println("Unsound type: Additive");
                 System.exit(42);
             }
         }
-
-
-        this.type = RHS.type;
     }
 }

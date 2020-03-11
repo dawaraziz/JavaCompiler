@@ -27,7 +27,9 @@ public class UnaryExpression extends Expression {
 
     @Override
     public void linkTypesToQualifiedNames(ClassScope rootClass) {
+
         RHS.linkTypesToQualifiedNames(rootClass);
+        this.type = RHS.type;
     }
 
     @Override

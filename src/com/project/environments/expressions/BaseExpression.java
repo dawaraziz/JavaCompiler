@@ -59,6 +59,7 @@ public class BaseExpression extends Expression {
                 case "MULTIPLICATIVEEXPRESSION":
                     this.type = new Type(Type.PRIM_TYPE.INT);
                     break;
+                case "SUBBASEEXPRESSION":
                 case "ASSIGNMENT":
                     this.type = RHS.type;
                     break;
