@@ -7,22 +7,38 @@ import com.project.environments.scopes.Scope;
 
 import java.util.ArrayList;
 
+import static com.project.scanner.structure.Kind.DOT;
+
 public class MethodInvocationExpression extends Expression {
+    final Expression primaryExpression;
     final Expression methodName;
     final Expression argumentExpression;
 
     MethodInvocationExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
-        this.methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
         this.name = null;
 
-        if (ast.getChildren().size() > 4) {
-            argumentExpression = generateExpressionScope(head.generateMethodSubHead(), this);
-        } else if (ast.getChildren().size() == 4) {
-            argumentExpression = generateExpressionScope(head.getChild(1), this);
+        if (ast.getChild(ast.getChildren().size() - 2).getKind() == DOT) {
+            primaryExpression = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+            methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 3), this);
+            if (ast.getChildren().size() > 6) {
+                argumentExpression = generateExpressionScope(head.generatePrimaryMethodSubHead(), this);
+            } else if (ast.getChildren().size() == 6) {
+                argumentExpression = generateExpressionScope(head.getChild(1), this);
+            } else {
+                argumentExpression = null;
+            }
         } else {
-            argumentExpression = null;
+            methodName = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+            if (ast.getChildren().size() > 4) {
+                argumentExpression = generateExpressionScope(head.generateMethodSubHead(), this);
+            } else if (ast.getChildren().size() == 4) {
+                argumentExpression = generateExpressionScope(head.getChild(1), this);
+            } else {
+                argumentExpression = null;
+            }
+            primaryExpression = null;
         }
     }
 
@@ -35,6 +51,7 @@ public class MethodInvocationExpression extends Expression {
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         if (argumentExpression != null) this.argumentExpression.linkTypesToQualifiedNames(rootClass);
         this.methodName.linkTypesToQualifiedNames(rootClass);
+        if (primaryExpression != null) primaryExpression.linkTypesToQualifiedNames(rootClass);
 
 
         final ArrayList<Expression> arguments = new ArrayList<>();
@@ -58,7 +75,17 @@ public class MethodInvocationExpression extends Expression {
 
         final ClassScope containingScope;
         final String identifier = name.getNameLexeme();
-        final String qualifier = name.getQualifierName();
+
+        final String qualifier;
+        if (primaryExpression != null) {
+            if (name.getQualifierType() != null)  {
+                System.err.println("Found primary method invocation with qualified name.");
+                System.exit(42);
+            }
+            qualifier = primaryExpression.type.name.getQualifiedName();
+        } else {
+            qualifier = name.getQualifierName();
+        }
 
         if (name.getQualifierType() != null
                 && name.getQualifierType().isReferenceType()) {
