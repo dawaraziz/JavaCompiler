@@ -3,6 +3,7 @@ package com.project.environments.scopes;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.expressions.Expression;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,13 +40,24 @@ public class FieldScope extends Scope {
         ArrayList<ASTNode> names = this.ast.getRHSExpressionNames();
         ArrayList<ASTNode> culledNames = new ArrayList<>();
 
-        //For every other fieldscope name we can't use it in the left side of a field
         if (names != null){
+//            culledNames = recursiveCulling(names, null);
+            System.out.println("LENGTH: " + culledNames);
 
             // Remove any expressions used as qualified names, field access, or Assignments
             for (ASTNode n : names){
                 if (!n.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS", "ASSIGNMENT")){
                     culledNames.add(n);
+                }
+                // add the RHS of any assignment within the RHS of the declaration
+                if (n.parentOneOfLexeme("ASSIGNMENT")){
+                    ArrayList<ASTNode> RHSNames = n.parent.findChildKindsAfterNodeWithLexeme(Kind.EXPRESSIONNAME, "ASSIGNMENTOPERATOR");
+                    for (ASTNode node : RHSNames){
+                        if(!node.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS")) {
+                            culledNames.add(n);
+                        }
+                    }
+
                 }
             }
 
@@ -66,12 +78,43 @@ public class FieldScope extends Scope {
             for(ASTNode name : culledNames){
                 System.out.println("check: "+ name.lexeme);
                 // If name wasn't previously declared as a field or it is the variable that is currently being declared fail
-                if (!name.lexeme.equals(this.name) && !seenDeclarations.contains(name.lexeme)){
+                if (name.lexeme.equals(this.name) && !seenDeclarations.contains(name.lexeme)){
                         System.err.println("Expression Name " + name.lexeme + " used in RHS of field declaration that is declared as another field variable in " + rootClass.name);
                         System.exit(42);
                 }
             }
         }
+    }
+
+    public ArrayList<ASTNode> recursiveCulling(ArrayList<ASTNode> names, ASTNode lastParent){
+        ArrayList<ASTNode> culledNames = new ArrayList<>();
+        if (names != null) {
+            // Remove any expressions used as qualified names, field access, or Assignments
+            for (ASTNode n : names) {
+                System.out.println("COMON " + n.lexeme + " : " + n.parent.lexeme);
+                if (!n.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS", "ASSIGNMENT")) {
+                    System.out.println("ADD IT");
+                    culledNames.add(n);
+                }
+                if (n.parentOneOfLexeme("ASSIGNMENT") && n.parent != lastParent) {
+                    System.out.println("forever: " + n.lexeme);
+                    ArrayList<ASTNode> RHSNames = n.parent.findChildKindsAfterNodeWithLexeme(Kind.EXPRESSIONNAME, "ASSIGNMENTOPERATOR");
+                    ArrayList<ASTNode> recurse = new ArrayList<>();
+                    for (ASTNode node : RHSNames){
+                        if(!node.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS", "ASSIGNMENT")) {
+                            culledNames.add(n);
+                            System.out.println("add to RHS cull: " + n.lexeme);
+                        }
+                        else{
+                            recurse.add(n);
+                            System.out.println("add to recurse: " + n.lexeme);
+                        }
+                    }
+                    culledNames.addAll(recursiveCulling(recurse, n.parent));
+                }
+            }
+        }
+        return culledNames;
     }
 
     @Override

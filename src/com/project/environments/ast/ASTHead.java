@@ -561,12 +561,12 @@ public class ASTHead {
     }
 
     public ArrayList<ASTNode> getRHSExpressionNames() {
-        ArrayList<ASTNode> LHSNames = null;
+        ArrayList<ASTNode> RHSName = null;
         final ASTNode varDec = headNode.findFirstDirectChildNodeWithLexeme(VARIABLE_DECLARATOR);
         if (varDec != null) {
-            LHSNames = varDec.findChildKindsAfterNodeWithKind(Kind.EXPRESSIONNAME, Kind.EQUAL);
+            RHSName = varDec.findChildKindsAfterNodeWithKind(Kind.EXPRESSIONNAME, Kind.EQUAL);
         }
-        return LHSNames;
+        return RHSName;
     }
 
 

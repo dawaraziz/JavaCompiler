@@ -114,6 +114,23 @@ public class ASTNode {
         return nodes;
     }
 
+    public ArrayList<ASTNode> findChildKindsAfterNodeWithLexeme(final Kind target, final String afterLex) {
+        ArrayList<ASTNode> nodes = new ArrayList();
+        boolean found = false;
+        for (int i = children.size()-1; i >= 0; i--) {
+            ASTNode child = children.get(i);
+            //Once we have found a direct child with the kind we can search recursively for the target nodes
+            if (child.lexeme.equals(afterLex)){
+                found = true;
+            }
+            if (found){
+                // Recurse through this child to find targets
+                nodes.addAll(child.findNodesWithKinds(target));
+            }
+        }
+        return nodes;
+    }
+
 
     public ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
         final ArrayList<ASTNode> nodesWithkind = new ArrayList<>();
