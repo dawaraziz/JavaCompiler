@@ -685,8 +685,7 @@ public class ASTHead {
     }
 
     public boolean isUnaryNotPlusMinusExpr() {
-        return
-                headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
+        return headNode.lexeme.equals(UNARY_EXPRESSION_NOT_PLUS_MINUS);
     }
 
     public boolean isPrimaryNoNewArrayExpr() {
@@ -856,7 +855,6 @@ public class ASTHead {
         replacementNode.children.addAll(headNode.children.subList(1, headNode.children.size() - 3));
         return new ASTHead(replacementNode);
     }
-
     public boolean isArgumentListExpr() {
         return headNode.lexeme.equals("ARGUMENTLIST");
     }
