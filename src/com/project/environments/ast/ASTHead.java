@@ -834,6 +834,12 @@ public class ASTHead {
         return new ASTHead(replacementNode);
     }
 
+    public ASTHead generateBaseSubHead() {
+        final ASTNode replacementNode = new ASTNode(null, "SUBBASEEXPRESSION");
+        replacementNode.children.addAll(headNode.children.subList(0, headNode.children.size() - 2));
+        return new ASTHead(replacementNode);
+    }
+
     public ASTHead generateNameSubHead() {
         final ASTNode replacementNode = new ASTNode(null, "SUBQUALIFIEDNAME");
         replacementNode.children.addAll(headNode.children.subList(2, headNode.children.size()));

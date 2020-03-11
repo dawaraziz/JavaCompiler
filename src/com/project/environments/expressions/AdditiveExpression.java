@@ -14,7 +14,10 @@ public class AdditiveExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        if (head.getChildren().size() == 2) {
+        if (head.getChildren().size() > 3) {
+            LHS = generateExpressionScope(head.getChild(head.getChildren().size() - 1), this);
+            RHS = generateExpressionScope(head.generateBaseSubHead(), this);
+        } else if (head.getChildren().size() == 2) {
             LHS = null;
             RHS = generateExpressionScope(head.getChild(0), this);
         } else {
@@ -44,8 +47,7 @@ public class AdditiveExpression extends Expression {
             if ((LHS.type.isString() && RHS.type.prim_type == Type.PRIM_TYPE.INT) ||
                     (LHS.type.prim_type == Type.PRIM_TYPE.INT && RHS.type.isString())) {
 
-            }
-            else if (!LHS.type.equals(RHS.type)) {
+            } else if (!LHS.type.equals(RHS.type)) {
                 System.err.println("Unsound type: Additive");
                 System.exit(42);
             }
