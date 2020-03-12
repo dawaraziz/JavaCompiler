@@ -537,7 +537,7 @@ public class ClassScope extends Scope {
             //TODO: What can't i declare null?
             // if rhs declared null
             if (rhs_type.getO2() == Kind.NULL){
-                if (lhs_type.getO2() == Kind.INT){
+                if (lhs_type.getO2() == Kind.INT && !lhs_type.getO1()){
                     System.err.println("Can't assign null to integer");
                     System.exit(42);
                 }
