@@ -131,6 +131,22 @@ public class ASTNode {
         return nodes;
     }
 
+    // Once we find a direct child with a kind 'afterKind' we will return the next child after it
+    public ASTNode findFirstChildAfterChildWithKind(final Kind target) {
+        boolean found = false;
+        for (int i = children.size()-1; i >= 0; i--) {
+            ASTNode child = children.get(i);
+            if (found){
+                return child;
+            }
+            //Once we have found a direct child with the kind we can search recursively for the target nodes
+            if (child.kind == target){
+                found = true;
+            }
+        }
+        return null;
+    }
+
 
     public ArrayList<ASTNode> findNodesWithKinds(final Kind... kinds) {
         final ArrayList<ASTNode> nodesWithkind = new ArrayList<>();

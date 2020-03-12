@@ -4,12 +4,14 @@ Written to test the compiler on legal and illegal Joos 1W files
 Use the first positional argument to decide which assignment tests to run
 Use the -s argument to show all of the passed tests
 Use the -h for Dawar Hierarchy stuff
+Use the -o flag to show the standard output of each test ran
 Use the -p <PREFIX> argument to only run tests of file with that prefix
 
 For example to run the Je_6_Assignable_* tests you can simple run:
     run_tests.py a3 -p Je_6_A
 add the -s option to see the ones that pass like so:
     run_tests.py a3 -p Je_6_A -s
+
 
 '''
 
