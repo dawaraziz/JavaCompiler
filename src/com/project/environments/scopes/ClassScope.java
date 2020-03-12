@@ -528,14 +528,19 @@ public class ClassScope extends Scope {
             System.out.println("GOT RHS: " + rhs_type);
             System.out.println("EQUAL: " + lhs_type.equals(rhs_type));
 
-            if (rhs_type.getO2() != Kind.NULL || rhs_type.getO2() == null){
+            // If rhs is null it is a declaration not an assignment we can break
+            if (rhs_type.getO2() == Kind.NULL || rhs_type.getO2() == null){
+                System.out.println("Breaking: " + rhs_type.getO2() + rhs_type.getO2() == null);
                 break;
             }
 
             // False if both arn't arrays and its not just a declaration
             if ((rhs_type.getO2() != Kind.NULL) && (lhs_type.getO1() != rhs_type.getO1())){
-                System.err.println("LHS or RHS is an array and the other is not in: " + name);
-                System.exit(42);
+                // if they are both a typeName however this is a special case -- deal with it later
+                if (lhs_type.getO2() != TYPENAME || rhs_type.getO2() != TYPENAME) {
+                    System.err.println("LHS or RHS is an array and the other is not in: " + name);
+                    System.exit(42);
+                }
             }
 
             if (bothNumbericType(lhs_type, rhs_type)) {
@@ -543,6 +548,19 @@ public class ClassScope extends Scope {
                 if (!legalNumericCast(lhs_type, rhs_type)) {
                     System.err.println("LHS type of Declaration does not match RHS in: " + name);
                     System.exit(42);
+                }
+            }
+
+            // If both are typename than check the rhs is as or extends the lhs
+            else if(rhs_type.getO2() == TYPENAME && lhs_type.getO2() == TYPENAME){
+                // ensure extension or same
+
+                // if one is an array and one isn't fail unless it is the lhs that isn't
+                if (lhs_type.getO1() != rhs_type.getO1()){
+                    if (lhs_type.getO1() == true){
+                        System.err.println("LHS is array of " + lhs_type.getO3() + " and RHS is not : " + name);
+                        System.exit(42);
+                    }
                 }
             }
 
@@ -603,9 +621,6 @@ public class ClassScope extends Scope {
                 return new Triplet(true, type, "");
             }
             else{
-                if (nextNode.lexeme.equals("String")){
-                    return new Triplet(true, Kind.STRING_LITERAL, "");
-                }
                 return new Triplet(true, TYPENAME, nextNode.lexeme);
             }
         }
@@ -675,13 +690,17 @@ public class ClassScope extends Scope {
             // Need to add multiplicative expression etc.
             if (nodeAfterEquals.lexeme.equals("CASTEXPRESSION")) {
                 ASTNode innerTypeNode = nodeAfterEquals.children.get(nodeAfterEquals.children.size()-2);
+                boolean isArr = false;
+                if (nodeAfterEquals.children.get(nodeAfterEquals.children.size()-3).lexeme.equals("DIMS")){
+                    isArr = true;
+                }
                 if (innerTypeNode.kind != TYPENAME){
                     Kind type = innerTypeNode.children.get(innerTypeNode.children.size()-1).kind;
                     type = translateType(type);
-                    return new Triplet(false, type, "");
+                    return new Triplet(isArr, type, "");
                 }
                 else{
-                    return new Triplet(false, TYPENAME, innerTypeNode.lexeme);
+                    return new Triplet(isArr, TYPENAME, innerTypeNode.lexeme);
                 }
             }
 
