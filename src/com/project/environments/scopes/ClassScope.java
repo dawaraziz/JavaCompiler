@@ -543,7 +543,8 @@ public class ClassScope extends Scope {
                 }
             }
 
-            if (bothNumbericType(lhs_type, rhs_type)) {
+            // If both are a numberic type and neither are arrays
+            if (bothNumbericType(lhs_type, rhs_type) && !lhs_type.getO1() && !rhs_type.getO1()) {
                 //Check if the numeric type fits in the other
                 if (!legalNumericCast(lhs_type, rhs_type)) {
                     System.err.println("LHS type of Declaration does not match RHS in: " + name);
@@ -553,7 +554,11 @@ public class ClassScope extends Scope {
 
             // If both are typename than check the rhs is as or extends the lhs
             else if(rhs_type.getO2() == TYPENAME && lhs_type.getO2() == TYPENAME){
-                // ensure extension or same
+                // TODO: ensure extension or same -- STILL NEED TO ADD EXTENSION CODE THIS IS WHY LEGALS FAIL
+                if (!lhs_type.getO3().equals(rhs_type.getO3())){
+                    System.err.println("LHS of type " + lhs_type.getO3() + " is not the same as or doesn't extend RHS of : " + rhs_type.getO3() + " IN : " + name);
+                    System.exit(42);
+                }
 
                 // if one is an array and one isn't fail unless it is the lhs that isn't
                 if (lhs_type.getO1() != rhs_type.getO1()){
