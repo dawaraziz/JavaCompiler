@@ -528,11 +528,54 @@ public class ClassScope extends Scope {
             System.out.println("GOT RHS: " + rhs_type);
             System.out.println("EQUAL: " + lhs_type.equals(rhs_type));
 
-            if (!lhs_type.equals(rhs_type)){
-                System.err.println("LHS type of Declaration does not match RHS in: " + name);
+            if (rhs_type.getO2() != Kind.NULL || rhs_type.getO2() == null){
+                break;
+            }
+
+            // False if both arn't arrays and its not just a declaration
+            if ((rhs_type.getO2() != Kind.NULL) && (lhs_type.getO1() != rhs_type.getO1())){
+                System.err.println("LHS or RHS is an array and the other is not in: " + name);
                 System.exit(42);
             }
+
+            if (bothNumbericType(lhs_type, rhs_type)) {
+                //Check if the numeric type fits in the other
+                if (!legalNumericCast(lhs_type, rhs_type)) {
+                    System.err.println("LHS type of Declaration does not match RHS in: " + name);
+                    System.exit(42);
+                }
+            }
+
+            else {
+                // If RHS is null it is legal, if not make sure the types are equal (i.e both array or not, and type)
+                if (rhs_type.getO2() != Kind.NULL && !lhs_type.equals(rhs_type)) {
+                    System.err.println("LHS type of Declaration does not match RHS in: " + name);
+                    System.exit(42);
+                }
+            }
         }
+    }
+
+    public boolean bothNumbericType(Triplet<Boolean, Kind, String> lhs, Triplet<Boolean, Kind, String> rhs){
+        ArrayList<Kind> numTypes = new ArrayList<>();
+        numTypes.add(Kind.BYTE);
+        numTypes.add(Kind.SHORT);
+        numTypes.add(Kind.INT);
+        if (numTypes.contains(lhs.getO2()) && numTypes.contains(rhs.getO2())){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean legalNumericCast(Triplet<Boolean, Kind, String> lhs, Triplet<Boolean, Kind, String> rhs) {
+        ArrayList<Kind> numTypes = new ArrayList<>();
+        numTypes.add(Kind.BYTE);
+        numTypes.add(Kind.SHORT);
+        numTypes.add(Kind.INT);
+        if (numTypes.indexOf(lhs.getO2()) >= numTypes.indexOf(rhs.getO2())){
+            return true;
+        }
+        return false;
     }
 
     // Takes a LOCALVARIABLEDECLARATION or FIELDDECLARATION node as input
@@ -547,21 +590,31 @@ public class ClassScope extends Scope {
             System.out.println("Field Declaration");
             typeNode = node.children.get(node.children.size()-2);
         }
+        System.out.println("HERE --------------------");
+        node.printAST();
+
         // An array type
         if (typeNode.lexeme.equals("ARRAYTYPE")){
             ASTNode nextNode =  typeNode.children.get(typeNode.children.size()-1);
             // if array of integral type need to go one more level
             if (nextNode.kind != TYPENAME){
-                Kind type = typeNode.children.get(typeNode.children.size()-1).kind;
+                Kind type = nextNode.children.get(nextNode.children.size()-1).kind;
+                System.out.println("TYPE : !! " + type);
                 return new Triplet(true, type, "");
             }
             else{
+                if (nextNode.lexeme.equals("String")){
+                    return new Triplet(true, Kind.STRING_LITERAL, "");
+                }
                 return new Triplet(true, TYPENAME, nextNode.lexeme);
             }
         }
         // some object type
         else if (typeNode.kind == TYPENAME){
-            return new Triplet<>(false, TYPENAME, typeNode.lexeme);
+            if (typeNode.lexeme.equals("String")){
+                return new Triplet(false, Kind.STRING_LITERAL, "");
+            }
+            return new Triplet(false, TYPENAME, typeNode.lexeme);
         }
         // Some primitive type
         else {
