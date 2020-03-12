@@ -7,6 +7,8 @@ import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 
+import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
+
 public class MethodScope extends Scope {
     public final ArrayList<String> modifiers;
     public final ArrayList<Parameter> parameters;
@@ -108,6 +110,13 @@ public class MethodScope extends Scope {
     }
 
     public void checkReachability() {
-        if (body != null) body.checkReachability();
+        if (body != null) {
+            body.checkReachability();
+
+            if (body.out && type.prim_type != VOID) {
+                System.err.println("Found non-void method without return statement.");
+                System.exit(42);
+            }
+        }
     }
 }

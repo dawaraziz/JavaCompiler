@@ -19,8 +19,7 @@ public class WhileStatement extends Statement {
         if (expression instanceof LiteralExpression) {
             isLiteralTrue = ((LiteralExpression) expression).isTrue()
                     && !(mainBody instanceof EmptyStatement);
-            isLiteralFalse = ((LiteralExpression) expression).isTrue()
-                    && !(mainBody instanceof EmptyStatement);
+            isLiteralFalse = ((LiteralExpression) expression).isFalse();
         } else {
             isLiteralTrue = false;
             isLiteralFalse = false;

@@ -2,6 +2,7 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.Scope;
+import com.project.environments.statements.DefinitionStatement;
 
 import java.util.ArrayList;
 

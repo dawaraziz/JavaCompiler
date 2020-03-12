@@ -28,7 +28,7 @@ public class NameExpression extends Expression {
 
     private NameExpression qualifier;
 
-    private Scope namePointer;
+    protected Scope namePointer;
 
     NameExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
