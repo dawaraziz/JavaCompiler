@@ -555,8 +555,11 @@ public class ClassScope extends Scope {
             // If both are typename than check the rhs is as or extends the lhs
             else if(rhs_type.getO2() == TYPENAME && lhs_type.getO2() == TYPENAME){
                 // TODO: ensure extension or same -- STILL NEED TO ADD EXTENSION CODE THIS IS WHY LEGALS FAIL
-                if (!lhs_type.getO3().equals(rhs_type.getO3())){
-                    System.err.println("LHS of type " + lhs_type.getO3() + " is not the same as or doesn't extend RHS of : " + rhs_type.getO3() + " IN : " + name);
+                ClassScope lhsScope = (ClassScope)resolveSimpleTypeName(lhs_type.getO3());
+                ClassScope rhsScope = (ClassScope)resolveSimpleTypeName(rhs_type.getO3());
+
+                if (!rhsScope.isSubClassOf(lhsScope)) {
+                    System.err.println("RHS of type " + rhs_type.getO3() + " is not the same as or doesn't extend LHS of : " + lhs_type.getO3() + " IN : " + name);
                     System.exit(42);
                 }
 
@@ -571,9 +574,12 @@ public class ClassScope extends Scope {
 
             else {
                 // If RHS is null it is legal, if not make sure the types are equal (i.e both array or not, and type)
-                if (rhs_type.getO2() != Kind.NULL && !lhs_type.equals(rhs_type)) {
-                    System.err.println("LHS type of Declaration does not match RHS in: " + name);
-                    System.exit(42);
+                if (!lhs_type.equals(rhs_type)) {
+                    // Don't fail in the special case the LHS is a string object and RHS is string literal
+                    if (!(lhs_type.getO3().equals("String") && rhs_type.getO2() == Kind.STRING_LITERAL)){
+                        System.err.println("LHS type of Declaration does not match RHS in: " + name);
+                        System.exit(42);
+                    }
                 }
             }
         }
@@ -631,9 +637,6 @@ public class ClassScope extends Scope {
         }
         // some object type
         else if (typeNode.kind == TYPENAME){
-            if (typeNode.lexeme.equals("String")){
-                return new Triplet(false, Kind.STRING_LITERAL, "");
-            }
             return new Triplet(false, TYPENAME, typeNode.lexeme);
         }
         // Some primitive type
@@ -763,6 +766,7 @@ public class ClassScope extends Scope {
     }
 
     public Scope resolveSimpleTypeName(final String identifier) {
+        System.out.println("Using: " + identifier);
         if (checkIdentifier(identifier)) {
             return this;
         } else if (checkIdentifierAgainstSingleImports(identifier)) {
