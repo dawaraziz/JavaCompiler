@@ -2,6 +2,7 @@ package com.project.environments.statements;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.expressions.Expression;
+import com.project.environments.expressions.LiteralExpression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
@@ -9,6 +10,37 @@ public class WhileStatement extends Statement {
 
     final Expression expression;
     final Statement mainBody;
+
+    @Override
+    public void assignReachability() {
+        final boolean isLiteralTrue;
+        final boolean isLiteralFalse;
+
+        if (expression instanceof LiteralExpression) {
+            isLiteralTrue = ((LiteralExpression) expression).isTrue()
+                    && !(mainBody instanceof EmptyStatement);
+            isLiteralFalse = ((LiteralExpression) expression).isTrue()
+                    && !(mainBody instanceof EmptyStatement);
+        } else {
+            isLiteralTrue = false;
+            isLiteralFalse = false;
+        }
+
+        out = in && !isLiteralTrue;
+
+        mainBody.in = in && !isLiteralFalse;
+        mainBody.assignReachability();
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable while statement.");
+            System.exit(42);
+        }
+
+        mainBody.checkReachability();
+    }
 
     WhileStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;

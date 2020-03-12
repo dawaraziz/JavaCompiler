@@ -18,6 +18,42 @@ public class DefinitionStatement extends Statement {
     final Expression initialization;
     final ArrayList<Statement> statements;
 
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable definition.");
+            System.exit(42);
+        }
+
+        statements.forEach(Statement::checkReachability);
+    }
+
+    @Override
+    public void assignReachability() {
+        if (!in) {
+            out = false;
+            return;
+        }
+
+        if (statements.size() == 0) {
+            out = in;
+            return;
+        }
+
+        for (int i = 0; i < statements.size(); ++i) {
+            final Statement curStatement = statements.get(i);
+            if (i == 0) {
+                curStatement.in = this.in;
+            } else {
+                curStatement.in = statements.get(i - 1).out;
+            }
+
+            curStatement.assignReachability();
+        }
+
+        out = statements.get(statements.size() - 1).out;
+    }
+
     DefinitionStatement(final ASTHead head, final List<ASTHead> postStatements,
                         final Scope parentScope) {
         this.ast = head;

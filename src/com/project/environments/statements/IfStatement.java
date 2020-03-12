@@ -12,6 +12,35 @@ public class IfStatement extends Statement {
     public final Statement ifBody;
     public final Statement elseBody;
 
+    @Override
+    public void assignReachability() {
+        if (elseBody == null) {
+            out = in;
+
+            ifBody.in = this.in;
+            ifBody.assignReachability();
+        } else {
+            ifBody.in = this.in;
+            ifBody.assignReachability();
+
+            elseBody.in = this.in;
+            elseBody.assignReachability();
+
+            this.out = ifBody.out || elseBody.out;
+        }
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable if statement.");
+            System.exit(42);
+        }
+
+        ifBody.checkReachability();
+        if (elseBody != null) elseBody.checkReachability();
+    }
+
     IfStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

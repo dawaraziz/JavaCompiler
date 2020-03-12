@@ -12,6 +12,19 @@ import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
 public class ReturnStatement extends Statement {
     final Expression expression;
 
+    @Override
+    public void assignReachability() {
+        out = false;
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable return statement.");
+            System.exit(42);
+        }
+    }
+
     public ReturnStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

@@ -160,6 +160,9 @@ public class Main {
         hCheck.followsClassHierarchyRules();
         hCheck.followsMethodHierarchyRules();
 
+        classTable.forEach(ClassScope::assignReachability);
+        classTable.forEach(ClassScope::checkReachability);
+
         System.exit(0);
     }
 }

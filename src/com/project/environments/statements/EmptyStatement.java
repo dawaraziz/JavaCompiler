@@ -5,6 +5,19 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
 public class EmptyStatement extends Statement {
+    @Override
+    public void assignReachability() {
+        out = in;
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable empty statement.");
+            System.exit(42);
+        }
+    }
+
     EmptyStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

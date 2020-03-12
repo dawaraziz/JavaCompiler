@@ -4,20 +4,22 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
+
+import static com.project.scanner.structure.Kind.*;
+import static com.project.scanner.structure.Kind.FALSE;
 
 public class LiteralExpression extends Expression {
 
-    public enum LITERAL_TYPE {
-        TRUE,
-        FALSE,
-        NULL,
-        STRING_LITERAL,
-        INTEGER_LITERAL,
-        CHARACTER_LITERAL
-    }
-
     final ASTHead literal;
 
+    public boolean isFalse() {
+        return literal.getKind() == FALSE;
+    }
+
+    public boolean isTrue() {
+        return literal.getKind() == TRUE;
+    }
 
     LiteralExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;

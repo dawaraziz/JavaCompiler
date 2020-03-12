@@ -647,4 +647,15 @@ public class ClassScope extends Scope {
 
         return false;
     }
+
+    public void assignReachability() {
+        methodTable.forEach(MethodScope::assignReachability);
+        constructorTable.forEach(ConstructorScope::assignReachability);
+    }
+
+    public void checkReachability() {
+        methodTable.forEach(MethodScope::checkReachability);
+        constructorTable.forEach(ConstructorScope::checkReachability);
+    }
+
 }

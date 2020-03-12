@@ -8,6 +8,14 @@ import java.util.List;
 
 public abstract class Statement extends Scope {
 
+    // Note these are boolean, but we DO NOT HAVE TRUE.
+    // Rather, we state true as "maybe" and false as "false".
+    public boolean in; // Can the statement begin execution?
+    public boolean out; // Can the statement end execution?
+
+    abstract public void assignReachability();
+    abstract public void checkReachability();
+
     static ArrayList<Statement> generateStatementScope
             (final List<ASTHead> statements, final Scope parentScope) {
         final ArrayList<Statement> childScopes = new ArrayList<>();

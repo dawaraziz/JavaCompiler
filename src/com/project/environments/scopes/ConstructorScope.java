@@ -69,4 +69,12 @@ public class ConstructorScope extends Scope {
     public int hashCode() {
         return Objects.hash(name, parameters);
     }
+
+    public void assignReachability() {
+        if (body != null) body.assignReachability();
+    }
+
+    public void checkReachability() {
+        if (body != null) body.checkReachability();
+    }
 }

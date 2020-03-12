@@ -2,6 +2,8 @@ package com.project.environments.statements;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ConstructorScope;
+import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.Scope;
 import com.project.scanner.structure.Kind;
 
@@ -9,6 +11,41 @@ import java.util.ArrayList;
 
 public class BlockStatement extends Statement {
     final ArrayList<Statement> childScopes;
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable block.");
+            System.exit(42);
+        }
+
+        childScopes.forEach(Statement::checkReachability);
+    }
+
+    @Override
+    public void assignReachability() {
+        if (parentScope instanceof ConstructorScope || parentScope instanceof MethodScope) {
+            in = true;
+        }
+
+        if (childScopes.size() == 0) {
+            out = in;
+            return;
+        }
+
+        for (int i = 0; i < childScopes.size(); ++i) {
+            final Statement curStatement = childScopes.get(i);
+            if (i == 0) {
+                curStatement.in = this.in;
+            } else {
+                curStatement.in = childScopes.get(i - 1).out;
+            }
+
+            curStatement.assignReachability();
+        }
+
+        out = childScopes.get(childScopes.size() - 1).out;
+    }
 
     BlockStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head.getChild(1);

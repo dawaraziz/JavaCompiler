@@ -102,4 +102,12 @@ public class MethodScope extends Scope {
         }
         return null;
     }
+
+    public void assignReachability() {
+        if (body != null) body.assignReachability();
+    }
+
+    public void checkReachability() {
+        if (body != null) body.checkReachability();
+    }
 }

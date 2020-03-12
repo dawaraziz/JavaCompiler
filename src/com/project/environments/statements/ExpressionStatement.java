@@ -10,6 +10,19 @@ import static com.project.environments.expressions.Expression.generateExpression
 public class ExpressionStatement extends Statement {
     final Expression expression;
 
+    @Override
+    public void assignReachability() {
+        out = in;
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable expression statement.");
+            System.exit(42);
+        }
+    }
+
     ExpressionStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

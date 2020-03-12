@@ -2,6 +2,7 @@ package com.project.environments.statements;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.expressions.Expression;
+import com.project.environments.expressions.LiteralExpression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
@@ -10,6 +11,37 @@ public class ForStatement extends Statement {
     Expression forExpression;
     Expression forUpdate;
     final Statement forBody;
+
+    @Override
+    public void assignReachability() {
+        final boolean isLiteralTrue;
+        final boolean isLiteralFalse;
+
+        if (forExpression instanceof LiteralExpression) {
+            isLiteralTrue = ((LiteralExpression) forExpression).isTrue()
+                    && !(forBody instanceof EmptyStatement);
+            isLiteralFalse = ((LiteralExpression) forExpression).isFalse()
+                    && !(forBody instanceof EmptyStatement);
+        } else {
+            isLiteralTrue = false;
+            isLiteralFalse = false;
+        }
+
+        out = in && forExpression != null && !isLiteralTrue;
+
+        forBody.in = in && !isLiteralFalse;
+        forBody.assignReachability();
+    }
+
+    @Override
+    public void checkReachability() {
+        if (!in) {
+            System.err.println("Found unreachable for statement.");
+            System.exit(42);
+        }
+
+        forBody.checkReachability();
+    }
 
     public ForStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
