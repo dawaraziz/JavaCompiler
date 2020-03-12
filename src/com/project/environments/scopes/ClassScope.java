@@ -529,8 +529,18 @@ public class ClassScope extends Scope {
             System.out.println("EQUAL: " + lhs_type.equals(rhs_type));
 
             // If rhs is null it is a declaration not an assignment we can break
-            if (rhs_type.getO2() == Kind.NULL || rhs_type.getO2() == null){
+            if (rhs_type.getO2() == null){
                 System.out.println("Breaking: " + rhs_type.getO2() + rhs_type.getO2() == null);
+                break;
+            }
+
+            //TODO: What can't i declare null?
+            // if rhs declared null
+            if (rhs_type.getO2() == Kind.NULL){
+                if (lhs_type.getO2() == Kind.INT){
+                    System.err.println("Can't assign null to integer");
+                    System.exit(42);
+                }
                 break;
             }
 
