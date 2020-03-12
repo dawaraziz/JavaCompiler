@@ -88,7 +88,8 @@ public class NameExpression extends Expression {
         } else if (namePointer == null
                 && type == null
                 && nameKind != PACKAGENAME
-                && nameKind != METHODNAME) {
+                && nameKind != METHODNAME
+                && !(parentScope instanceof FieldAccessExpression)) {
             System.err.println("Could not identify name pointer; aborting!");
             System.exit(42);
         } else {
@@ -99,7 +100,7 @@ public class NameExpression extends Expression {
     }
 
     public void classifyExpressionNameWithType(final Type type) {
-        if (nameLexeme.equals("length") && type.prim_type != VAR) {
+        if (nameLexeme.equals("length") && type.isArray) {
             this.type = new Type(INT);
             return;
         }

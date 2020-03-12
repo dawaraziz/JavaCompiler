@@ -758,6 +758,15 @@ public class ClassScope extends Scope {
         for (final FieldScope fieldScope : fieldTable) {
             if (fieldScope.checkIdentifier(identifier)) return fieldScope;
         }
+
+        if (extendsTable == null) return null;
+
+        for (final Name className : extendsTable) {
+            final FieldScope fieldScope = getClassFromPackage(className.getPackageString(),
+                    className.getSimpleName()).getIdentifierFromFields(identifier);
+            if (fieldScope != null) return fieldScope;
+        }
+
         return null;
     }
 
@@ -793,14 +802,9 @@ public class ClassScope extends Scope {
                 if (parameters.size() != method.parameters.size()) continue;
                 boolean parametersMatch = true;
                 for (int i = 0; i < parameters.size(); ++i) {
-                    try {
-                        if (!(parameters.get(i).type.equals(method.parameters.get(i).type))) {
-                            parametersMatch = false;
-                            break;
-                        }
-                    } catch (NullPointerException e) {
-                        int a = 1;
-                        System.exit(42);
+                    if (!(parameters.get(i).type.equals(method.parameters.get(i).type))) {
+                        parametersMatch = false;
+                        break;
                     }
                 }
 

@@ -40,8 +40,6 @@ public class TypeLinker {
         nameNodes.forEach(c -> setExpressionTypes(c, c.parent));
 
         // Set all the method nodes to MethodName.
-        nameNodes.forEach(c -> setExpressionTypes(c, c.parent));
-
         nameNodes.forEach(c -> setMethodTypes(c, c.parent));
 
         nameNodes.forEach(TypeLinker::setOnDemandImportTypes);

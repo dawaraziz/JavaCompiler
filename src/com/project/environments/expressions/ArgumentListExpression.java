@@ -23,7 +23,6 @@ public class ArgumentListExpression extends Expression {
             if (child.getKind() != COMMA)
                 arguments.add(generateExpressionScope(child, this));
         }
-        Collections.reverse(arguments);
     }
 
     @Override
