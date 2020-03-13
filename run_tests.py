@@ -85,7 +85,7 @@ def main():
 
 
 def listdir_nohidden(path):
-    for f in os.listdir(path):
+    for f in sorted(os.listdir(path)):
         if not f.startswith('.'):
             yield f
 
