@@ -47,6 +47,16 @@ public class Type {
         return newType;
     }
 
+    @Override
+    public String toString() {
+        return "Type {" +
+                "prim_type=" + prim_type +
+                ", literal_type=" + literal_type +
+                ", name=" + name +
+                ", isArray=" + isArray +
+                '}';
+    }
+
     private Type() {
         prim_type = VAR;
         isArray = false;
@@ -135,6 +145,26 @@ public class Type {
             prim_type = PRIM_TYPE.VAR;
             name = new Name(typeLexemes);
         }
+    }
+
+    public Kind typeToKind() {
+        switch (prim_type) {
+            case BOOLEAN:
+                return Kind.BOOLEAN;
+            case INT:
+                return Kind.INT;
+            case CHAR:
+                return Kind.CHAR;
+            case BYTE:
+                return Kind.BYTE;
+            case SHORT:
+                return Kind.SHORT;
+            case VAR:
+                return Kind.EXPRESSIONNAME;
+            case VOID:
+                return Kind.VOID;
+        }
+        return Kind.NULL;
     }
 
     public boolean isString() {

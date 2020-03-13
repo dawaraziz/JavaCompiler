@@ -5,6 +5,7 @@ import com.project.environments.statements.Statement;
 import com.project.environments.structure.Parameter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ConstructorScope extends Scope {
@@ -76,5 +77,19 @@ public class ConstructorScope extends Scope {
 
     public void checkReachability() {
         if (body != null) body.checkReachability();
+    }
+
+    public void checkConditionals() {
+        if (body != null) {
+            System.out.println(body);
+            body.checkConditionals();
+        }
+    }
+
+    public void checkReturnedTypes(HashMap<String, ClassScope> classmap) {
+        if (body != null) {
+            System.out.println("Constructor Scope body: " + body);
+            body.checkReturnedTypes(type, classmap);
+        }
     }
 }

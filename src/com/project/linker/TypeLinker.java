@@ -275,7 +275,6 @@ public class TypeLinker {
                                           final HashMap<String, PackageScope> packages) {
         // Package - Classname clash ex. foo.bar package name illegal if there is a qualified classname foo.bar
         for (final String pkgName : packages.keySet()) {
-            System.out.println(pkgName + " $: " + javaClass.packageName.getQualifiedName() + '.' + javaClass.name);
 
             if (pkgName.equals(javaClass.packageName.getQualifiedName() + '.' + javaClass.name)) {
                 System.err.println("Package Name " + pkgName + " clashes with qualified class name");

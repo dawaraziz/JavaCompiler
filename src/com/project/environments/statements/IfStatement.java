@@ -4,6 +4,10 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.expressions.Expression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
+
+import java.util.HashMap;
 
 import static com.project.environments.expressions.Expression.generateExpressionScope;
 
@@ -11,6 +15,26 @@ public class IfStatement extends Statement {
     public final Expression expression;
     public final Statement ifBody;
     public final Statement elseBody;
+
+    @Override
+    public void checkConditionals() {
+        // expression must evaluate to boolean
+        expression.ast.printAST();
+        System.out.println("Expression type is: " + expression);
+        if (!(expression.evaluatesTo() == Kind.BOOLEAN)){
+            System.err.println("If Statement does not evaluate to a boolean");
+            System.exit(42);
+        }
+    }
+
+    @Override
+    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+        ifBody.checkReturnedTypes(type, classmap);
+        if (elseBody != null) {
+            elseBody.checkReturnedTypes(type, classmap);
+        }
+        return;
+    }
 
     @Override
     public void assignReachability() {
@@ -42,6 +66,8 @@ public class IfStatement extends Statement {
     }
 
     IfStatement(final ASTHead head, final Scope parentScope) {
+        System.out.println("MADE IF STATEMENT: ");
+        head.printAST();
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;

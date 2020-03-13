@@ -6,6 +6,7 @@ import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
 
@@ -119,4 +120,19 @@ public class MethodScope extends Scope {
             }
         }
     }
+
+    public void checkConditionals() {
+        if (body != null) {
+            System.out.println("Method Scope body: " + body);
+            body.checkConditionals();
+        }
+    }
+
+    public void checkReturnedTypes(HashMap<String, ClassScope> classmap) {
+        if (body != null) {
+            System.out.println("Method Scope body: " + body);
+            body.checkReturnedTypes(type, classmap);
+        }
+    }
+
 }

@@ -12,6 +12,11 @@ public class TypeExpression extends Expression {
     private final Kind literalKind;
     private final String literalValue;
 
+    public Kind evaluatesTo(){
+        System.out.println("TYPEEXPRESSION: " + literalKind + " : interest " + literalValue);
+        return booleanOrKind(literalKind);
+    }
+
     TypeExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

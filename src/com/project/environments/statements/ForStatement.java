@@ -5,12 +5,32 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.expressions.LiteralExpression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
+
+import java.util.HashMap;
 
 public class ForStatement extends Statement {
     public Scope forInit;
     Expression forExpression;
     Expression forUpdate;
     final Statement forBody;
+
+    @Override
+    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+        forBody.checkReturnedTypes(type, classmap);
+        return;
+    }
+
+//    @Override
+//    public void checkConditionals() {
+//        // expression must evaluate to boolean
+//        System.out.println("Expression type in for is: " + forExpression);
+//        if (!(forExpression.evaluatesTo() == Kind.BOOLEAN)){
+//            System.err.println("for Statement does not evaluate to a boolean");
+//            System.exit(42);
+//        }
+//    }
 
     @Override
     public void assignReachability() {

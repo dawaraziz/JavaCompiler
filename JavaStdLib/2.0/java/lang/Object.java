@@ -14,7 +14,5 @@ public class Object {
     protected Object clone() {
         return this;
     }
-    public final Class getClass() {
-        return null;
-    }
+    public final Class getClass() { return null; }
 }

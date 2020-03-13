@@ -33,6 +33,10 @@ public class BaseExpression extends Expression {
         }
     }
 
+    @Override
+    public Kind evaluatesTo(){
+        return booleanOrKind(Kind.BOOLEAN);
+    }
 
     @Override
     public boolean isVariableNameUsed(String variableName) {

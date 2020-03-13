@@ -3,6 +3,7 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.scanner.structure.Kind;
 
 public class ClassInstanceCreationExpression extends Expression {
     final Expression classType;
@@ -44,4 +45,11 @@ public class ClassInstanceCreationExpression extends Expression {
         this.classType.checkTypeSoundness();
         //TODO: Check that parameters match a constructor
     }
+
+    @Override
+    // I guess a new Object() is an expressionName? Doesn't really matter, anything but Bool
+    public Kind evaluatesTo(){
+        return booleanOrKind(Kind.EXPRESSIONNAME);
+    }
+
 }

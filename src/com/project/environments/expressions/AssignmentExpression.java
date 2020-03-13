@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
 
 public class AssignmentExpression extends Expression {
     private final Expression LHS;
@@ -69,5 +70,9 @@ public class AssignmentExpression extends Expression {
 
         System.err.println("Could not identify assignment type.");
         System.exit(42);
+    }
+
+    public Kind evaluatesTo(){
+        return booleanOrKind(Kind.NULL);
     }
 }

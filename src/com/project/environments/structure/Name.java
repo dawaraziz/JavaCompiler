@@ -35,7 +35,6 @@ public class Name {
 
     public boolean isNotSimpleName() {
         final boolean notSimple = this.getQualifiedName().contains(".");
-        System.out.println("Is there a dot? guaranteed " + notSimple + " in " + this.getQualifiedName());
         return notSimple;
     }
 

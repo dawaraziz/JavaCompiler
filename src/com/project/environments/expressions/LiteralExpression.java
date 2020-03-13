@@ -30,6 +30,15 @@ public class LiteralExpression extends Expression {
     }
 
     @Override
+    public Kind evaluatesTo(){
+        System.out.println("The kind is: " + literal.getKind());
+        if (literal.getKind() == FALSE || literal.getKind() == TRUE){
+            return BOOLEAN;
+        }
+        return literal.getKind();
+    }
+
+    @Override
     public boolean isVariableNameUsed(final String variableName) {
         return false;
     }

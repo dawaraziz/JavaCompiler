@@ -1,9 +1,12 @@
 package com.project.environments.statements;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
+import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Statement extends Scope {
@@ -15,6 +18,8 @@ public abstract class Statement extends Scope {
 
     abstract public void assignReachability();
     abstract public void checkReachability();
+    public void checkConditionals() { System.out.println("Exited Here"); return; };
+    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) { return; }
 
     static ArrayList<Statement> generateStatementScope
             (final List<ASTHead> statements, final Scope parentScope) {

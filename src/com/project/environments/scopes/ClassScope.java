@@ -509,6 +509,14 @@ public class ClassScope extends Scope {
 
         //Dealing with assignable
         checkAssignments(ast);
+        System.out.println("CALUM CHECKING CONDITIONALS --------------- " + this.name);
+        methodTable.forEach(MethodScope::checkConditionals);
+        constructorTable.forEach(ConstructorScope::checkConditionals);
+        System.out.println("CALUM CHECKING RETURNS --------------- " + this.name);
+        methodTable.forEach(n -> n.checkReturnedTypes(classMap));
+        constructorTable.forEach(n -> n.checkReturnedTypes(classMap));
+//        constructorTable.forEach();
+//        fieldTable.forEach();
 
 
     }

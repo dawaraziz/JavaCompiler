@@ -11,8 +11,8 @@ public class Je_6_Assignable_Condition_SimpleType {
     public Je_6_Assignable_Condition_SimpleType () {}
 
     public static int test() {
-	int i = 17;
-	if (i) return 123;
+	int blam = 17;
+	if (blam) return 123;
         return 7;
     }
 

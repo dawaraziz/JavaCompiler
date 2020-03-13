@@ -14,12 +14,7 @@ import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.environments.structure.Type.PRIM_TYPE.INT;
 import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
-import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
-import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
-import static com.project.scanner.structure.Kind.METHODNAME;
-import static com.project.scanner.structure.Kind.PACKAGENAME;
-import static com.project.scanner.structure.Kind.PACKAGEORTYPENAME;
-import static com.project.scanner.structure.Kind.TYPENAME;
+import static com.project.scanner.structure.Kind.*;
 
 public class NameExpression extends Expression {
     private final String nameLexeme;
@@ -48,6 +43,12 @@ public class NameExpression extends Expression {
             nameKind = head.getChild(0).getKind();
             qualifier = new NameExpression(head.generateNameSubHead(), this);
         }
+    }
+
+    @Override
+    public Kind evaluatesTo(){
+        System.out.println("NAMEKIND: " + nameKind + " kind: " + namePointer.type.typeToKind());
+        return booleanOrKind(namePointer.type.typeToKind());
     }
 
     @Override

@@ -5,8 +5,10 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.project.environments.ast.ASTHead.LOCAL_VARIABLE_DECLARATION_STATEMENT;
@@ -17,6 +19,24 @@ import static com.project.environments.expressions.Expression.generateExpression
 public class DefinitionStatement extends Statement {
     final Expression initialization;
     final ArrayList<Statement> statements;
+
+    @Override
+    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+        for (Statement stmt : statements){
+            System.out.println(stmt);
+            stmt.checkReturnedTypes(type, classmap);
+        }
+        return;
+    }
+
+    @Override
+    public void checkConditionals() {
+        System.out.println("Will iterate through defintion Statment children: " + statements.size());
+        for (Statement stmt : statements){
+            System.out.println(stmt);
+            stmt.checkConditionals();
+        }
+    }
 
     @Override
     public void checkReachability() {

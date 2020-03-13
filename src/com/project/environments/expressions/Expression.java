@@ -3,10 +3,21 @@ package com.project.environments.expressions;
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.Scope;
 import com.project.environments.statements.DefinitionStatement;
+import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
 abstract public class Expression extends Scope {
+
+    // Assume an expression evaluates to Bool unless specified otherwise
+    public Kind evaluatesTo(){ return Kind.BOOLEAN;};
+
+    // If the passed kind is a boolean return Kind.Boolean else return itself
+    public Kind booleanOrKind(Kind k){
+        if (k == Kind.TRUE || k == Kind.FALSE)
+            return Kind.BOOLEAN;
+        return k;
+    }
 
     public static ArrayList<Expression> generateExpressionScope
             (final ArrayList<ASTHead> expressions, final Scope parentScope) {
@@ -71,4 +82,5 @@ abstract public class Expression extends Scope {
     public boolean isLiteralExpression() {
         return this instanceof LiteralExpression;
     }
+
 }
