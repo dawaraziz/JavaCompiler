@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 abstract public class Expression extends Scope {
 
+    abstract public String code();
     // Assume an expression evaluates to Bool unless specified otherwise
     public Kind evaluatesTo(){ return Kind.BOOLEAN;};
 

@@ -114,4 +114,19 @@ public class IfStatement extends Statement {
         ifBody.checkTypeSoundness();
         if (elseBody != null) elseBody.checkTypeSoundness();
     }
+
+    //Generate the assembly code
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+        assembly.append(expression.code());
+        assembly.append("cmp eax, 0;");
+        assembly.append("je elseL; jump to the else statment");
+        assembly.append(ifBody.code());
+        assembly.append("jmp endL;");
+        assembly.append("elseL: " + elseBody.code());
+        return assembly.toString();
+        }
+    }
+
+
 }
