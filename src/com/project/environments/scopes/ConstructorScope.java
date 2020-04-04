@@ -92,4 +92,9 @@ public class ConstructorScope extends Scope {
             body.checkReturnedTypes(type, classmap);
         }
     }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return null;
+    }
 }

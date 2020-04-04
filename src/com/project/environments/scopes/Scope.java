@@ -20,6 +20,8 @@ public abstract class Scope {
 
     public abstract void checkTypeSoundness();
 
+    public abstract ArrayList<String> generatei386Code();
+
     protected ArrayList<FieldScope> getParentFields() {
         final ArrayList<FieldScope> ret = new ArrayList<>();
 

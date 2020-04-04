@@ -8,6 +8,7 @@ import com.project.environments.structure.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.project.environments.structure.Name.generateFullyQualifiedName;
 import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
 
 public class MethodScope extends Scope {
@@ -135,4 +136,15 @@ public class MethodScope extends Scope {
         }
     }
 
+    public String generateLabel() {
+        final ClassScope classScope = ((ClassScope) parentScope);
+        final String label = generateFullyQualifiedName(classScope.name,
+                classScope.packageName).getQualifiedName();
+        return label + "_" + name;
+    }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return null;
+    }
 }

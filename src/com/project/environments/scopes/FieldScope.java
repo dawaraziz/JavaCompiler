@@ -129,4 +129,9 @@ public class FieldScope extends Scope {
     public boolean checkIdentifier(final String identifier) {
         return identifier.equals(name);
     }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return null;
+    }
 }

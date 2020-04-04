@@ -58,4 +58,9 @@ public class ImportScope extends Scope {
     Name getPackageName() {
         return (importType == IMPORT_TYPE.ON_DEMAND) ? name : name.getPackageName();
     }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return null;
+    }
 }

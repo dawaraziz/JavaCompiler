@@ -2,6 +2,7 @@ package com.project;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.hierarchy.HierarchyChecker;
 import com.project.linker.TypeLinker;
@@ -17,13 +18,20 @@ import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
+
 public class Main {
+
+    public static ArrayList<ClassScope> classTable = new ArrayList<>();
+    public static HashSet<MethodScope> interfaceSignatureSet = new HashSet<>();
+
     public static void main(final String[] args) {
 
         if (args.length < 1) {
@@ -31,7 +39,6 @@ public class Main {
             System.exit(42);
         }
 
-        final ArrayList<ClassScope> classTable = new ArrayList<>();
         for (final String fileName : args) {
             System.out.println("Scanning " + fileName + ".");
 
@@ -116,7 +123,7 @@ public class Main {
 
         // Generates the methods that every interface specially has from the Object class.
         for (final ClassScope classScope : classTable) {
-            if (classScope.classType == ClassScope.CLASS_TYPE.INTERFACE) {
+            if (classScope.classType == INTERFACE) {
                 classScope.generateObjectMethods(objectScope.methodTable);
             }
         }
@@ -163,7 +170,51 @@ public class Main {
         classTable.forEach(ClassScope::assignReachability);
         classTable.forEach(ClassScope::checkReachability);
 
+        generateInterfaceSignatureSet();
+
+        // Generates any static, non-class code.
+        final ArrayList<String> staticExecCode = new ArrayList<>();
+        staticExecCode.add("section .data");
+
+        // Generates the SIT code.
+        for (final ClassScope classScope : classTable) {
+            staticExecCode.add(classScope.setSITLabel());
+            for (final MethodScope methodScope : interfaceSignatureSet) {
+                // TODO: Implement what the SIT does.
+            }
+        }
+
+        for (final ClassScope classScope : classTable) {
+            staticExecCode.add(classScope.setSubtypeTableLabel());
+            // TODO: Implement the subtype table.
+        }
+
+        classTable.forEach(ClassScope::generatei386Code);
+
+        staticExecCode.add("section .bss");
+        // TODO: Define all static field for each class.
+
+        staticExecCode.add("section .text");
+        staticExecCode.add("global _start");
+        staticExecCode.add("_start");
+
+        // TODO: Resolve all static fields for each class.
+
+        // TODO: Jump to the start of test method.
+
+        // TODO: Print static exec code to a file.
+
         System.exit(0);
+    }
+
+    private static void generateInterfaceSignatureSet() {
+        // Get all the interface methods.
+        for (final ClassScope classScope : classTable) {
+            if (classScope.classType == INTERFACE) {
+                // Duplicate signatures should be weeded out by set.
+                interfaceSignatureSet.addAll(classScope.methodTable);
+            }
+        }
     }
 }
 
