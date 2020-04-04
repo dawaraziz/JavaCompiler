@@ -107,4 +107,16 @@ public class BlockStatement extends Statement {
     public void checkTypeSoundness() {
         childScopes.forEach(Scope::checkTypeSoundness);
     }
+
+    //Generate the assembly code
+    public String code() {
+//        this.uniqueCount++;
+//        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        // Get the assembly for all statements in the block
+        for (Statement statement : childScopes){
+            assembly.append(statement.code());
+        }
+        return assembly.toString();
+    }
 }

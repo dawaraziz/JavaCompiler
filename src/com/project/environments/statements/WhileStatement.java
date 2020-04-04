@@ -92,4 +92,32 @@ public class WhileStatement extends Statement {
         expression.checkTypeSoundness();
         mainBody.checkTypeSoundness();
     }
+
+    //Generate the assembly code
+    public String code() {
+        this.uniqueCount++;
+        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        String loopID = "loop" + uniqueID;
+        String endID = "end" + uniqueID;
+
+        //Am i missing initialization of a variable in the for loop?
+
+        // Start of loop assembly
+        assembly.append(loopID + ": \n");
+
+        // Evaluate the while loop condition
+        assembly.append(expression.code());
+        assembly.append("cmp eax, 0; evaluate value returned from for check in eax\n");
+        assembly.append("je " + endID + "; jump to end of for loop\n");
+
+        // For loop body
+        assembly.append(mainBody.code());
+        assembly.append("jmp " +  loopID + "; jump to top of loop \n");
+
+
+        // code after for loop
+        assembly.append(endID + ": \n");
+        return assembly.toString();
+    }
 }

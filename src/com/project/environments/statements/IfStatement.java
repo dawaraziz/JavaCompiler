@@ -117,16 +117,16 @@ public class IfStatement extends Statement {
 
     //Generate the assembly code
     public String code() {
+        this.uniqueCount++;
+        String uniqueID = String.valueOf(uniqueCount);
         StringBuilder assembly = new StringBuilder();
         assembly.append(expression.code());
-        assembly.append("cmp eax, 0;");
-        assembly.append("je elseL; jump to the else statment");
+        assembly.append("cmp eax, 0; compare value returned from if in eax to 0\n");
+        assembly.append("je else" + uniqueID + "; jump to the else statement\n");
         assembly.append(ifBody.code());
-        assembly.append("jmp endL;");
-        assembly.append("elseL: " + elseBody.code());
+        assembly.append("jmp end" + uniqueID + ";\n");
+        assembly.append("else" + uniqueID + ": \n" + elseBody.code());
+        assembly.append("end" + uniqueID + ": \n");
         return assembly.toString();
         }
-    }
-
-
 }

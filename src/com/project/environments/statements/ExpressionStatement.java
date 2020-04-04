@@ -47,4 +47,15 @@ public class ExpressionStatement extends Statement {
     public void checkTypeSoundness() {
         expression.checkTypeSoundness();
     }
+
+
+    //Generate the assembly code
+    public String code() {
+//        this.uniqueCount++;
+//        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        assembly.append(expression.code());
+        return assembly.toString();
+    }
+
 }

@@ -124,4 +124,34 @@ public class ForStatement extends Statement {
         if (forUpdate != null) forUpdate.checkTypeSoundness();
         if (forBody != null) forBody.checkTypeSoundness();
     }
+
+    //Generate the assembly code
+    public String code() {
+        this.uniqueCount++;
+        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        String loopID = "loop" + uniqueID;
+        String endID = "end" + uniqueID;
+
+        //Am i missing initialization of a variable in the for loop?
+
+        // Start of loop assembly
+        assembly.append(loopID + ": \n");
+
+        // Evaluate the for loop condition
+        assembly.append(forExpression.code());
+        assembly.append("cmp eax, 0; evaluate value returned from for check in eax\n");
+        assembly.append("je " + endID + "; jump to end of for loop\n");
+
+        // For loop body
+        assembly.append(forBody.code());
+        assembly.append("jmp " +  loopID + "; jump to top of loop \n");
+
+        // For update
+        assembly.append(forUpdate.code());
+
+        // code after for loop
+        assembly.append(endID + ": \n");
+        return assembly.toString();
+    }
 }

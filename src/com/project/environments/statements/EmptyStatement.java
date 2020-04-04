@@ -39,4 +39,9 @@ public class EmptyStatement extends Statement {
     public void checkTypeSoundness() {
 
     }
+
+    public String code(){
+        return "";
+    }
+
 }

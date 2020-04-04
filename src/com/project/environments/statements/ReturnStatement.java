@@ -137,4 +137,13 @@ public class ReturnStatement extends Statement {
 //            System.exit(42);
 //        }
     }
+
+    //Generate the assembly code
+    public String code() {
+//        this.uniqueCount++;
+//        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        assembly.append(expression.code());
+        return assembly.toString();
+    }
 }

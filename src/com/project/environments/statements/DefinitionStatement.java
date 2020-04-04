@@ -136,4 +136,17 @@ public class DefinitionStatement extends Statement {
     public boolean checkIdentifier(final String identifier) {
         return identifier.equals(name);
     }
+
+    //Generate the assembly code
+    public String code() {
+//        this.uniqueCount++;
+//        String uniqueID = String.valueOf(uniqueCount);
+        StringBuilder assembly = new StringBuilder();
+        assembly.append(initialization.code());
+        for (Statement statement : statements){
+            assembly.append(statement.code());
+        }
+        return assembly.toString();
+    }
+
 }
