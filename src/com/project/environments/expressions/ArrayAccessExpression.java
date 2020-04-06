@@ -47,4 +47,19 @@ public class ArrayAccessExpression extends Expression {
             System.exit(42);
         }
     }
+
+    @Override
+    public String code(){
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append(LHS.code());
+        assembly.append("push eax");
+        assembly.append(RHS.code());
+        assembly.append("pop ebx");
+        assembly.append("shl eax,2");
+        assembly.append("add eax,8"); // Are we storing class and length of array at the front?
+        assembly.append("add eax,ebx");
+
+        return assembly.toString();
+    }
 }

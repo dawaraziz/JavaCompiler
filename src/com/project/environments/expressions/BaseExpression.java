@@ -6,15 +6,34 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.HashMap;
+
 public class BaseExpression extends Expression {
     final Expression LHS;
     final Expression singular;
     final Expression RHS;
 
+    final String symbol;
+
+    HashMap<String, String> instructionMap = new HashMap<>();
+
     public BaseExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
+
+        instructionMap.put("LESS", "");
+        instructionMap.put("LESSEQUAL", "");
+        instructionMap.put("GREATER", "");
+        instructionMap.put("GREATEREQUAL", "");
+        instructionMap.put("EQUALEQUAL", "");
+        instructionMap.put("NOTEQUAL", "");
+        instructionMap.put("UPARROW", "");
+        instructionMap.put("BAR", "");
+        instructionMap.put("AND", "");
+        instructionMap.put("AMPERSAND", "");
+        instructionMap.put("instanceof", "");
+
 
         if (head.getChildren().size() == 3
                 && head.getChild(0).getKind() == Kind.PAREN_CLOSE
@@ -22,14 +41,17 @@ public class BaseExpression extends Expression {
             LHS = null;
             singular = generateExpressionScope(head.getChild(1), this);
             RHS = null;
+            symbol = null;
         } else if (head.getChildren().size() == 2) {
             LHS = null;
             singular = generateExpressionScope(head.getChild(0), this);
             RHS = null;
+            symbol = null;
         } else {
             LHS = generateExpressionScope(head.getChild(2), this);
             singular = null;
             RHS = generateExpressionScope(head.getChild(0), this);
+            symbol = head.getChild(1).getLexeme();
         }
     }
 
@@ -41,6 +63,50 @@ public class BaseExpression extends Expression {
     @Override
     public boolean isVariableNameUsed(String variableName) {
         return false;
+    }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        if (singular != null) {
+            assembly.append(singular.code());
+            return assembly.toString();
+        }
+
+        assembly.append(LHS.code());
+        assembly.append("push eax;");
+        assembly.append(RHS.code());
+        assembly.append("pop ebx");
+
+        switch (this.ast.getLexeme()) {
+            case "RELATIONALEXPRESSION":
+            case "EQUALITYEXPRESSION":
+            case "EXCLUSIVEOREXPRESSION":
+            case "CONDITIONALEXPRESSION":
+            case "CONDITIONALOREXPRESSION":
+            case "INCLUSIVEOREXPRESSION":
+            case "CONDITIONALANDEXPRESSION":
+            case "ANDEXPRESSION":
+                assembly.append(instructionMap.get(symbol));
+                break;
+            case "MULTIPLICATIVEEXPRESSION":
+                assembly.append("mul ebx, [eax]");
+                break;
+            case "SUBBASEEXPRESSION":
+                //assembly.append();
+                break;
+            default:
+                System.err.println("Could not write Base Expr!");
+                System.exit(42);
+        }
+
+        assembly.append("mov eax, ebx");
+
+
+        return assembly.toString();
+
+
     }
 
     @Override

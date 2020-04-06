@@ -63,4 +63,19 @@ public class AdditiveExpression extends Expression {
     }
 
 
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append(LHS.code());
+        assembly.append("push eax;");
+        assembly.append(RHS.code());
+        assembly.append("pop ebx");
+        assembly.append("add ebx, eax");
+        assembly.append("mov eax, ebx");
+
+
+        return assembly.toString();
+    }
+
+
 }
