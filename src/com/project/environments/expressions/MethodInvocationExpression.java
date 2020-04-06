@@ -154,4 +154,21 @@ public class MethodInvocationExpression extends Expression {
         if (this.argumentExpression != null) this.argumentExpression.checkTypeSoundness();
         // TODO:
     }
+
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append(primaryExpression.code());
+        assembly.append("\n");
+        assembly.append("push eax;");
+        assembly.append("\n");
+        assembly.append(argumentExpression.code());
+        assembly.append("\n");
+        assembly.append("push eax;"); // multiple push for each argument?
+        assembly.append("\n");
+
+        return assembly.toString();
+    }
 }

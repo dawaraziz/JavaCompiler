@@ -75,4 +75,25 @@ public class AssignmentExpression extends Expression {
     public Kind evaluatesTo(){
         return booleanOrKind(Kind.NULL);
     }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append(LHS.code());
+        assembly.append("\n");
+        assembly.append("move eax, [eax];");
+        assembly.append("\n");
+        assembly.append("push eax;");
+        assembly.append("\n");
+        assembly.append(RHS.code());
+        assembly.append("\n");
+        assembly.append("pop ebx;");
+        assembly.append("\n");
+        // check if array?
+        assembly.append("move [ebx], eax;");
+        assembly.append("\n");
+
+        return assembly.toString();
+    }
 }

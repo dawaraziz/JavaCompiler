@@ -35,4 +35,11 @@ public class UnaryNotPlusMinusExpr extends Expression {
             System.exit(42);
         }
     }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        return assembly.append(nextExpr.code()).toString();
+    }
 }

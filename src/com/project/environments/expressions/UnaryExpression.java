@@ -41,4 +41,11 @@ public class UnaryExpression extends Expression {
             //}
         }
     }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        return assembly.append(RHS.code()).toString();
+    }
 }
