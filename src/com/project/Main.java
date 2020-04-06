@@ -18,8 +18,6 @@ import com.project.weeders.LiteralWeeder;
 import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +33,7 @@ public class Main {
     public static final HashSet<MethodScope> interfaceSignatureSet = new HashSet<>();
     public static final HashMap<String, PackageScope> packageMap = new HashMap<>();
     public static MethodScope testMethod = null;
+    public static ClassScope objectClass = null;
 
     public static void main(final String[] args) {
 
@@ -108,15 +107,14 @@ public class Main {
         }
 
         // Find the Object class.
-        ClassScope objectScope = null;
         for (final ClassScope scope : classTable) {
             if (scope.isJavaLangObject()) {
-                objectScope = scope;
+                objectClass = scope;
                 break;
             }
         }
 
-        if (objectScope == null) {
+        if (objectClass == null) {
             System.err.println("Could not identify java.lang.Object. Aborting!");
             System.exit(42);
         }
@@ -124,7 +122,7 @@ public class Main {
         // Generates the methods that every interface specially has from the Object class.
         for (final ClassScope classScope : classTable) {
             if (classScope.classType == INTERFACE) {
-                classScope.generateObjectMethods(objectScope.methodTable);
+                classScope.generateObjectMethods();
             }
         }
 
@@ -174,7 +172,9 @@ public class Main {
 
         generateStatici386Code();
 
-//        classTable.forEach(ClassScope::generatei386Code);
+        classTable.forEach(ClassScope::generateMethodOrder);
+
+        classTable.forEach(ClassScope::generatei386Code);
 
         System.exit(0);
     }
@@ -183,6 +183,22 @@ public class Main {
 
         // Generates any static, non-class code.
         final ArrayList<String> staticExecCode = new ArrayList<>();
+
+        // Identify all the static fields
+        final ArrayList<FieldScope> staticFields = new ArrayList<>();
+        classTable.forEach(e -> staticFields.addAll(e.getStaticFields()));
+
+        // Add all the static fields as variables.
+            staticFields.forEach(e -> staticExecCode.add(e.generateStaticFieldCode()));
+
+        // Generate the global SIT labels.
+        classTable.forEach(e -> staticExecCode.add(e.generateSITGlobalLabel()));
+
+        // Generate the global subtype labels.
+        classTable.forEach(e -> staticExecCode.add(e.generateSubtypeGlobalLabel()));
+
+        staticExecCode.add("");
+
         staticExecCode.add("section .data");
 
         // Generates the SIT code.
@@ -190,22 +206,13 @@ public class Main {
             staticExecCode.add(classScope.setSITLabel());
             for (final MethodScope methodScope : interfaceSignatureSet) {
                 // TODO: Implement the SIT.
+//                staticExecCode.add(methodScope.callLabel());
             }
         }
 
         for (final ClassScope classScope : classTable) {
             staticExecCode.add(classScope.setSubtypeTableLabel());
             // TODO: Implement the subtype table.
-        }
-
-        // Identify all the static fields
-        final ArrayList<FieldScope> staticFields = new ArrayList<>();
-        classTable.forEach(e -> staticFields.addAll(e.getStaticFields()));
-
-        // Add all the static fields as variables.
-        staticExecCode.add("section .bss");
-        for (final FieldScope fieldScope : staticFields) {
-            staticExecCode.addAll(fieldScope.generateStaticFieldCode());
         }
 
         staticExecCode.add("section .text");
@@ -231,13 +238,15 @@ public class Main {
     }
 
     private static void generateInterfaceSignatureSet() {
-        classTable.stream()
-                .filter(e -> e.classType == INTERFACE)
-                .forEach(e -> interfaceSignatureSet.addAll(e.methodTable));
+        for (final ClassScope classScope : classTable) {
+            if (classScope.classType == INTERFACE) {
+                interfaceSignatureSet.addAll(classScope.methodTable);
+            }
+        }
     }
 
     public static void writeCodeToFile(final String name, final ArrayList<String> text) {
-        System.out.println("Start of code: =============================");
+        System.out.println("Start of " + name + ": =============================");
         text.forEach(System.out::println);
         System.out.println("End of code: =============================");
 
