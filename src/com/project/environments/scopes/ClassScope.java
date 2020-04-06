@@ -66,7 +66,7 @@ public class ClassScope extends Scope {
     public final ArrayList<ConstructorScope> constructorTable;
     public final ArrayList<FieldScope> fieldTable;
 
-    public final LinkedHashSet<MethodScope> codeMethodOrder = new LinkedHashSet<>();
+    public LinkedHashSet<MethodScope> codeMethodOrder = new LinkedHashSet<>();
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -908,7 +908,22 @@ public class ClassScope extends Scope {
                     superName.getPackageName().toString(), superName.getSimpleName());
             parent.generateMethodOrder();
             codeMethodOrder.addAll(parent.codeMethodOrder);
-            codeMethodOrder.addAll(methodTable);
+
+            for (final MethodScope methodScope : methodTable) {
+                if (codeMethodOrder.contains(methodScope)) {
+                    final LinkedHashSet<MethodScope> hashSet = new LinkedHashSet<>();
+                    for (final MethodScope orderedMethodScope: codeMethodOrder) {
+                        if (methodScope.equals(orderedMethodScope)) {
+                            hashSet.add(methodScope);
+                        } else {
+                            hashSet.add(orderedMethodScope);
+                        }
+                    }
+                    codeMethodOrder = hashSet;
+                } else {
+                    codeMethodOrder.add(methodScope);
+                }
+            }
         } else {
             System.err.println("Found class with more than one extends?");
             System.exit(42);
