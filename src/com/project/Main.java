@@ -210,7 +210,7 @@ public class Main {
 
         staticExecCode.add("section .text");
         staticExecCode.add("global _start");
-        staticExecCode.add("_start");
+        staticExecCode.add("_start:");
 
         // Initializes all our static fields.
         for (final FieldScope fieldScope : staticFields) {
