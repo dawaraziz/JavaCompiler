@@ -23,13 +23,6 @@ public class Type {
         VAR
     }
 
-    public int getFieldByteSize() {
-        if (prim_type != VAR) return 4;
-
-        // TODO: Size of variables.
-        return 8;
-    }
-
     static final private String INT_LEXEME = "int";
     static final private String BYTE_LEXEME = "byte";
     static final private String SHORT_LEXEME = "short";
@@ -38,7 +31,7 @@ public class Type {
     static final private String VOID_LEXEME = "void";
 
     public final PRIM_TYPE prim_type;
-    public final Kind literal_type;
+    private final Kind literal_type;
 
     public Name name;
     public final boolean isArray;
@@ -49,7 +42,7 @@ public class Type {
         return newType;
     }
 
-    static public Type generateNullType() {
+    private static Type generateNullType() {
         final Type newType = new Type(Type.PRIM_TYPE.VAR);
         newType.name = new Name("null");
         return newType;
@@ -57,12 +50,11 @@ public class Type {
 
     @Override
     public String toString() {
-        return "Type {" +
-                "prim_type=" + prim_type +
-                ", literal_type=" + literal_type +
-                ", name=" + name +
-                ", isArray=" + isArray +
-                '}';
+        if (prim_type != VAR) {
+            return prim_type.name();
+        } else {
+            return name.getQualifiedName();
+        }
     }
 
     private Type() {

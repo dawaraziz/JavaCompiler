@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.expressions.Expression;
 import com.project.scanner.structure.Kind;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -126,29 +127,22 @@ public class FieldScope extends Scope {
 //        }
     }
 
-    public boolean checkIdentifier(final String identifier) {
+    boolean checkIdentifier(final String identifier) {
         return identifier.equals(name);
     }
 
     @Override
     public ArrayList<String> generatei386Code() {
-        return null;
+        throw new NotImplementedException();
     }
 
-    public ArrayList<String> generateStaticFieldCode() {
+    public String generateStaticFieldCode() {
         if (!modifiers.contains("static")) {
             System.err.println("Non-static field cannot generate static code; aborting!");
             System.exit(42);
         }
 
-        final ArrayList<String> code = new ArrayList<>();
-        code.add(setStaticLabel());
-
-        for (int i = 0; i < getFieldByteSize(); i += 4) {
-            code.add("dd 0");
-        }
-
-        return code;
+        return "common " + callStaticLabel() + " 4";
     }
 
     public ArrayList<String> generateStaticInitializationCode() {
@@ -157,23 +151,15 @@ public class FieldScope extends Scope {
             System.exit(42);
         }
 
-        if (initializer == null) return null;
-
-
-        final ArrayList<String> code = new ArrayList<>(initializer.generatei386Code());
-
-        code.add("mov eax, " + callStaticLabel());
+        final ArrayList<String> code = new ArrayList<>();
+        if (initializer == null) {
+            code.add("mov dword [" + callStaticLabel() + "], 0");
+        } else {
+            code.addAll(initializer.generatei386Code());
+            code.add("mov [" + callStaticLabel() + "], eax");
+        }
 
         return code;
-    }
-
-
-    public int getFieldByteSize() {
-        return type.getFieldByteSize();
-    }
-
-    public String setStaticLabel() {
-        return ((ClassScope) parentScope).generateClassLabel() + "_static_" + name + ":";
     }
 
     public String callStaticLabel() {

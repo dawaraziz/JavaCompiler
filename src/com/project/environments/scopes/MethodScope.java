@@ -7,6 +7,7 @@ import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.project.Main.testMethod;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
@@ -66,6 +67,11 @@ public class MethodScope extends Scope {
         }
 
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, parameters);
     }
 
     @Override
@@ -147,21 +153,39 @@ public class MethodScope extends Scope {
     }
 
     public String setLabel() {
-        final ClassScope classScope = ((ClassScope) parentScope);
-        final String label = generateFullyQualifiedName(classScope.name,
-                classScope.packageName).getQualifiedName();
-        return label + "_" + name + ":";
+        return callLabel() + ":";
     }
 
     public String callLabel() {
         final ClassScope classScope = ((ClassScope) parentScope);
-        final String label = generateFullyQualifiedName(classScope.name,
-                classScope.packageName).getQualifiedName();
-        return label + "_" + name;
+
+        final String label;
+        if (classScope == null) {
+            label = "java.lang.Object";
+        } else {
+            label = generateFullyQualifiedName(classScope.name,
+                    classScope.packageName).getQualifiedName();
+        }
+
+        final StringBuilder argLabel = new StringBuilder();
+        if (parameters != null) {
+            for (final Parameter parameter : parameters) {
+                argLabel.append("_");
+                argLabel.append(parameter.toString());
+            }
+        }
+
+        return label + "_" + name + argLabel.toString();
     }
 
     @Override
     public ArrayList<String> generatei386Code() {
-        return new ArrayList<>();
+        final ArrayList<String> code = new ArrayList<>();
+
+        code.add("section .text");
+
+        body.generatei386Code();
+
+        return code;
     }
 }
