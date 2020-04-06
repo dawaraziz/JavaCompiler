@@ -10,14 +10,19 @@ import com.project.util.Triplet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static com.project.Main.classTable;
+import static com.project.Main.objectClass;
 import static com.project.Main.packageMap;
-import static com.project.Main.testMethod;
+import static com.project.Main.writeCodeToFile;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
+import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.structure.Name.containsPrefixName;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
@@ -26,6 +31,14 @@ import static com.project.scanner.structure.Kind.TYPENAME;
 public class ClassScope extends Scope {
 
     private static final ClassScope duplicateHolderScope = new ClassScope();
+
+    public String generateSITGlobalLabel() {
+        return "global " + callSITLabel();
+    }
+
+    public String generateSubtypeGlobalLabel() {
+        return "global " + callSubtypeTableLabel();
+    }
 
     public enum CLASS_TYPE {
         INTERFACE,
@@ -53,6 +66,8 @@ public class ClassScope extends Scope {
     public final ArrayList<ConstructorScope> constructorTable;
     public final ArrayList<FieldScope> fieldTable;
 
+    public final LinkedHashSet<MethodScope> codeMethodOrder = new LinkedHashSet<>();
+
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
         this.ast = ast;
@@ -71,7 +86,7 @@ public class ClassScope extends Scope {
 
         implementsTable = classDeclaration.getClassInterfaces();
 
-        if (this.classType == CLASS_TYPE.INTERFACE) {
+        if (this.classType == INTERFACE) {
             extendsTable = classDeclaration.getInterfaceSuperInterfaces();
         } else {
             extendsTable = classDeclaration.getClassSuperClass();
@@ -188,10 +203,10 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void generateObjectMethods(final ArrayList<MethodScope> objectMethods) {
+    public void generateObjectMethods() {
         if (extendsTable != null && extendsTable.size() > 0) return;
 
-        for (final MethodScope objectMethod : objectMethods) {
+        for (final MethodScope objectMethod : objectClass.methodTable) {
             final Boolean check = containsMethod(objectMethod);
 
             if (check == null) {
@@ -881,11 +896,32 @@ public class ClassScope extends Scope {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public void generateMethodOrder() {
+        if (classType != CLASS) return;
+        if (codeMethodOrder.size() != 0) return;
+
+        if (extendsTable == null || extendsTable.size() == 0) {
+            codeMethodOrder.addAll(methodTable);
+        } else if (extendsTable.size() == 1) {
+            final Name superName = extendsTable.get(0);
+            final ClassScope parent = getClassFromPackage(
+                    superName.getPackageName().toString(), superName.getSimpleName());
+            parent.generateMethodOrder();
+            codeMethodOrder.addAll(parent.codeMethodOrder);
+            codeMethodOrder.addAll(methodTable);
+        } else {
+            System.err.println("Found class with more than one extends?");
+            System.exit(42);
+        }
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
 
         // TODO: Determine which extern imports are needed.
+
+        methodTable.forEach(e -> code.add("global " + e.callLabel()));
 
         code.add("section .data");
 
@@ -893,17 +929,19 @@ public class ClassScope extends Scope {
         code.add(setVtableLabel());
         code.add("dd " + callSITLabel() + " ; Pointer to the SIT.");
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
-        methodTable.forEach(e -> code.add("dd " + e.setLabel()));
+        codeMethodOrder.forEach(e -> code.add("dd " + e.callLabel()));
 
         code.add("section .text");
 
         // Generates our method code.
         for (final MethodScope methodScope : methodTable) {
-            code.addAll(methodScope.generatei386Code());
-            code.add("");
+            if (methodScope.body != null) {
+                code.addAll(methodScope.generatei386Code());
+                code.add("");
+            }
         }
 
-        // TODO: Print the code to a class file.
+        writeCodeToFile(this.name, code);
 
         return null;
     }

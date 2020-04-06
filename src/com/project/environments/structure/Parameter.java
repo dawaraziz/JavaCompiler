@@ -37,6 +37,11 @@ public class Parameter extends Scope {
     }
 
     @Override
+    public String toString() {
+        return type.toString();
+    }
+
+    @Override
     public void checkTypeSoundness() {
 
     }
