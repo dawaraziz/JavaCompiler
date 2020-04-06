@@ -2,6 +2,7 @@ package com.project;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.FieldScope;
 import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
 import com.project.hierarchy.HierarchyChecker;
@@ -17,8 +18,9 @@ import com.project.weeders.LiteralWeeder;
 import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,8 +31,10 @@ import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 
 public class Main {
 
-    public static ArrayList<ClassScope> classTable = new ArrayList<>();
-    public static HashSet<MethodScope> interfaceSignatureSet = new HashSet<>();
+    public static final ArrayList<ClassScope> classTable = new ArrayList<>();
+    public static final HashSet<MethodScope> interfaceSignatureSet = new HashSet<>();
+    public static final HashMap<String, PackageScope> packageMap = new HashMap<>();
+    public static MethodScope testMethod = null;
 
     public static void main(final String[] args) {
 
@@ -41,22 +45,26 @@ public class Main {
 
         for (final String fileName : args) {
             System.out.println("Scanning " + fileName + ".");
-
-            // Scanning step.
             final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(fileName);
 
+            // Default to Linux standard.
             InputStream inputStreamJLR1 = Main.class.getResourceAsStream("/output.jlr1");
+
+            // If Linux standard doesn't work, try Windows standard.
             if (inputStreamJLR1 == null) {
                 inputStreamJLR1 = Main.class.getResourceAsStream("./output.jlr1");
             }
 
-            System.out.println("Parsing " + fileName + ".");
+            // Can't seem to find the jlr1 file; abort.
+            if (inputStreamJLR1 == null) {
+                System.err.println("Could not identify jlr1 grammar; aborting!");
+                System.exit(42);
+            }
 
-            // Parsing step.
+            System.out.println("Parsing " + fileName + ".");
             final ASTHead AST = new ASTHead(JavaParser.parseTokenList(tokens, new Scanner(inputStreamJLR1)));
 
             System.out.println("Weeding " + fileName + ".");
-
             LiteralWeeder.weed(AST);
             AbstractMethodWeeder.weed(AST);
             ClassModifierWeeder.weed(AST);
@@ -64,8 +72,8 @@ public class Main {
             FieldModifierWeeder.weed(AST);
             ClassNameWeeder.weed(AST, fileName);
 
+            System.out.println("Disambiguating names in " + fileName + ".");
             TypeLinker.assignTypesToNames(AST);
-            AST.printAST();
 
             // Associates the AST with the class name.
             classTable.add(new ClassScope(new File(fileName).getName().split("\\.")[0], AST));
@@ -77,7 +85,6 @@ public class Main {
                 .collect(Collectors.toCollection(HashSet::new));
 
         // Creates a map of package scopes.
-        final HashMap<String, PackageScope> packageMap = new HashMap<>();
         for (final String packageName : packageSet) {
             final PackageScope packageScope = new PackageScope();
             for (final ClassScope javaClass : classTable) {
@@ -87,14 +94,7 @@ public class Main {
             packageMap.put(packageName, packageScope);
         }
 
-        classTable.forEach(c -> c.packageMap.putAll(packageMap));
-
-        // Link all types to their fully qualified name.
-        for (final ClassScope classScope : classTable) {
-            classScope.generateImportMaps(classTable);
-//            classScope.linkTypesToQualifiedNames(null);
-//            classScope.checkTypeSoundness();
-        }
+        classTable.forEach(ClassScope::generateImportMaps);
 
         // Checks for duplicate classes.
         for (int i = 0; i < classTable.size(); ++i) {
@@ -159,7 +159,7 @@ public class Main {
             classScope.checkTypeSoundness();
         }
 
-        TypeLinker.link(classTable, packageMap);
+        TypeLinker.link();
 
         // Checks that the class hierarchy is correct.
         final HierarchyChecker hCheck = new HierarchyChecker(classTable, classMap);
@@ -172,6 +172,15 @@ public class Main {
 
         generateInterfaceSignatureSet();
 
+        generateStatici386Code();
+
+//        classTable.forEach(ClassScope::generatei386Code);
+
+        System.exit(0);
+    }
+
+    private static void generateStatici386Code() {
+
         // Generates any static, non-class code.
         final ArrayList<String> staticExecCode = new ArrayList<>();
         staticExecCode.add("section .data");
@@ -180,7 +189,7 @@ public class Main {
         for (final ClassScope classScope : classTable) {
             staticExecCode.add(classScope.setSITLabel());
             for (final MethodScope methodScope : interfaceSignatureSet) {
-                // TODO: Implement what the SIT does.
+                // TODO: Implement the SIT.
             }
         }
 
@@ -189,32 +198,64 @@ public class Main {
             // TODO: Implement the subtype table.
         }
 
-        classTable.forEach(ClassScope::generatei386Code);
+        // Identify all the static fields
+        final ArrayList<FieldScope> staticFields = new ArrayList<>();
+        classTable.forEach(e -> staticFields.addAll(e.getStaticFields()));
 
+        // Add all the static fields as variables.
         staticExecCode.add("section .bss");
-        // TODO: Define all static field for each class.
+        for (final FieldScope fieldScope : staticFields) {
+            staticExecCode.addAll(fieldScope.generateStaticFieldCode());
+        }
 
         staticExecCode.add("section .text");
         staticExecCode.add("global _start");
         staticExecCode.add("_start");
 
-        // TODO: Resolve all static fields for each class.
+        // Initializes all our static fields.
+        for (final FieldScope fieldScope : staticFields) {
+            if (fieldScope.initializer != null) {
+                staticExecCode.addAll(fieldScope.generateStaticInitializationCode());
+            }
+        }
 
-        // TODO: Jump to the start of test method.
+        // Calls the "static int test()" method.
+        staticExecCode.add("call " + testMethod.callLabel());
 
-        // TODO: Print static exec code to a file.
+        // Exits.
+        staticExecCode.add("mov ebx, eax");
+        staticExecCode.add("mov eax, 1");
+        staticExecCode.add("int 0x80");
 
-        System.exit(0);
+        writeCodeToFile("static_exec.s", staticExecCode);
     }
 
     private static void generateInterfaceSignatureSet() {
-        // Get all the interface methods.
-        for (final ClassScope classScope : classTable) {
-            if (classScope.classType == INTERFACE) {
-                // Duplicate signatures should be weeded out by set.
-                interfaceSignatureSet.addAll(classScope.methodTable);
-            }
-        }
+        classTable.stream()
+                .filter(e -> e.classType == INTERFACE)
+                .forEach(e -> interfaceSignatureSet.addAll(e.methodTable));
+    }
+
+    public static void writeCodeToFile(final String name, final ArrayList<String> text) {
+        System.out.println("Start of code: =============================");
+        text.forEach(System.out::println);
+        System.out.println("End of code: =============================");
+
+//        final File file = new File("./output/" + name);
+//
+//        try {
+//            if (!file.createNewFile()) throw new IOException();
+//
+//            final FileWriter fileWriter = new FileWriter(file);
+//            for (final String s : text) {
+//                fileWriter.write(s);
+//            }
+//            fileWriter.close();
+//        } catch (final IOException e) {
+//            System.err.println("Could not write file; aborting!");
+//            System.err.println(e.toString());
+//            System.exit(42);
+//        }
     }
 }
 

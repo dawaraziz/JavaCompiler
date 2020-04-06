@@ -10,11 +10,16 @@ import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import static com.project.Main.packageMap;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.environments.structure.Type.PRIM_TYPE.INT;
-import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
-import static com.project.scanner.structure.Kind.*;
+import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
+import static com.project.scanner.structure.Kind.EXPRESSIONNAME;
+import static com.project.scanner.structure.Kind.METHODNAME;
+import static com.project.scanner.structure.Kind.PACKAGENAME;
+import static com.project.scanner.structure.Kind.PACKAGEORTYPENAME;
+import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class NameExpression extends Expression {
     private final String nameLexeme;
@@ -46,7 +51,7 @@ public class NameExpression extends Expression {
     }
 
     @Override
-    public Kind evaluatesTo(){
+    public Kind evaluatesTo() {
         System.out.println("NAMEKIND: " + nameKind + " kind: " + namePointer.type.typeToKind());
         return booleanOrKind(namePointer.type.typeToKind());
     }
@@ -285,7 +290,7 @@ public class NameExpression extends Expression {
 
         // Need to take entire name on the left.
         if (qualifier.nameKind == Kind.PACKAGENAME) {
-            final PackageScope packageScope = getParentClass().packageMap.get(qualifierName);
+            final PackageScope packageScope = packageMap.get(qualifierName);
 
             if (packageScope != null
                     && packageScope.classes.stream().anyMatch(c -> c.name.equals(nameLexeme))) {

@@ -6,6 +6,7 @@ import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.ForStatement;
 import com.project.environments.structure.Type;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public abstract class Scope {
@@ -20,7 +21,11 @@ public abstract class Scope {
 
     public abstract void checkTypeSoundness();
 
-    public abstract ArrayList<String> generatei386Code();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("Placeholder " + this.getClass().getName());
+        return code;
+    }
 
     protected ArrayList<FieldScope> getParentFields() {
         final ArrayList<FieldScope> ret = new ArrayList<>();

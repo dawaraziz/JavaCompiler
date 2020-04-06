@@ -9,17 +9,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import static com.project.Main.classTable;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 
 public class HierarchyChecker {
 
-    private final ArrayList<ClassScope> classTable;
     private final HashMap<String, ClassScope> classMap;
 
     public HierarchyChecker(final ArrayList<ClassScope> classTable,
                             final HashMap<String, ClassScope> classMap) {
-        this.classTable = classTable;
         this.classMap = classMap;
     }
 

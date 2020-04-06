@@ -2,19 +2,23 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.Scope;
-import com.project.environments.statements.DefinitionStatement;
 import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 
 abstract public class Expression extends Scope {
 
-    abstract public String code();
+    public String code() {
+        return null;
+    }
+
     // Assume an expression evaluates to Bool unless specified otherwise
-    public Kind evaluatesTo(){ return Kind.BOOLEAN;};
+    public Kind evaluatesTo() {
+        return Kind.BOOLEAN;
+    }
 
     // If the passed kind is a boolean return Kind.Boolean else return itself
-    public Kind booleanOrKind(Kind k){
+    public Kind booleanOrKind(final Kind k) {
         if (k == Kind.TRUE || k == Kind.FALSE)
             return Kind.BOOLEAN;
         return k;
@@ -79,9 +83,4 @@ abstract public class Expression extends Scope {
         nodes.add(expression);
         return generateExpressionScope(nodes, parentScope).get(0);
     }
-
-    public boolean isLiteralExpression() {
-        return this instanceof LiteralExpression;
-    }
-
 }

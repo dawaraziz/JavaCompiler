@@ -134,4 +134,50 @@ public class FieldScope extends Scope {
     public ArrayList<String> generatei386Code() {
         return null;
     }
+
+    public ArrayList<String> generateStaticFieldCode() {
+        if (!modifiers.contains("static")) {
+            System.err.println("Non-static field cannot generate static code; aborting!");
+            System.exit(42);
+        }
+
+        final ArrayList<String> code = new ArrayList<>();
+        code.add(setStaticLabel());
+
+        for (int i = 0; i < getFieldByteSize(); i += 4) {
+            code.add("dd 0");
+        }
+
+        return code;
+    }
+
+    public ArrayList<String> generateStaticInitializationCode() {
+        if (!modifiers.contains("static")) {
+            System.err.println("Non-static field cannot generate static code; aborting!");
+            System.exit(42);
+        }
+
+        if (initializer == null) return null;
+
+
+        final ArrayList<String> code = new ArrayList<>(initializer.generatei386Code());
+
+        code.add("mov eax, " + callStaticLabel());
+
+        return code;
+    }
+
+
+    public int getFieldByteSize() {
+        return type.getFieldByteSize();
+    }
+
+    public String setStaticLabel() {
+        return ((ClassScope) parentScope).generateClassLabel() + "_static_" + name + ":";
+    }
+
+    public String callStaticLabel() {
+        return ((ClassScope) parentScope).generateClassLabel() + "_static_" + name;
+    }
+
 }

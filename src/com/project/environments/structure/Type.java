@@ -12,6 +12,7 @@ import static com.project.environments.structure.Type.PRIM_TYPE.SHORT;
 import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
 
 public class Type {
+
     public enum PRIM_TYPE {
         BOOLEAN,
         INT,
@@ -20,6 +21,13 @@ public class Type {
         SHORT,
         VOID,
         VAR
+    }
+
+    public int getFieldByteSize() {
+        if (prim_type != VAR) return 4;
+
+        // TODO: Size of variables.
+        return 8;
     }
 
     static final private String INT_LEXEME = "int";

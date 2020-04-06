@@ -9,9 +9,10 @@ import com.project.environments.structure.Name;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Stack;
 
+import static com.project.Main.classTable;
+import static com.project.Main.packageMap;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.ON_DEMAND;
 import static com.project.scanner.structure.Kind.AMBIGUOUSNAME;
 import static com.project.scanner.structure.Kind.DOT;
@@ -271,10 +272,9 @@ public class TypeLinker {
         }
     }
 
-    private static void checkPackageNames(final ClassScope javaClass,
-                                          final HashMap<String, PackageScope> packages) {
+    private static void checkPackageNames(final ClassScope javaClass) {
         // Package - Classname clash ex. foo.bar package name illegal if there is a qualified classname foo.bar
-        for (final String pkgName : packages.keySet()) {
+        for (final String pkgName : packageMap.keySet()) {
 
             if (pkgName.equals(javaClass.packageName.getQualifiedName() + '.' + javaClass.name)) {
                 System.err.println("Package Name " + pkgName + " clashes with qualified class name");
@@ -289,15 +289,14 @@ public class TypeLinker {
         }
     }
 
-    private static void checkTypesAreImported(final ClassScope javaClass,
-                                              final HashMap<String, PackageScope> packages) {
+    private static void checkTypesAreImported(final ClassScope javaClass) {
         for (final Name typeName : javaClass.usedTypeNames) {
 
             // If the name is already qualified, ensure it is contained.
             if (typeName.isNotSimpleName()) {
                 final String qualifiedPackage = typeName.getPackageString();
                 final String qualifiedClass = typeName.getActualSimpleName();
-                final PackageScope pkgScope = packages.get(qualifiedPackage);
+                final PackageScope pkgScope = packageMap.get(qualifiedPackage);
 
                 if (pkgScope == null || !pkgScope.containsClass(qualifiedClass)) {
                     System.err.println("Found non-imported qualified name: " + typeName.getQualifiedName());
@@ -315,7 +314,7 @@ public class TypeLinker {
                 for (final ImportScope importScope : importsAndSelf) {
                     if (importScope.importType.equals(ON_DEMAND)) {
                         final String importPackage = importScope.name.getQualifiedName();
-                        final PackageScope pkgScope = packages.get(importPackage);
+                        final PackageScope pkgScope = packageMap.get(importPackage);
 
                         if (pkgScope == null) continue;
 
@@ -337,22 +336,17 @@ public class TypeLinker {
         }
     }
 
-    public static void link(final ArrayList<ClassScope> classTable,
-                            final HashMap<String, PackageScope> packages) {
+    public static void link() {
         for (final ClassScope javaClass : classTable) {
 
             // Check all on demand imports resolve
-            checkPackageNames(javaClass, packages);
+            checkPackageNames(javaClass);
 
             // Check all types used are properly imported
-            checkTypesAreImported(javaClass, packages);
+            checkTypesAreImported(javaClass);
 
             // Deal with variable redeclaration within scopes
             checkVariableDeclarationScopes(javaClass.ast);
         }
-    }
-
-    public static void disambiguateNames() {
-
     }
 }

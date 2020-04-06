@@ -15,6 +15,9 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import static com.project.Main.classTable;
+import static com.project.Main.packageMap;
+import static com.project.Main.testMethod;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
 import static com.project.environments.structure.Name.containsPrefixName;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
@@ -33,10 +36,7 @@ public class ClassScope extends Scope {
     private final Map<String, ClassScope> onDemandImportMap;
     private final Map<String, ClassScope> inPackageImportMap;
 
-    public final ArrayList<ClassScope> classTable;
     public HashMap<String, ClassScope> classMap;
-
-    public final Map<String, PackageScope> packageMap;
 
     public final ASTHead ast;
     public final CLASS_TYPE classType;
@@ -60,12 +60,10 @@ public class ClassScope extends Scope {
         this.imports = ast.getImports(this);
         this.modifiers = ast.getClassModifiers();
         this.type = new Type(name, packageName);
-        this.packageMap = new HashMap<>();
 
         singleImportMap = new HashMap<>();
         onDemandImportMap = new HashMap<>();
         inPackageImportMap = new HashMap<>();
-        classTable = new ArrayList<>();
 
         final ASTHead classDeclaration = ast.getClassDeclaration();
 
@@ -111,8 +109,6 @@ public class ClassScope extends Scope {
         singleImportMap = null;
         onDemandImportMap = null;
         inPackageImportMap = null;
-        packageMap = null;
-        classTable = null;
 
         ast = null;
         classType = null;
@@ -253,10 +249,8 @@ public class ClassScope extends Scope {
 
     /**
      * Generates a set of maps that link our imports to any existent classes.
-     *
-     * @param classTable Required to know about the classes.
      */
-    public void generateImportMaps(final ArrayList<ClassScope> classTable) {
+    public void generateImportMaps() {
         for (final ImportScope importScope : imports) {
             if (importScope.importType == SINGLE) {
                 final String simpleName = importScope.getSimpleName();
@@ -332,8 +326,6 @@ public class ClassScope extends Scope {
                 inPackageImportMap.put(classScope.name, classScope);
             }
         }
-
-        this.classTable.addAll(classTable);
     }
 
     @Override
@@ -883,6 +875,12 @@ public class ClassScope extends Scope {
         constructorTable.forEach(ConstructorScope::checkReachability);
     }
 
+    public ArrayList<FieldScope> getStaticFields() {
+        return fieldTable.stream()
+                .filter(e -> e.modifiers.contains("static"))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
@@ -895,7 +893,7 @@ public class ClassScope extends Scope {
         code.add(setVtableLabel());
         code.add("dd " + callSITLabel() + " ; Pointer to the SIT.");
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
-        methodTable.forEach(e -> code.add("dd " + e.generateLabel()));
+        methodTable.forEach(e -> code.add("dd " + e.setLabel()));
 
         code.add("section .text");
 
@@ -934,7 +932,7 @@ public class ClassScope extends Scope {
         return generateClassLabel() + "_subtypeTable";
     }
 
-    private String generateClassLabel() {
+    protected String generateClassLabel() {
         return generateFullyQualifiedName(name, packageName).getQualifiedName();
     }
 }

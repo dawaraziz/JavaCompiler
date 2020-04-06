@@ -8,7 +8,9 @@ import com.project.environments.structure.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.project.Main.testMethod;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
+import static com.project.environments.structure.Type.PRIM_TYPE.INT;
 import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
 
 public class MethodScope extends Scope {
@@ -25,6 +27,14 @@ public class MethodScope extends Scope {
         modifiers = method.getMethodModifiers().get(0);
         parameters = method.getMethodParameters();
         body = Statement.generateStatementScope(method.getMethodBlock(), this);
+
+        // If there is no test method, check if we are it.
+        if (testMethod == null
+                && name.equals("test")
+                && modifiers.contains("static")
+                && type.prim_type == INT) {
+            testMethod = this;
+        }
     }
 
     MethodScope(final String name, final Type type, final ArrayList<String> modifiers,
@@ -136,7 +146,14 @@ public class MethodScope extends Scope {
         }
     }
 
-    public String generateLabel() {
+    public String setLabel() {
+        final ClassScope classScope = ((ClassScope) parentScope);
+        final String label = generateFullyQualifiedName(classScope.name,
+                classScope.packageName).getQualifiedName();
+        return label + "_" + name + ":";
+    }
+
+    public String callLabel() {
         final ClassScope classScope = ((ClassScope) parentScope);
         final String label = generateFullyQualifiedName(classScope.name,
                 classScope.packageName).getQualifiedName();
@@ -145,6 +162,6 @@ public class MethodScope extends Scope {
 
     @Override
     public ArrayList<String> generatei386Code() {
-        return null;
+        return new ArrayList<>();
     }
 }
