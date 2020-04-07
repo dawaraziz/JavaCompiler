@@ -946,8 +946,6 @@ public class ClassScope extends Scope {
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
         codeMethodOrder.forEach(e -> code.add("dd " + e.callLabel()));
 
-        code.add("section .text");
-
         // Generates our method code.
         for (final MethodScope methodScope : methodTable) {
             if (methodScope.body != null) {

@@ -10,8 +10,6 @@ public class AssignmentExpression extends Expression {
     private final Expression LHS;
     private final Expression RHS;
 
-    public int f = 1 + 3 + (f=2);
-
     AssignmentExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;

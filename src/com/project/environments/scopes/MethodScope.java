@@ -184,7 +184,25 @@ public class MethodScope extends Scope {
 
         code.add("section .text");
 
+        // Prologue
+        code.add("push ebp ; Saves the ebp.");
+        code.add("mov ebp, esp ; Saves the esp.");
+        code.add("push ebx");
+        code.add("push esi");
+        code.add("push edi");
+
+        code.add("");
         body.generatei386Code();
+        code.add("");
+
+        // Epilogue
+        code.add("pop edi");
+        code.add("pop esi");
+        code.add("pop ebx");
+        code.add("mov esp, ebp ; Restores the esp.");
+        code.add("pop ebp ; Restores the ebp.");
+
+        code.add("ret");
 
         return code;
     }
