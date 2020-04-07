@@ -145,6 +145,15 @@ public class FieldScope extends Scope {
         return "common " + callStaticLabel() + " 4";
     }
 
+    public String generateStaticFieldExtern() {
+        if (!modifiers.contains("static")) {
+            System.err.println("Non-static field cannot generate static code; aborting!");
+            System.exit(42);
+        }
+
+        return "extern " + callStaticLabel();
+    }
+
     public ArrayList<String> generateStaticInitializationCode() {
         if (!modifiers.contains("static")) {
             System.err.println("Non-static field cannot generate static code; aborting!");

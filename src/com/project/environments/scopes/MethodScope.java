@@ -182,7 +182,7 @@ public class MethodScope extends Scope {
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
 
-        code.add("section .text");
+        code.add("section .text ; Code for the method " + callLabel());
 
         // Prologue
         code.add("push ebp ; Saves the ebp.");
@@ -205,5 +205,10 @@ public class MethodScope extends Scope {
         code.add("ret");
 
         return code;
+    }
+
+
+    public String generateExternStatement() {
+        return "extern " + callLabel();
     }
 }

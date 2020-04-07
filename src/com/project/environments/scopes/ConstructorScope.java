@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.project.environments.structure.Name.generateFullyQualifiedName;
+
 public class ConstructorScope extends Scope {
     public final ArrayList<String> modifiers;
     public final ArrayList<Parameter> parameters;
@@ -79,14 +81,14 @@ public class ConstructorScope extends Scope {
         if (body != null) body.checkReachability();
     }
 
-    public void checkConditionals() {
+    void checkConditionals() {
         if (body != null) {
             System.out.println(body);
             body.checkConditionals();
         }
     }
 
-    public void checkReturnedTypes(HashMap<String, ClassScope> classmap) {
+    public void checkReturnedTypes(final HashMap<String, ClassScope> classmap) {
         if (body != null) {
             System.out.println("Constructor Scope body: " + body);
             body.checkReturnedTypes(type, classmap);
@@ -95,6 +97,57 @@ public class ConstructorScope extends Scope {
 
     @Override
     public ArrayList<String> generatei386Code() {
-        return null;
+        final ArrayList<String> code = new ArrayList<>();
+
+        code.add("section .text ; Code for the constructor " + callLabel());
+
+        // Prologue
+        code.add("push ebp ; Saves the ebp.");
+        code.add("mov ebp, esp ; Saves the esp.");
+        code.add("push ebx");
+        code.add("push esi");
+        code.add("push edi");
+
+        code.add("");
+        body.generatei386Code();
+        code.add("");
+
+        // Epilogue
+        code.add("pop edi");
+        code.add("pop esi");
+        code.add("pop ebx");
+        code.add("mov esp, ebp ; Restores the esp.");
+        code.add("pop ebp ; Restores the ebp.");
+
+        code.add("ret");
+
+        return code;
+    }
+
+    public String setLabel() {
+        return callLabel() + ":";
+    }
+
+    public String callLabel() {
+        final ClassScope classScope = ((ClassScope) parentScope);
+
+        final String label;
+        if (classScope == null) {
+            label = "java.lang.Object";
+        } else {
+            label = generateFullyQualifiedName(classScope.name,
+                    classScope.packageName).getQualifiedName();
+        }
+
+        final StringBuilder argLabel = new StringBuilder();
+        if (parameters != null) {
+            for (final Parameter parameter : parameters) {
+                argLabel.append("_");
+                argLabel.append(parameter.toString());
+            }
+        }
+
+        return label + "_" + name + argLabel.toString();
     }
 }
+

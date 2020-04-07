@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,14 @@ import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 public class Main {
 
     public static final ArrayList<ClassScope> classTable = new ArrayList<>();
-    public static final HashSet<MethodScope> interfaceSignatureSet = new HashSet<>();
+    public static final LinkedHashSet<MethodScope> interfaceSignatureSet = new LinkedHashSet<>();
     public static final HashMap<String, PackageScope> packageMap = new HashMap<>();
     public static MethodScope testMethod = null;
     public static ClassScope objectClass = null;
+
+    public static final LinkedHashSet<String> methodExternList = new LinkedHashSet<>();
+    public static final LinkedHashSet<String> staticExternList = new LinkedHashSet<>();
+
 
     public static void main(final String[] args) {
 
@@ -170,32 +175,50 @@ public class Main {
 
         generateInterfaceSignatureSet();
 
-        generateStatici386Code();
-
         classTable.forEach(ClassScope::generateMethodOrder);
+
+        generateExternList();
+
+        generateStatici386Code();
 
         classTable.forEach(ClassScope::generatei386Code);
 
         System.exit(0);
     }
 
-    private static void generateStatici386Code() {
+    private static void generateExternList() {
+        for (final ClassScope classScope : classTable) {
+            for (final MethodScope methodScope : classScope.codeMethodOrder) {
+                methodExternList.add(methodScope.generateExternStatement());
 
-        // Generates any static, non-class code.
+                for (final ClassScope classScope1 : classTable) {
+                    if (!classScope1.equals(classScope)) {
+                        classScope1.methodExternList.add(methodScope.generateExternStatement());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void generateStatici386Code() {
         final ArrayList<String> staticExecCode = new ArrayList<>();
 
-        // Identify all the static fields
+        // Imports every method, for simplicity.
+        staticExecCode.addAll(methodExternList);
+
+        // Exports all the SIT labels.
+        classTable.forEach(e -> staticExecCode.add(e.generateSITGlobalLabel()));
+        classTable.forEach(e -> staticExternList.add(e.generateSITExternLabel()));
+
+        // Exports all the subtype table labels.
+        classTable.forEach(e -> staticExecCode.add(e.generateSubtypeGlobalLabel()));
+        classTable.forEach(e -> staticExternList.add(e.generateSubtypeExternLabel()));
+
+        // Create a variable for each static variable, see https://nasm.us/doc/nasmdoc6.html for common.
         final ArrayList<FieldScope> staticFields = new ArrayList<>();
         classTable.forEach(e -> staticFields.addAll(e.getStaticFields()));
-
-        // Add all the static fields as variables.
-            staticFields.forEach(e -> staticExecCode.add(e.generateStaticFieldCode()));
-
-        // Generate the global SIT labels.
-        classTable.forEach(e -> staticExecCode.add(e.generateSITGlobalLabel()));
-
-        // Generate the global subtype labels.
-        classTable.forEach(e -> staticExecCode.add(e.generateSubtypeGlobalLabel()));
+        staticFields.forEach(e -> staticExecCode.add(e.generateStaticFieldCode() + " ; Static var."));
+        staticFields.forEach(e -> staticExternList.add(e.generateStaticFieldExtern()));
 
         staticExecCode.add("");
 
@@ -205,14 +228,37 @@ public class Main {
         for (final ClassScope classScope : classTable) {
             staticExecCode.add(classScope.setSITLabel());
             for (final MethodScope methodScope : interfaceSignatureSet) {
-                // TODO: Implement the SIT.
-//                staticExecCode.add(methodScope.callLabel());
+                if (classScope.codeMethodOrder.contains(methodScope)) {
+                    MethodScope method = null;
+                    for (final MethodScope orderedMethod : classScope.codeMethodOrder) {
+                        if (orderedMethod.equals(methodScope)) {
+                            method = orderedMethod;
+                            break;
+                        }
+                    }
+
+                    if (method == null) {
+                        System.err.println("Method is contained, but not found. Aborting!");
+                        System.exit(42);
+                    }
+
+                    staticExecCode.add("dd " + method.callLabel());
+                } else {
+                    staticExecCode.add("dd 0 ; Method " + methodScope.name);
+                }
             }
         }
 
-        for (final ClassScope classScope : classTable) {
-            staticExecCode.add(classScope.setSubtypeTableLabel());
-            // TODO: Implement the subtype table.
+        // Generates the subtype table code.
+        for (final ClassScope subClass : classTable) {
+            staticExecCode.add(subClass.setSubtypeTableLabel());
+            for (final ClassScope superClass : classTable) {
+                if (subClass.isSubClassOf(superClass)) {
+                    staticExecCode.add("dd 1 ; Subclass " + subClass.name + ", Superclass " + superClass.name);
+                } else {
+                    staticExecCode.add("dd 0 ; Subclass " + subClass.name + ", Superclass " + superClass.name);
+                }
+            }
         }
 
         staticExecCode.add("section .text");

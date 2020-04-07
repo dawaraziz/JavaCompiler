@@ -10,7 +10,6 @@ import com.project.util.Triplet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 import static com.project.Main.classTable;
 import static com.project.Main.objectClass;
 import static com.project.Main.packageMap;
+import static com.project.Main.staticExternList;
 import static com.project.Main.writeCodeToFile;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
@@ -30,14 +30,24 @@ import static com.project.scanner.structure.Kind.TYPENAME;
 
 public class ClassScope extends Scope {
 
+    public final LinkedHashSet<String> methodExternList = new LinkedHashSet<>();
+
     private static final ClassScope duplicateHolderScope = new ClassScope();
 
     public String generateSITGlobalLabel() {
         return "global " + callSITLabel();
     }
 
+    public String generateSITExternLabel() {
+        return "extern " + callSITLabel();
+    }
+
     public String generateSubtypeGlobalLabel() {
         return "global " + callSubtypeTableLabel();
+    }
+
+    public String generateSubtypeExternLabel() {
+        return "extern " + callSubtypeTableLabel();
     }
 
     public enum CLASS_TYPE {
@@ -912,7 +922,7 @@ public class ClassScope extends Scope {
             for (final MethodScope methodScope : methodTable) {
                 if (codeMethodOrder.contains(methodScope)) {
                     final LinkedHashSet<MethodScope> hashSet = new LinkedHashSet<>();
-                    for (final MethodScope orderedMethodScope: codeMethodOrder) {
+                    for (final MethodScope orderedMethodScope : codeMethodOrder) {
                         if (methodScope.equals(orderedMethodScope)) {
                             hashSet.add(methodScope);
                         } else {
@@ -934,7 +944,8 @@ public class ClassScope extends Scope {
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
 
-        // TODO: Determine which extern imports are needed.
+        code.addAll(methodExternList);
+        code.addAll(staticExternList);
 
         methodTable.forEach(e -> code.add("global " + e.callLabel()));
 
@@ -953,6 +964,15 @@ public class ClassScope extends Scope {
                 code.add("");
             }
         }
+
+        // Generates our method code.
+        for (final ConstructorScope constructorScope : constructorTable) {
+            if (constructorScope.body != null) {
+                code.addAll(constructorScope.generatei386Code());
+                code.add("");
+            }
+        }
+
 
         writeCodeToFile(this.name, code);
 
