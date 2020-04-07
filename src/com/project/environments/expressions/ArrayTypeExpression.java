@@ -30,4 +30,9 @@ public class ArrayTypeExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
     }
+
+    @Override
+    public String code() {
+        return typeName.code();
+    }
 }

@@ -52,4 +52,26 @@ public class ClassInstanceCreationExpression extends Expression {
         return booleanOrKind(Kind.EXPRESSIONNAME);
     }
 
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append("mov eax, 4"); // sizeof class ?
+        assembly.append("\n");
+        assembly.append("call __malloc");
+        assembly.append("\n");
+        assembly.append("mov [eax], " + ((ClassScope) ((NameExpression) classType).namePointer).callVtableLabel());
+        assembly.append("\n");
+        assembly.append("push eax");
+        assembly.append('\n');
+        assembly.append(argList.code()); // Does this handle making arguments available for constructor ?
+        assembly.append('\n');
+        //assembly.append("call " + ((ClassScope) ((NameExpression) classType).namePointer).callConstructorLabel()); // But which constructor?
+        // pop arguments
+        // pop eax
+
+
+        return assembly.toString();
+    }
 }

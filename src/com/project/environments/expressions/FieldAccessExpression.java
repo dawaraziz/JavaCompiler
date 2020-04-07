@@ -36,4 +36,21 @@ public class FieldAccessExpression extends Expression {
     public void checkTypeSoundness() {
 
     }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+        assembly.append(expressionName.code());
+        assembly.append("\n");
+        assembly.append("push eax;");
+        assembly.append("\n");
+        assembly.append(primary.code());
+        assembly.append("\n");
+        assembly.append("pop ebx;");
+        assembly.append("\n");
+
+        // TODO:
+
+        return assembly.toString();
+    }
 }

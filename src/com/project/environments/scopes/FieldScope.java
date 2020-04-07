@@ -4,7 +4,6 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
 import com.project.environments.expressions.Expression;
 import com.project.scanner.structure.Kind;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -133,7 +132,7 @@ public class FieldScope extends Scope {
 
     @Override
     public ArrayList<String> generatei386Code() {
-        throw new NotImplementedException();
+        return new ArrayList<>();
     }
 
     public String generateStaticFieldCode() {

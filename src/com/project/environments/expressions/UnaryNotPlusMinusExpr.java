@@ -38,8 +38,6 @@ public class UnaryNotPlusMinusExpr extends Expression {
 
     @Override
     public String code() {
-        StringBuilder assembly = new StringBuilder();
-
-        return assembly.append(nextExpr.code()).toString();
+        return nextExpr.code();
     }
 }
