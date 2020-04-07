@@ -71,5 +71,23 @@ public class LiteralExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
     }
+
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        assembly.append("section .data");
+        assembly.append("\n");
+        assembly.append("\n");
+        assembly.append("mystr db \'" + literal.getLexeme() + "\' , 0xa");
+        assembly.append("\n");
+        assembly.append("len equ $ - mystr");
+        assembly.append("\n");
+        assembly.append("mov eax, str;");
+        assembly.append("\n");
+
+        return assembly.toString();
+    }
 }
 

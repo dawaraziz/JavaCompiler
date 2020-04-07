@@ -36,4 +36,11 @@ public class PrimaryNoNewArrayExpression extends Expression {
     public void checkTypeSoundness() {
         nextExpr.checkTypeSoundness();
     }
+
+    @Override
+    public String code() {
+        StringBuilder assembly = new StringBuilder();
+
+        return assembly.append(nextExpr.code()).toString();
+    }
 }

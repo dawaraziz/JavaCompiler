@@ -41,4 +41,9 @@ public class UnaryExpression extends Expression {
             //}
         }
     }
+
+    @Override
+    public String code() {
+        return RHS.code();
+    }
 }

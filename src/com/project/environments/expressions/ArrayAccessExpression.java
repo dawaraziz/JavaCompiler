@@ -53,12 +53,19 @@ public class ArrayAccessExpression extends Expression {
         StringBuilder assembly = new StringBuilder();
 
         assembly.append(LHS.code());
-        assembly.append("push eax");
+        assembly.append("\n");
+        assembly.append("push eax;");
+        assembly.append("\n");
         assembly.append(RHS.code());
-        assembly.append("pop ebx");
-        assembly.append("shl eax,2");
-        assembly.append("add eax,8"); // Are we storing class and length of array at the front?
-        assembly.append("add eax,ebx");
+        assembly.append("\n");
+        assembly.append("pop ebx;");
+        assembly.append("\n");
+        assembly.append("shl eax,2;");
+        assembly.append("\n");
+        assembly.append("add eax,8;"); // Are we storing class and length of array at the front?
+        assembly.append("\n");
+        assembly.append("add eax,ebx;");
+        assembly.append("\n");
 
         return assembly.toString();
     }
