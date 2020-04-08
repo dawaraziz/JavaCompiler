@@ -190,9 +190,9 @@ public class MethodScope extends Scope {
 
     public static ArrayList<String> generateEpilogueCode() {
         final ArrayList<String> code = new ArrayList<>();
-        code.add("mov edi, [ebx - 12]");
-        code.add("mov esi, [ebx - 8]");
-        code.add("mov ebx, [ebx - 4]");
+        code.add("mov edi, [ebp - 12]");
+        code.add("mov esi, [ebp - 8]");
+        code.add("mov ebx, [ebp - 4]");
         code.add("mov esp, ebp ; Restores the esp.");
         code.add("pop ebp ; Restores the ebp.");
         return code;
@@ -203,6 +203,7 @@ public class MethodScope extends Scope {
         final ArrayList<String> code = new ArrayList<>();
 
         code.add("section .text ; Code for the method " + callLabel());
+        code.add(setLabel());
 
         code.addAll(generatePrologueCode());
 
