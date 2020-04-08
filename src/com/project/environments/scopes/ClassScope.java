@@ -19,11 +19,13 @@ import java.util.stream.Collectors;
 import static com.project.Main.classTable;
 import static com.project.Main.objectClass;
 import static com.project.Main.packageMap;
-import static com.project.Main.staticExternList;
+import static com.project.Main.staticExternSet;
 import static com.project.Main.writeCodeToFile;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
 import static com.project.environments.scopes.ImportScope.IMPORT_TYPE.SINGLE;
+import static com.project.environments.scopes.MethodScope.generateEpilogueCode;
+import static com.project.environments.scopes.MethodScope.generatePrologueCode;
 import static com.project.environments.structure.Name.containsPrefixName;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
 import static com.project.scanner.structure.Kind.TYPENAME;
@@ -48,6 +50,10 @@ public class ClassScope extends Scope {
 
     public String generateSubtypeExternLabel() {
         return "extern " + callSubtypeTableLabel();
+    }
+
+    public int getWordSize() {
+        return codeFieldOrder.size() + 1;
     }
 
     public enum CLASS_TYPE {
@@ -77,6 +83,8 @@ public class ClassScope extends Scope {
     public final ArrayList<FieldScope> fieldTable;
 
     public LinkedHashSet<MethodScope> codeMethodOrder = new LinkedHashSet<>();
+    public LinkedHashSet<FieldScope> codeFieldOrder = new LinkedHashSet<>();
+    public LinkedHashSet<ConstructorScope> codeConstructorOrder = new LinkedHashSet<>();
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -906,6 +914,79 @@ public class ClassScope extends Scope {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public void generateFieldOrder() {
+        if (classType != CLASS) return;
+        if (codeFieldOrder.size() != 0) return;
+
+        final ArrayList<FieldScope> nonStaticFields = fieldTable.stream()
+                .filter(e -> !e.modifiers.contains("static"))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (extendsTable == null || extendsTable.size() == 0) {
+            codeFieldOrder.addAll(nonStaticFields);
+        } else if (extendsTable.size() == 1) {
+            final Name superName = extendsTable.get(0);
+
+            final ClassScope parent = getClassFromPackage(
+                    superName.getPackageName().toString(), superName.getSimpleName());
+            parent.generateFieldOrder();
+            codeFieldOrder.addAll(parent.codeFieldOrder);
+
+            for (final FieldScope fieldScope : nonStaticFields) {
+                if (codeFieldOrder.contains(fieldScope)) {
+                    final LinkedHashSet<FieldScope> hashSet = new LinkedHashSet<>();
+                    for (final FieldScope orderedFieldScope : codeFieldOrder) {
+                        if (fieldScope.equals(orderedFieldScope)) {
+                            hashSet.add(fieldScope);
+                        } else {
+                            hashSet.add(orderedFieldScope);
+                        }
+                    }
+                    codeFieldOrder = hashSet;
+                } else {
+                    codeFieldOrder.add(fieldScope);
+                }
+            }
+        } else {
+            System.err.println("Found class with more than one extends?");
+            System.exit(42);
+        }
+    }
+
+    public void generateConstructorOrder() {
+        if (classType != CLASS) return;
+        if (codeConstructorOrder.size() != 0) return;
+
+        if (extendsTable == null || extendsTable.size() == 0) {
+            codeConstructorOrder.addAll(constructorTable);
+        } else if (extendsTable.size() == 1) {
+            final Name superName = extendsTable.get(0);
+            final ClassScope parent = getClassFromPackage(
+                    superName.getPackageName().toString(), superName.getSimpleName());
+            parent.generateConstructorOrder();
+            codeConstructorOrder.addAll(parent.codeConstructorOrder);
+
+            for (final ConstructorScope constructorScope : constructorTable) {
+                if (codeConstructorOrder.contains(constructorScope)) {
+                    final LinkedHashSet<ConstructorScope> hashSet = new LinkedHashSet<>();
+                    for (final ConstructorScope orderedConstructorScope : codeConstructorOrder) {
+                        if (constructorScope.equals(orderedConstructorScope)) {
+                            hashSet.add(constructorScope);
+                        } else {
+                            hashSet.add(orderedConstructorScope);
+                        }
+                    }
+                    codeConstructorOrder = hashSet;
+                } else {
+                    codeConstructorOrder.add(constructorScope);
+                }
+            }
+        } else {
+            System.err.println("Found class with more than one extends?");
+            System.exit(42);
+        }
+    }
+
     public void generateMethodOrder() {
         if (classType != CLASS) return;
         if (codeMethodOrder.size() != 0) return;
@@ -940,14 +1021,57 @@ public class ClassScope extends Scope {
         }
     }
 
+    public ArrayList<String> generateAllocationCode() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        code.add("mov eax, " + getWordSize() + " ; Number of bytes allocated.");
+        code.addAll(generatePrologueCode());
+        code.add("call __malloc");
+        code.addAll(generateEpilogueCode());
+        code.add("mov [eax], " + callVtableLabel());
+
+        return code;
+    }
+
+    public int getVTableOffset(final MethodScope target) {
+        int it = 8;
+        for (final MethodScope methodScope: codeMethodOrder) {
+            if (methodScope.equals(target)) {
+                return it;
+            }
+            it += 4;
+        }
+
+        System.err.println("Could not find vtable offset for given method.");
+        System.exit(42);
+
+        return -1;
+    }
+
+    public int getVTableOffset(final ConstructorScope target) {
+        int it = 8 + (codeMethodOrder.size() * 4);
+        for (final ConstructorScope constructorScope: codeConstructorOrder) {
+            if (constructorScope.equals(target)) {
+                return it;
+            }
+            it += 4;
+        }
+
+        System.err.println("Could not find vtable offset for given method.");
+        System.exit(42);
+
+        return -1;
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
 
         code.addAll(methodExternList);
-        code.addAll(staticExternList);
+        code.addAll(staticExternSet);
 
         methodTable.forEach(e -> code.add("global " + e.callLabel()));
+        constructorTable.forEach(e -> code.add("global " + e.callLabel()));
 
         code.add("section .data");
 
@@ -956,6 +1080,7 @@ public class ClassScope extends Scope {
         code.add("dd " + callSITLabel() + " ; Pointer to the SIT.");
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
         codeMethodOrder.forEach(e -> code.add("dd " + e.callLabel()));
+        codeConstructorOrder.forEach(e -> code.add("dd " + e.callLabel()));
 
         // Generates our method code.
         for (final MethodScope methodScope : methodTable) {
@@ -965,14 +1090,13 @@ public class ClassScope extends Scope {
             }
         }
 
-        // Generates our method code.
+        // Generates our constructor code.
         for (final ConstructorScope constructorScope : constructorTable) {
             if (constructorScope.body != null) {
                 code.addAll(constructorScope.generatei386Code());
                 code.add("");
             }
         }
-
 
         writeCodeToFile(this.name, code);
 

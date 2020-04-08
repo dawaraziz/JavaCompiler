@@ -2,6 +2,7 @@ package com.project;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ConstructorScope;
 import com.project.environments.scopes.FieldScope;
 import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.PackageScope;
@@ -36,8 +37,8 @@ public class Main {
     public static MethodScope testMethod = null;
     public static ClassScope objectClass = null;
 
-    public static final LinkedHashSet<String> methodExternList = new LinkedHashSet<>();
-    public static final LinkedHashSet<String> staticExternList = new LinkedHashSet<>();
+    public static final LinkedHashSet<String> methodExternSet = new LinkedHashSet<>();
+    public static final LinkedHashSet<String> staticExternSet = new LinkedHashSet<>();
 
 
     public static void main(final String[] args) {
@@ -176,6 +177,8 @@ public class Main {
         generateInterfaceSignatureSet();
 
         classTable.forEach(ClassScope::generateMethodOrder);
+        classTable.forEach(ClassScope::generateFieldOrder);
+        classTable.forEach(ClassScope::generateConstructorOrder);
 
         generateExternList();
 
@@ -189,7 +192,7 @@ public class Main {
     private static void generateExternList() {
         for (final ClassScope classScope : classTable) {
             for (final MethodScope methodScope : classScope.codeMethodOrder) {
-                methodExternList.add(methodScope.generateExternStatement());
+                methodExternSet.add(methodScope.generateExternStatement());
 
                 for (final ClassScope classScope1 : classTable) {
                     if (!classScope1.equals(classScope)) {
@@ -197,6 +200,22 @@ public class Main {
                     }
                 }
             }
+
+            for (final ConstructorScope constructorScope : classScope.codeConstructorOrder) {
+                methodExternSet.add(constructorScope.generateExternStatement());
+
+                for (final ClassScope classScope1 : classTable) {
+                    if (!classScope1.equals(classScope)) {
+                        classScope1.methodExternList.add(constructorScope.generateExternStatement());
+                    }
+                }
+            }
+
+            // Add the runtime.s routines.
+            methodExternSet.add("extern __malloc");
+            methodExternSet.add("extern __debexit");
+            methodExternSet.add("extern __exception");
+            methodExternSet.add("extern NATIVEjava.io.OutputStream.nativeWrite");
         }
     }
 
@@ -204,21 +223,21 @@ public class Main {
         final ArrayList<String> staticExecCode = new ArrayList<>();
 
         // Imports every method, for simplicity.
-        staticExecCode.addAll(methodExternList);
+        staticExecCode.addAll(methodExternSet);
 
         // Exports all the SIT labels.
         classTable.forEach(e -> staticExecCode.add(e.generateSITGlobalLabel()));
-        classTable.forEach(e -> staticExternList.add(e.generateSITExternLabel()));
+        classTable.forEach(e -> staticExternSet.add(e.generateSITExternLabel()));
 
         // Exports all the subtype table labels.
         classTable.forEach(e -> staticExecCode.add(e.generateSubtypeGlobalLabel()));
-        classTable.forEach(e -> staticExternList.add(e.generateSubtypeExternLabel()));
+        classTable.forEach(e -> staticExternSet.add(e.generateSubtypeExternLabel()));
 
         // Create a variable for each static variable, see https://nasm.us/doc/nasmdoc6.html for common.
         final ArrayList<FieldScope> staticFields = new ArrayList<>();
         classTable.forEach(e -> staticFields.addAll(e.getStaticFields()));
         staticFields.forEach(e -> staticExecCode.add(e.generateStaticFieldCode() + " ; Static var."));
-        staticFields.forEach(e -> staticExternList.add(e.generateStaticFieldExtern()));
+        staticFields.forEach(e -> staticExternSet.add(e.generateStaticFieldExtern()));
 
         staticExecCode.add("");
 

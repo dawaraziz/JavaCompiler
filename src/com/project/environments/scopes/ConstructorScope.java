@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.project.environments.scopes.MethodScope.generateEpilogueCode;
+import static com.project.environments.scopes.MethodScope.generatePrologueCode;
 import static com.project.environments.structure.Name.generateFullyQualifiedName;
 
 public class ConstructorScope extends Scope {
@@ -101,23 +103,17 @@ public class ConstructorScope extends Scope {
 
         code.add("section .text ; Code for the constructor " + callLabel());
 
-        // Prologue
-        code.add("push ebp ; Saves the ebp.");
-        code.add("mov ebp, esp ; Saves the esp.");
-        code.add("push ebx");
-        code.add("push esi");
-        code.add("push edi");
+        code.addAll(generatePrologueCode());
+
+        // TODO: Call super constructor.
+
+        // TODO: Field initialization expressions.
 
         code.add("");
         body.generatei386Code();
         code.add("");
 
-        // Epilogue
-        code.add("pop edi");
-        code.add("pop esi");
-        code.add("pop ebx");
-        code.add("mov esp, ebp ; Restores the esp.");
-        code.add("pop ebp ; Restores the ebp.");
+        code.addAll(generateEpilogueCode());
 
         code.add("ret");
 
@@ -148,6 +144,10 @@ public class ConstructorScope extends Scope {
         }
 
         return label + "_" + name + argLabel.toString();
+    }
+
+    public String generateExternStatement() {
+        return "extern " + callLabel();
     }
 }
 

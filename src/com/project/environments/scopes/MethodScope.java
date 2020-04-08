@@ -178,29 +178,39 @@ public class MethodScope extends Scope {
         return label + "_" + name + argLabel.toString();
     }
 
+    public static ArrayList<String> generatePrologueCode() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("push ebp ; Saves the ebp.");
+        code.add("mov ebp, esp ; Saves the esp.");
+        code.add("push ebx");
+        code.add("push esi");
+        code.add("push edi");
+        return code;
+    }
+
+    public static ArrayList<String> generateEpilogueCode() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("mov edi, [ebx - 12]");
+        code.add("mov esi, [ebx - 8]");
+        code.add("mov ebx, [ebx - 4]");
+        code.add("mov esp, ebp ; Restores the esp.");
+        code.add("pop ebp ; Restores the ebp.");
+        return code;
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
 
         code.add("section .text ; Code for the method " + callLabel());
 
-        // Prologue
-        code.add("push ebp ; Saves the ebp.");
-        code.add("mov ebp, esp ; Saves the esp.");
-        code.add("push ebx");
-        code.add("push esi");
-        code.add("push edi");
+        code.addAll(generatePrologueCode());
 
         code.add("");
         body.generatei386Code();
         code.add("");
 
-        // Epilogue
-        code.add("pop edi");
-        code.add("pop esi");
-        code.add("pop ebx");
-        code.add("mov esp, ebp ; Restores the esp.");
-        code.add("pop ebp ; Restores the ebp.");
+        code.addAll(generateEpilogueCode());
 
         code.add("ret");
 
