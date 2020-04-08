@@ -22,12 +22,12 @@ public class BaseExpression extends Expression {
         this.parentScope = parentScope;
         this.name = null;
 
-        instructionMap.put("LESS", "");
-        instructionMap.put("LESSEQUAL", "");
-        instructionMap.put("GREATER", "");
-        instructionMap.put("GREATEREQUAL", "");
-        instructionMap.put("EQUALEQUAL", "");
-        instructionMap.put("NOTEQUAL", "");
+        instructionMap.put("LESS", "jl ");
+        instructionMap.put("LESSEQUAL", "jle ");
+        instructionMap.put("GREATER", "jg ");
+        instructionMap.put("GREATEREQUAL", "jge ");
+        instructionMap.put("EQUALEQUAL", "je ");
+        instructionMap.put("NOTEQUAL", "jne ");
         instructionMap.put("UPARROW", "");
         instructionMap.put("BAR", "");
         instructionMap.put("AND", "");
@@ -70,39 +70,68 @@ public class BaseExpression extends Expression {
         StringBuilder assembly = new StringBuilder();
 
         if (singular != null) {
-            assembly.append(singular.code());
-            return assembly.toString();
+            return singular.code();
         }
 
         assembly.append(LHS.code());
+        assembly.append('\n');
         assembly.append("push eax;");
+        assembly.append('\n');
         assembly.append(RHS.code());
+        assembly.append('\n');
         assembly.append("pop ebx");
+        assembly.append('\n');
+        assembly.append("cmp eax, ebx;");
+        assembly.append('\n');
 
         switch (this.ast.getLexeme()) {
             case "RELATIONALEXPRESSION":
             case "EQUALITYEXPRESSION":
+                assembly.append(instructionMap.get(symbol) + "relational_true;\n");
+                assembly.append("mov eax, 0;\n");
+                assembly.append("jmp relational_end\n");
+                assembly.append("relational_true: \n");
+                assembly.append("mov eax, 1\n");
+                assembly.append("relational_end: \n");
+                break;
             case "EXCLUSIVEOREXPRESSION":
+                assembly.append("je xor_true;\n");
+                assembly.append("mov eax, 1;\n");
+                assembly.append("jmp xor_end\n");
+                assembly.append("xor_true: \n");
+                assembly.append("mov eax, 0\n");
+                assembly.append("xor_end: \n");
+                break;
             case "CONDITIONALEXPRESSION":
             case "CONDITIONALOREXPRESSION":
             case "INCLUSIVEOREXPRESSION":
+                assembly.append("je or_true;\n");
+                assembly.append("mov eax, 1;\n");
+                assembly.append("jmp or_end\n");
+                assembly.append("or_true: \n");
+                assembly.append("mov eax, ebx\n");
+                assembly.append("or_end: \n");
+                break;
             case "CONDITIONALANDEXPRESSION":
             case "ANDEXPRESSION":
-                assembly.append(instructionMap.get(symbol));
+                assembly.append("je and_true;\n");
+                assembly.append("mov eax, 0;\n");
+                assembly.append("jmp and_end\n");
+                assembly.append("and_true: \n");
+                assembly.append("mov eax, ebx\n");
+                assembly.append("and_end: \n");
                 break;
             case "MULTIPLICATIVEEXPRESSION":
                 assembly.append("mul ebx, [eax]");
+                assembly.append("mov eax, ebx");
                 break;
             case "SUBBASEEXPRESSION":
-                //assembly.append();
+                // Just recurses on its children
                 break;
             default:
                 System.err.println("Could not write Base Expr!");
                 System.exit(42);
         }
-
-        assembly.append("mov eax, ebx");
-
 
         return assembly.toString();
 
@@ -181,3 +210,7 @@ public class BaseExpression extends Expression {
         }
     }
 }
+
+
+
+
