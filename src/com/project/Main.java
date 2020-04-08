@@ -178,7 +178,6 @@ public class Main {
 
         classTable.forEach(ClassScope::generateMethodOrder);
         classTable.forEach(ClassScope::generateFieldOrder);
-        classTable.forEach(ClassScope::generateConstructorOrder);
 
         generateExternList();
 
@@ -201,7 +200,7 @@ public class Main {
                 }
             }
 
-            for (final ConstructorScope constructorScope : classScope.codeConstructorOrder) {
+            for (final ConstructorScope constructorScope : classScope.constructorTable) {
                 methodExternSet.add(constructorScope.generateExternStatement());
 
                 for (final ClassScope classScope1 : classTable) {

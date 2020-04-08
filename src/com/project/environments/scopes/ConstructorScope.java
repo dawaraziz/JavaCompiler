@@ -102,12 +102,24 @@ public class ConstructorScope extends Scope {
         final ArrayList<String> code = new ArrayList<>();
 
         code.add("section .text ; Code for the constructor " + callLabel());
+        code.add(setLabel());
 
         code.addAll(generatePrologueCode());
 
-        // TODO: Call super constructor.
+        final int thisOffset;
+        if (parameters != null) {
+            thisOffset = (8 + (parameters.size() * 4));
+        } else {
+            thisOffset = 8;
+        }
 
-        // TODO: Field initialization expressions.
+        if (getParentClass().getSuperConstructor() != null) {
+            code.add("push [ebx + " + thisOffset + "]");
+            code.add("call " + getParentClass().getSuperConstructor().callLabel());
+            code.add("add esp, 4");
+        }
+
+        code.addAll(getParentClass().generateFieldInitializationCode(thisOffset));
 
         code.add("");
         body.generatei386Code();

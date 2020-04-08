@@ -56,6 +56,21 @@ public class ClassScope extends Scope {
         return codeFieldOrder.size() + 1;
     }
 
+    public ArrayList<String> generateFieldInitializationCode(final int thisOffset) {
+        final ArrayList<String> code = new ArrayList<>();
+        for (final FieldScope fieldScope : codeFieldOrder) {
+            if (fieldScope.initializer != null) {
+                fieldScope.initializer.generatei386Code();
+                code.add("push eax");
+                code.add("mov eax, [ebp + " + thisOffset + "] ; Get this object.");
+                code.add("mov eax, eax + " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
+                code.add("pop word [eax] ; Put the value of the field into the object.");
+                code.add("");
+            }
+        }
+        return code;
+    }
+
     public enum CLASS_TYPE {
         INTERFACE,
         CLASS
@@ -84,7 +99,6 @@ public class ClassScope extends Scope {
 
     public LinkedHashSet<MethodScope> codeMethodOrder = new LinkedHashSet<>();
     public LinkedHashSet<FieldScope> codeFieldOrder = new LinkedHashSet<>();
-    public LinkedHashSet<ConstructorScope> codeConstructorOrder = new LinkedHashSet<>();
 
     public ClassScope(final String name, final ASTHead ast) {
         this.name = name;
@@ -953,40 +967,6 @@ public class ClassScope extends Scope {
         }
     }
 
-    public void generateConstructorOrder() {
-        if (classType != CLASS) return;
-        if (codeConstructorOrder.size() != 0) return;
-
-        if (extendsTable == null || extendsTable.size() == 0) {
-            codeConstructorOrder.addAll(constructorTable);
-        } else if (extendsTable.size() == 1) {
-            final Name superName = extendsTable.get(0);
-            final ClassScope parent = getClassFromPackage(
-                    superName.getPackageName().toString(), superName.getSimpleName());
-            parent.generateConstructorOrder();
-            codeConstructorOrder.addAll(parent.codeConstructorOrder);
-
-            for (final ConstructorScope constructorScope : constructorTable) {
-                if (codeConstructorOrder.contains(constructorScope)) {
-                    final LinkedHashSet<ConstructorScope> hashSet = new LinkedHashSet<>();
-                    for (final ConstructorScope orderedConstructorScope : codeConstructorOrder) {
-                        if (constructorScope.equals(orderedConstructorScope)) {
-                            hashSet.add(constructorScope);
-                        } else {
-                            hashSet.add(orderedConstructorScope);
-                        }
-                    }
-                    codeConstructorOrder = hashSet;
-                } else {
-                    codeConstructorOrder.add(constructorScope);
-                }
-            }
-        } else {
-            System.err.println("Found class with more than one extends?");
-            System.exit(42);
-        }
-    }
-
     public void generateMethodOrder() {
         if (classType != CLASS) return;
         if (codeMethodOrder.size() != 0) return;
@@ -1033,9 +1013,24 @@ public class ClassScope extends Scope {
         return code;
     }
 
+    public int getNonStaticFieldOffset(final FieldScope target) {
+        int it = 4;
+        for (final FieldScope fieldScope : codeFieldOrder) {
+            if (fieldScope.equals(target)) {
+                return it;
+            }
+            it += 4;
+        }
+
+        System.err.println("Could not find vtable offset for given field.");
+        System.exit(42);
+
+        return -1;
+    }
+
     public int getVTableOffset(final MethodScope target) {
         int it = 8;
-        for (final MethodScope methodScope: codeMethodOrder) {
+        for (final MethodScope methodScope : codeMethodOrder) {
             if (methodScope.equals(target)) {
                 return it;
             }
@@ -1048,19 +1043,34 @@ public class ClassScope extends Scope {
         return -1;
     }
 
-    public int getVTableOffset(final ConstructorScope target) {
-        int it = 8 + (codeMethodOrder.size() * 4);
-        for (final ConstructorScope constructorScope: codeConstructorOrder) {
-            if (constructorScope.equals(target)) {
-                return it;
+    protected ConstructorScope getSuperConstructor() {
+        if (classType != CLASS) return null;
+
+        if (extendsTable == null || extendsTable.size() == 0) {
+            return null;
+        } else if (extendsTable.size() == 1) {
+            final Name superName = extendsTable.get(0);
+            final ClassScope parent = getClassFromPackage(
+                    superName.getPackageName().toString(), superName.getSimpleName());
+            return parent.getEmptyConstructor();
+        } else {
+            System.err.println("Found class with more than one extends?");
+            System.exit(42);
+            return null;
+        }
+    }
+
+    private ConstructorScope getEmptyConstructor() {
+        for (final ConstructorScope constructorScope : constructorTable) {
+            if (constructorScope.parameters == null
+                    || constructorScope.parameters.size() == 0) {
+                return constructorScope;
             }
-            it += 4;
         }
 
-        System.err.println("Could not find vtable offset for given method.");
+        System.err.println("Found class with no empty constructor?");
         System.exit(42);
-
-        return -1;
+        return null;
     }
 
     @Override
@@ -1080,7 +1090,6 @@ public class ClassScope extends Scope {
         code.add("dd " + callSITLabel() + " ; Pointer to the SIT.");
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
         codeMethodOrder.forEach(e -> code.add("dd " + e.callLabel()));
-        codeConstructorOrder.forEach(e -> code.add("dd " + e.callLabel()));
 
         // Generates our method code.
         for (final MethodScope methodScope : methodTable) {

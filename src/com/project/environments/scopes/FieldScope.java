@@ -171,6 +171,11 @@ public class FieldScope extends Scope {
     }
 
     public String callStaticLabel() {
+        if (!modifiers.contains("static")) {
+            System.err.println("Non-static field cannot generate static code; aborting!");
+            System.exit(42);
+        }
+
         return ((ClassScope) parentScope).generateClassLabel() + "_static_" + name;
     }
 
