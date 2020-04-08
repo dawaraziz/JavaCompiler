@@ -9,6 +9,11 @@ public class Parameter extends Scope {
         this.name = name.getSimpleName();
     }
 
+    public Parameter(final Type type, final String name) {
+        this.type = type;
+        this.name = name;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

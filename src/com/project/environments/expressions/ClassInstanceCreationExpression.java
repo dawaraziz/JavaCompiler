@@ -2,6 +2,7 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.ConstructorScope;
 import com.project.environments.scopes.Scope;
 import com.project.scanner.structure.Kind;
 
@@ -48,7 +49,7 @@ public class ClassInstanceCreationExpression extends Expression {
 
     @Override
     // I guess a new Object() is an expressionName? Doesn't really matter, anything but Bool
-    public Kind evaluatesTo(){
+    public Kind evaluatesTo() {
         return booleanOrKind(Kind.EXPRESSIONNAME);
     }
 
@@ -56,16 +57,18 @@ public class ClassInstanceCreationExpression extends Expression {
     @Override
     public String code() {
         StringBuilder assembly = new StringBuilder();
-
+        ClassScope parentClass = ((ClassScope) ((NameExpression) classType).namePointer);
         assembly.append("mov eax, 4"); // sizeof class ?
         assembly.append("\n");
         assembly.append("call __malloc");
         assembly.append("\n");
-        assembly.append("mov [eax], " + ((ClassScope) ((NameExpression) classType).namePointer).callVtableLabel());
+        assembly.append("mov [eax], " + parentClass.callVtableLabel());
         assembly.append("\n");
         assembly.append("push eax");
         assembly.append('\n');
-        assembly.append(argList.code()); // Does this handle making arguments available for constructor ?
+        assembly.append(pushArguments(argList));
+        assembly.append('\n');
+        assembly.append(parentClass.getConstructorLabel(argList)); // Does this handle making arguments available for constructor ?
         assembly.append('\n');
         //assembly.append("call " + ((ClassScope) ((NameExpression) classType).namePointer).callConstructorLabel()); // But which constructor?
         // pop arguments
@@ -73,5 +76,24 @@ public class ClassInstanceCreationExpression extends Expression {
 
 
         return assembly.toString();
+    }
+
+    public String pushArguments(Expression arguments) {
+        String label = "";
+
+        if (arguments instanceof NameExpression) {
+
+            label = "push ";
+
+        } else if (arguments instanceof ArgumentListExpression) {
+
+
+        } else {
+            System.out.println("Why is it anything else");
+            System.exit(42);
+        }
+
+
+        return label;
     }
 }

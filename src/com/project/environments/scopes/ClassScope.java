@@ -2,8 +2,11 @@ package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.ast.ASTNode;
+import com.project.environments.expressions.ArgumentListExpression;
 import com.project.environments.expressions.Expression;
+import com.project.environments.expressions.NameExpression;
 import com.project.environments.structure.Name;
+import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 import com.project.util.Triplet;
@@ -696,6 +699,46 @@ public class ClassScope extends Scope {
         }
         return type;
     }
+
+    public String getConstructorLabel(Expression arguments) {
+        String label = "";
+
+
+        for (ConstructorScope constructorScope: constructorTable) {
+
+            if ((arguments == null) && (constructorScope.parameters == null)) return constructorScope.callLabel();
+
+            else if ((arguments instanceof NameExpression) && (constructorScope.parameters.size() == 1)
+                    &&  (this.constructorTable.get(0).parameters.get(0).equals(new Parameter(((NameExpression) arguments).type, ((NameExpression) arguments).getNameLexeme())))) {
+
+            }
+
+        }
+
+        if (arguments instanceof NameExpression) {
+
+            for (ConstructorScope constructorScope : constructorTable) {
+                if (constructorScope.parameters.size() == 1) {
+                    if (constructorScope.parameters.get(0).type.equals(((NameExpression) arguments).type)
+                            && constructorScope.parameters.get(0).name.equals(((NameExpression) arguments).getNameLexeme())) {
+                        return constructorScope.callLabel();
+                    }
+                }
+            }
+
+        } else if (arguments instanceof ArgumentListExpression) {
+
+
+        } else {
+            System.out.println("Why is it anything else");
+            System.exit(42);
+        }
+
+
+        return label;
+    }
+
+
 
     // Takes a LOCALVARIABLEDECLARATION or FIELDDECLARATION node as input
     public Triplet<Boolean, Kind, String> getDeclarationRHSType(ASTNode node) {
