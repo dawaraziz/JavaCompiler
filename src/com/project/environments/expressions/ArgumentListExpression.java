@@ -11,7 +11,7 @@ import java.util.Collections;
 import static com.project.scanner.structure.Kind.COMMA;
 
 public class ArgumentListExpression extends Expression {
-    ArrayList<Expression> arguments;
+    public ArrayList<Expression> arguments;
 
     ArgumentListExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;

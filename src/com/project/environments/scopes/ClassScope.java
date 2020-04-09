@@ -722,34 +722,42 @@ public class ClassScope extends Scope {
 
             if ((arguments == null) && (constructorScope.parameters == null)) return constructorScope.callLabel();
 
-            else if ((arguments instanceof NameExpression) && (constructorScope.parameters.size() == 1)
-                    &&  (this.constructorTable.get(0).parameters.get(0).equals(new Parameter(((NameExpression) arguments).type, ((NameExpression) arguments).getNameLexeme())))) {
+            else if (arguments == null) continue;
 
+            else if (arguments instanceof NameExpression) {
+                ArrayList<Expression> args = new ArrayList<>();
+                args.add(arguments);
+                if ((constructorScope.parameters.size() == 1) && (paramsEqual(args, constructorScope.parameters)))
+                    return constructorScope.callLabel();
+            }
+            else if ((arguments instanceof ArgumentListExpression)
+                    && (((ArgumentListExpression) arguments).arguments.size() == constructorScope.parameters.size())
+                    && (paramsEqual(((ArgumentListExpression) arguments).arguments, constructorScope.parameters))) {
+                return constructorScope.callLabel();
             }
 
-        }
-
-        if (arguments instanceof NameExpression) {
-
-            for (ConstructorScope constructorScope : constructorTable) {
-                if (constructorScope.parameters.size() == 1) {
-                    if (constructorScope.parameters.get(0).type.equals(((NameExpression) arguments).type)
-                            && constructorScope.parameters.get(0).name.equals(((NameExpression) arguments).getNameLexeme())) {
-                        return constructorScope.callLabel();
-                    }
-                }
-            }
-
-        } else if (arguments instanceof ArgumentListExpression) {
-
-
-        } else {
-            System.out.println("Why is it anything else");
-            System.exit(42);
         }
 
 
         return label;
+    }
+
+
+    private boolean paramsEqual(ArrayList<Expression> arguments, ArrayList<Parameter> params) {
+
+        for (Expression argument : arguments) {
+            boolean found = false;
+            NameExpression arg = (NameExpression) argument;
+            for (Parameter param : params) {
+                if (param.equals(new Parameter(arg.type, arg.getNameLexeme()))) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
