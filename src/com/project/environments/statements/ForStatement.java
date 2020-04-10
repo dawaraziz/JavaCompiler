@@ -143,18 +143,18 @@ public class ForStatement extends Statement {
     }
 
     private String setLoopLabel() {
-        return "loop_" + labelCounter + ":";
+        return "for_loop_" + labelCounter + ":";
     }
 
     private String callLoopLabel() {
-        return "loop_" + labelCounter;
+        return "for_loop_" + labelCounter;
     }
 
     private String setEndLabel() {
-        return "end_" + labelCounter + ":";
+        return "for_end_" + labelCounter + ":";
     }
 
     private String callEndLabel() {
-        return "end_" + labelCounter;
+        return "for_end_" + labelCounter;
     }
 }

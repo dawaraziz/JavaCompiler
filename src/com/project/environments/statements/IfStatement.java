@@ -140,18 +140,18 @@ public class IfStatement extends Statement {
     }
 
     private String setElseLabel() {
-        return "else_" + labelCounter + ":";
+        return "if_else_" + labelCounter + ":";
     }
 
     private String callElseLabel() {
-        return "else_" + labelCounter;
+        return "if_else_" + labelCounter;
     }
 
     private String setEndLabel() {
-        return "end_" + labelCounter + ":";
+        return "if_end_" + labelCounter + ":";
     }
 
     private String callEndLabel() {
-        return "end_" + labelCounter;
+        return "if_end_" + labelCounter;
     }
 }

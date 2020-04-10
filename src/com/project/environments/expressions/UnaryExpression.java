@@ -5,7 +5,7 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
-import static com.project.scanner.structure.Kind.INT;
+import java.util.ArrayList;
 
 public class UnaryExpression extends Expression {
 
@@ -35,15 +35,19 @@ public class UnaryExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
         if (RHS.type.prim_type != Type.PRIM_TYPE.INT) {
-            //if (RHS.isLiteralExpression() && ((LiteralExpression) RHS).literalKind != INT) {
-                System.err.println("Unsound type: Unary");
-                System.exit(42);
-            //}
+            System.err.println("Unsound type: Unary");
+            System.exit(42);
         }
     }
 
     @Override
-    public String code() {
-        return RHS.code();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        code.addAll(RHS.generatei386Code());
+
+        code.add("neg eax");
+
+        return code;
     }
 }
