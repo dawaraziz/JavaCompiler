@@ -1,6 +1,7 @@
 package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.Statement;
 import com.project.environments.structure.Parameter;
 
@@ -16,6 +17,22 @@ public class ConstructorScope extends Scope {
     public final ArrayList<String> modifiers;
     public final ArrayList<Parameter> parameters;
     public final Statement body;
+
+    public final ArrayList<DefinitionStatement> stackIndexMap = new ArrayList<>();
+
+    /**
+     * Returns the stack offset from the ebp.
+     */
+    public int getStackOffset(final DefinitionStatement scope) {
+        final int i = stackIndexMap.indexOf(scope);
+
+        if (i == -1) {
+            System.err.println("Could not identify scope's stack offset.");
+            System.exit(42);
+        }
+
+        return -(12 + (i * 4));
+    }
 
     ConstructorScope(final ASTHead constructor, final ClassScope classScope) {
         this.ast = constructor;
@@ -40,11 +57,26 @@ public class ConstructorScope extends Scope {
         return false;
     }
 
+    public boolean checkIdentifierAgainstParameters(final String identifier) {
+        if (parameters == null) return false;
+
+        return parameters.stream()
+                .anyMatch(c -> c.name.equals(identifier));
+    }
+
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
-        if (parameters == null) return;
+        if (parameters != null) parameters.forEach(c -> c.linkType(rootClass));
+        if (body != null) body.linkTypesToQualifiedNames(rootClass);
+    }
 
-        parameters.forEach(c -> c.linkType(rootClass));
+    public Parameter getParameterFromIdentifier(final String identifier) {
+        if (parameters == null) return null;
+
+        for (final Parameter parameter : parameters) {
+            if (parameter.name.equals(identifier)) return parameter;
+        }
+        return null;
     }
 
     @Override
@@ -97,6 +129,12 @@ public class ConstructorScope extends Scope {
         }
     }
 
+    public void linkTypes(final ClassScope rootClass) {
+        type.linkType(rootClass);
+
+        if (parameters != null) parameters.forEach(c -> c.linkType(rootClass));
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
@@ -122,14 +160,24 @@ public class ConstructorScope extends Scope {
         code.addAll(getParentClass().generateFieldInitializationCode(thisOffset));
 
         code.add("");
-        body.generatei386Code();
+        code.addAll(body.generatei386Code());
         code.add("");
+
+        code.add(setEndLabel());
 
         code.addAll(generateEpilogueCode());
 
         code.add("ret");
 
         return code;
+    }
+
+    public String callEndLabel() {
+        return callLabel() + "@end_method";
+    }
+
+    public String setEndLabel() {
+        return callLabel() + "@end_method:";
     }
 
     public String setLabel() {

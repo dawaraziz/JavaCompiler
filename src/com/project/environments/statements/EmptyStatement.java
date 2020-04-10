@@ -4,6 +4,8 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
+import java.util.ArrayList;
+
 public class EmptyStatement extends Statement {
     @Override
     public void assignReachability() {
@@ -40,8 +42,8 @@ public class EmptyStatement extends Statement {
 
     }
 
-    public String code(){
-        return "";
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return new ArrayList<>();
     }
-
 }

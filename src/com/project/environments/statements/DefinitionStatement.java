@@ -5,7 +5,6 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
-import com.project.scanner.structure.Kind;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,22 +16,21 @@ import static com.project.environments.ast.ASTNode.lexemesToStringList;
 import static com.project.environments.expressions.Expression.generateExpressionScope;
 
 public class DefinitionStatement extends Statement {
-    final Expression initialization;
-    final ArrayList<Statement> statements;
+    private final Expression initialization;
+    private final ArrayList<Statement> statements;
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
-        for (Statement stmt : statements){
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
+        for (final Statement stmt : statements) {
             System.out.println(stmt);
             stmt.checkReturnedTypes(type, classmap);
         }
-        return;
     }
 
     @Override
     public void checkConditionals() {
         System.out.println("Will iterate through defintion Statment children: " + statements.size());
-        for (Statement stmt : statements){
+        for (final Statement stmt : statements) {
             System.out.println(stmt);
             stmt.checkConditionals();
         }
@@ -124,12 +122,6 @@ public class DefinitionStatement extends Statement {
 
     @Override
     public void checkTypeSoundness() {
-        // TODO: Uncomment when expression types are implemented.
-//        if (!type.equals(initialization.type)) {
-//            System.err.println("Definition initializer has wrong type.");
-//            System.exit(42);
-//        }
-
         statements.forEach(Scope::checkTypeSoundness);
     }
 
@@ -137,16 +129,34 @@ public class DefinitionStatement extends Statement {
         return identifier.equals(name);
     }
 
-    //Generate the assembly code
-    public String code() {
-//        this.uniqueCount++;
-//        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        assembly.append(initialization.code());
-        for (Statement statement : statements){
-            assembly.append(statement.code());
-        }
-        return assembly.toString();
-    }
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
+        if (getParentMethod() != null) {
+            getParentMethod().stackIndexMap.add(this);
+        } else if (getParentConstructor() != null) {
+            getParentConstructor().stackIndexMap.add(this);
+        } else {
+            System.err.println("Found definition outside method or constructor?");
+            System.exit(42);
+        }
+
+        code.add("");
+
+        code.addAll(initialization.generatei386Code());
+
+        if (getParentMethod() != null) {
+            code.add("push [ebp + " + getParentMethod().getStackOffset(this) + "], eax");
+        } else if (getParentConstructor() != null) {
+            code.add("push [ebp + " + getParentConstructor().getStackOffset(this) + "], eax");
+        } else {
+            System.err.println("Found definition outside method or constructor?");
+            System.exit(42);
+        }
+
+        statements.forEach(e -> code.addAll(e.generatei386Code()));
+
+        return code;
+    }
 }

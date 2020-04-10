@@ -6,6 +6,8 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
+
 import static com.project.scanner.structure.Kind.*;
 import static com.project.scanner.structure.Kind.FALSE;
 
@@ -72,22 +74,40 @@ public class LiteralExpression extends Expression {
     public void checkTypeSoundness() {
     }
 
-
     @Override
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
-        assembly.append("section .data");
-        assembly.append("\n");
-        assembly.append("\n");
-        assembly.append("mystr db \'" + literal.getLexeme() + "\' , 0xa");
-        assembly.append("\n");
-        assembly.append("len equ $ - mystr");
-        assembly.append("\n");
-        assembly.append("mov eax, str;");
-        assembly.append("\n");
+        switch (literal.getKind()) {
+            case INTEGER_LITERAL:
+                code.add("mov eax, " + literal.getLexeme());
+                break;
+            case STRING_LITERAL:
+                // TODO:
+                break;
+            case CHARACTER_LITERAL:
+                if (literal.getLexeme().length() != 3) {
+                    System.err.println("Found char literal with 2+ chars?");
+                    System.exit(42);
+                }
 
-        return assembly.toString();
+                final int charInt = literal.getLexeme().charAt(1);
+
+                code.add("mov eax, " + charInt);
+                break;
+            case NULL:
+            case FALSE:
+                code.add("mov eax, 0");
+                break;
+            case TRUE:
+                code.add("mov eax, 1");
+                break;
+            default:
+                System.err.println("Could not ID literal!");
+                System.exit(42);
+        }
+
+        return code;
     }
 }
 

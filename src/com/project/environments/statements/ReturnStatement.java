@@ -5,82 +5,70 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.Scope;
-import com.project.environments.structure.Name;
 import com.project.environments.structure.Type;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.project.environments.expressions.Expression.generateExpressionScope;
-import static com.project.environments.structure.Type.PRIM_TYPE.*;
+import static com.project.environments.structure.Type.PRIM_TYPE.BYTE;
+import static com.project.environments.structure.Type.PRIM_TYPE.CHAR;
+import static com.project.environments.structure.Type.PRIM_TYPE.INT;
+import static com.project.environments.structure.Type.PRIM_TYPE.SHORT;
+import static com.project.environments.structure.Type.PRIM_TYPE.VAR;
+import static com.project.environments.structure.Type.PRIM_TYPE.VOID;
 
 public class ReturnStatement extends Statement {
-    final Expression expression;
+    private final Expression expression;
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
-//        System.out.println(type + " : " + expression.type);
-//         Return nothing i.e return;
-        if (expression == null){
-            if (type.prim_type != VOID){
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
+        if (expression == null) {
+            if (type.prim_type != VOID) {
                 System.err.println("Returned nothing but Method was not of type void");
                 System.exit(42);
             }
-        }
-        //TODO: FIX THIS SEEMS TO OCCUR IN A RETURN IN CONSTRUCTOR, but we need to check these!
-        else if (expression.type == null){
+        } else if (expression.type == null) {
             System.out.println("There is no information on the return type");
-            return;
-        }
-        else if (type.prim_type == VOID && expression != null) {
+        } else if (type.prim_type == VOID) {
             System.err.println("Encountered non-void return in void method.");
             System.exit(42);
-        }
-        else if (expression.type.prim_type == VAR && type.prim_type == VAR && !(expression.type.name == null) && (expression.type.name.getQualifiedName().equals("null"))) {
-            return;
-        }
-        else if (implicitUpcast(type, expression.type)) {
-            return;
-        }
-        // Can return java.lang.String to java.lang.Object
-        else if (objectUpcast(classmap, type, expression.type)) {
-            return;
-        }
-        // default
-        else if (!expression.type.equals(type)) {
+        } else if ((expression.type.prim_type == VAR
+                && type.prim_type == VAR
+                && !(expression.type.name == null)
+                && (expression.type.name.getQualifiedName().equals("null")))
+                || implicitUpcast(type, expression.type)
+                || objectUpcast(classmap, type, expression.type)) {
+        } else if (!expression.type.equals(type)) {
             System.err.println("Encountered return with incorrect type.");
             System.exit(42);
         }
-        return;
     }
 
-    public boolean implicitUpcast(Type decRetType, Type retType) {
-        if(decRetType.prim_type == INT){
+    private boolean implicitUpcast(final Type decRetType, final Type retType) {
+        if (decRetType.prim_type == INT) {
             if (retType.prim_type == INT ||
                     retType.prim_type == CHAR ||
                     retType.prim_type == BYTE ||
                     retType.prim_type == SHORT
-            ){
-                if (decRetType.isArray == retType.isArray){
-                    return true;
-                }
+            ) {
+                return decRetType.isArray == retType.isArray;
             }
         }
         return false;
     }
 
 
-    public boolean objectUpcast(HashMap<String, ClassScope> classmap, Type decRetType, Type retType) {
-        if(decRetType.prim_type == VAR && retType.prim_type == VAR){
-            String decName = decRetType.name.getQualifiedName();
-            String retName = retType.name.getQualifiedName();
-            ClassScope decScope = classmap.get(decName);
-            ClassScope retScope = classmap.get(retName);
-            if(retScope != null && decScope != null) {
+    private boolean objectUpcast(final HashMap<String, ClassScope> classmap, final Type decRetType, final Type retType) {
+        if (decRetType.prim_type == VAR && retType.prim_type == VAR) {
+            final String decName = decRetType.name.getQualifiedName();
+            final String retName = retType.name.getQualifiedName();
+            final ClassScope decScope = classmap.get(decName);
+            final ClassScope retScope = classmap.get(retName);
+            if (retScope != null && decScope != null) {
                 if (retScope.isSubClassOf(decScope)) {
                     System.out.println(retScope.name + " is subclass$ of :" + decScope.name);
-                    if (decRetType.isArray == retType.isArray) {
-                        return true;
-                    }
+                    return decRetType.isArray == retType.isArray;
                 }
             }
         }
@@ -101,7 +89,7 @@ public class ReturnStatement extends Statement {
         }
     }
 
-    public ReturnStatement(final ASTHead head, final Scope parentScope) {
+    ReturnStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
@@ -127,23 +115,25 @@ public class ReturnStatement extends Statement {
         while (!(parentMethod instanceof MethodScope)) {
             parentMethod = parentMethod.parentScope;
         }
-
-        // TODO: Uncomment when expression types are implemented.
-//        if (parentMethod.type.prim_type == VOID && expression != null) {
-//            System.err.println("Encountered non-void return in void method.");
-//            System.exit(42);
-//        } else if (expression == null || !expression.type.equals(parentMethod.type)) {
-//            System.err.println("Encountered return with incorrect type.");
-//            System.exit(42);
-//        }
     }
 
-    //Generate the assembly code
-    public String code() {
-//        this.uniqueCount++;
-//        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        assembly.append(expression.code());
-        return assembly.toString();
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        if (expression != null) {
+            code.addAll(expression.generatei386Code());
+        }
+
+        if (getParentMethod() != null) {
+            code.add("jmp " + getParentMethod().callEndLabel());
+        } else if (getParentConstructor() != null) {
+            code.add("jmp " + getParentConstructor().callEndLabel());
+        } else {
+            System.err.println("Found definition outside method or constructor?");
+            System.exit(42);
+        }
+
+        return code;
     }
 }

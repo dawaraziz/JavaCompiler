@@ -5,6 +5,8 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
+import java.util.ArrayList;
+
 import static com.project.environments.structure.Type.PRIM_TYPE.INT;
 
 public class AdditiveExpression extends Expression {
@@ -62,26 +64,27 @@ public class AdditiveExpression extends Expression {
         }
     }
 
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("");
 
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
+        // Evaluate the LHS.
+        code.addAll(LHS.generatei386Code());
 
-        assembly.append(LHS.code());
-        assembly.append("\n");
-        assembly.append("push eax;");
-        assembly.append("\n");
-        assembly.append(RHS.code());
-        assembly.append("\n");
-        assembly.append("pop ebx;");
-        assembly.append("\n");
-        assembly.append("add ebx, eax;");
-        assembly.append("\n");
-        assembly.append("mov eax, ebx;");
-        assembly.append("\n");
+        // Put the LHS value on the stack.
+        code.add("push eax ; Push add. expr. LSH.");
 
+        // Evaluate the RHS.
+        code.addAll(RHS.generatei386Code());
 
-        return assembly.toString();
+        // Get the saved LHS value.
+        code.add("pop ebx ; Pop add. expr. LSH.");
+
+        // Add the two values. Result is stored in eax.
+        code.add("add eax, ebx");
+
+        code.add("");
+        return code;
     }
-
-
 }

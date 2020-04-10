@@ -8,6 +8,7 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WhileStatement extends Statement {
@@ -15,11 +16,13 @@ public class WhileStatement extends Statement {
     final Expression expression;
     final Statement mainBody;
 
+    private static long labelCounter = 0;
+
     @Override
     public void checkConditionals() {
         // expression must evaluate to boolean
         System.out.println("Expression type is: " + expression);
-        if (!(expression.evaluatesTo() == Kind.BOOLEAN)){
+        if (!(expression.evaluatesTo() == Kind.BOOLEAN)) {
             System.err.println("While Statement does not evaluate to a boolean");
             System.exit(42);
         }
@@ -93,31 +96,39 @@ public class WhileStatement extends Statement {
         mainBody.checkTypeSoundness();
     }
 
-    //Generate the assembly code
-    public String code() {
-        this.uniqueCount++;
-        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        String loopID = "loop" + uniqueID;
-        String endID = "end" + uniqueID;
+    private String setLoopLabel() {
+        return "loop_" + labelCounter + ":";
+    }
 
-        //Am i missing initialization of a variable in the for loop?
+    private String callLoopLabel() {
+        return "loop_" + labelCounter;
+    }
 
-        // Start of loop assembly
-        assembly.append(loopID + ": \n");
+    private String setEndLabel() {
+        return "end_" + labelCounter + ":";
+    }
 
-        // Evaluate the while loop condition
-        assembly.append(expression.code());
-        assembly.append("cmp eax, 0; evaluate value returned from for check in eax\n");
-        assembly.append("je " + endID + "; jump to end of for loop\n");
+    private String callEndLabel() {
+        return "end_" + labelCounter;
+    }
 
-        // For loop body
-        assembly.append(mainBody.code());
-        assembly.append("jmp " +  loopID + "; jump to top of loop \n");
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
+        code.add(setLoopLabel());
 
-        // code after for loop
-        assembly.append(endID + ": \n");
-        return assembly.toString();
+        // Evaluate the loop condition.
+        code.addAll(expression.generatei386Code());
+        code.add("cmp eax, 0; Check if expression returns false.");
+        code.add("je " + callEndLabel() + "; Jump to end of loop if expr. is false.");
+
+        // Evaluate the loop body.
+        code.addAll(mainBody.generatei386Code());
+        code.add("jmp " + callLoopLabel() + "; Jump to top of loop.");
+
+        code.add(setEndLabel());
+
+        return code;
     }
 }

@@ -10,6 +10,8 @@ import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
+
 import static com.project.Main.packageMap;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.CLASS;
 import static com.project.environments.scopes.ClassScope.CLASS_TYPE.INTERFACE;
@@ -168,6 +170,24 @@ public class NameExpression extends Expression {
                 }
             }
 
+            // Also check if we can find it in our constructor declaration.
+            if (getParentConstructor() != null) {
+                final DefinitionStatement statement = getDefinitionScope(nameLexeme);
+
+                if (statement != null) {
+                    namePointer = statement;
+                    return;
+                }
+
+                final Parameter parameter = getParentConstructor()
+                        .getParameterFromIdentifier(nameLexeme);
+                if (parameter != null) {
+                    namePointer = parameter;
+                    return;
+                }
+            }
+
+
             // Then check if we can find it in our class declaration.
             final FieldScope fieldScope = parentClass.getIdentifierFromFields(nameLexeme);
             if (fieldScope != null) {
@@ -256,7 +276,8 @@ public class NameExpression extends Expression {
 
         // Check if we can find the name as a field, parameter, or local definition.
         if (getParentClass().checkIdentifierAgainstFields(nameLexeme)
-                || getParentMethod().checkIdentifierAgainstParameters(nameLexeme)
+                || (getParentConstructor() != null && getParentConstructor().checkIdentifierAgainstParameters(nameLexeme))
+                || (getParentMethod() != null && getParentMethod().checkIdentifierAgainstParameters(nameLexeme))
                 || getParentLocalDefinitions().stream().anyMatch(c -> c.checkIdentifier(nameLexeme))) {
             nameKind = EXPRESSIONNAME;
 
@@ -381,5 +402,48 @@ public class NameExpression extends Expression {
     public Type getQualifierType() {
         if (qualifier == null) return null;
         return qualifier.type;
+    }
+
+    public ArrayList<String> generateNameAddrCode() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("");
+
+        if (namePointer instanceof DefinitionStatement) {
+            final DefinitionStatement actName = (DefinitionStatement) namePointer;
+
+            final int offset;
+            if (getParentMethod() != null) {
+                offset = getParentMethod().getStackOffset(actName);
+            } else {
+                offset = getParentConstructor().getStackOffset(actName);
+            }
+
+            code.add("mov eax, ebp + " + offset + "; Get local variable value.");
+        }
+
+        code.add("");
+        return code;
+    }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.add("");
+
+        if (namePointer instanceof DefinitionStatement) {
+            final DefinitionStatement actName = (DefinitionStatement) namePointer;
+
+            final int offset;
+            if (getParentMethod() != null) {
+                offset = getParentMethod().getStackOffset(actName);
+            } else {
+                offset = getParentConstructor().getStackOffset(actName);
+            }
+
+            code.add("mov eax, [ebp + " + offset + "]; Get local variable value.");
+        }
+
+        code.add("");
+        return code;
     }
 }
