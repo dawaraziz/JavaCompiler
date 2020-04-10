@@ -68,12 +68,12 @@ public class ClassInstanceCreationExpression extends Expression {
         assembly.append('\n');
         assembly.append(pushArguments(argList));
         assembly.append('\n');
-        assembly.append(parentClass.getConstructorLabel(argList)); // Does this handle making arguments available for constructor ?
+        assembly.append("call " + parentClass.getConstructorLabel(argList));
         assembly.append('\n');
-        //assembly.append("call " + ((ClassScope) ((NameExpression) classType).namePointer).callConstructorLabel()); // But which constructor?
-        // pop arguments
-        // pop eax
-
+        assembly.append(popArguments(argList));
+        assembly.append('\n');
+        assembly.append("pop eax");
+        assembly.append('\n');
 
         return assembly.toString();
     }
@@ -83,10 +83,13 @@ public class ClassInstanceCreationExpression extends Expression {
 
         if (arguments instanceof NameExpression) {
 
-            label = "push ";
+            label = "push " + arguments.code() + ";\n";
 
         } else if (arguments instanceof ArgumentListExpression) {
 
+            for (Expression arg : ((ArgumentListExpression) arguments).arguments) {
+                label += "push " + arg.code() + ";\n";
+            }
 
         } else {
             System.out.println("Why is it anything else");
@@ -96,4 +99,27 @@ public class ClassInstanceCreationExpression extends Expression {
 
         return label;
     }
+
+    public String popArguments(Expression arguments) {
+        String label = "";
+
+        if (arguments instanceof NameExpression) {
+
+            label = "pop " + arguments.code() + ";\n";
+
+        } else if (arguments instanceof ArgumentListExpression) {
+
+            for (Expression arg : ((ArgumentListExpression) arguments).arguments) {
+                label += "pop " + arguments.code() + ";\n";
+            }
+
+        } else {
+            System.out.println("Why is it anything else");
+            System.exit(42);
+        }
+
+
+        return label;
+    }
+
 }
