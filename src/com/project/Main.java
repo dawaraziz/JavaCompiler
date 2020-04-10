@@ -19,6 +19,8 @@ import com.project.weeders.LiteralWeeder;
 import com.project.weeders.MethodModifierWeeder;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -314,26 +316,32 @@ public class Main {
         }
     }
 
-    public static void writeCodeToFile(final String name, final ArrayList<String> text) {
-        System.out.println("Start of " + name + ": =============================");
+    public static void writeCodeToFile(String name, final ArrayList<String> text) {
+        //System.out.println("Start of " + name + ": =============================");
         text.forEach(System.out::println);
-        System.out.println("End of code: =============================");
+        //System.out.println("End of code: =============================");
+        if (name.charAt(name.length()-2) == '.' && name.charAt(name.length()-1) == 's') {
+            name = name + ".s";
+        }
 
-//        final File file = new File("./output/" + name);
-//
-//        try {
-//            if (!file.createNewFile()) throw new IOException();
-//
-//            final FileWriter fileWriter = new FileWriter(file);
-//            for (final String s : text) {
-//                fileWriter.write(s);
-//            }
-//            fileWriter.close();
-//        } catch (final IOException e) {
-//            System.err.println("Could not write file; aborting!");
-//            System.err.println(e.toString());
-//            System.exit(42);
-//        }
+        final File file = new File("./../output/" + name);
+
+
+
+        try {
+            if (!file.createNewFile()) throw new IOException();
+
+            final FileWriter fileWriter = new FileWriter(file);
+            for (final String s : text) {
+                fileWriter.write(s);
+                fileWriter.write('\n');
+            }
+            fileWriter.close();
+        } catch (final IOException e) {
+            System.err.println("Could not write file; aborting!");
+            System.err.println(e.toString());
+            System.exit(42);
+        }
     }
 }
 

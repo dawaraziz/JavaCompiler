@@ -16,6 +16,15 @@ public class String {
         this.chars = new char[chars.length];
         for(int i = 0; i < chars.length; i = i + 1) this.chars[i] = chars[i];
     }
+
+
+    public String(char[] chars, int REMOVE_INT) {
+        this.chars = new char[chars.length];
+        for(int i = 0; i < chars.length; i = i + 1) this.chars[i] = chars[i];
+    }
+
+
+
     public String(String other) {
         this.chars = other.chars;
     }
@@ -88,7 +97,8 @@ public class String {
         if(j<i) return "";
         char[] ret = new char[j-i];
         for(k=i;k<j;k=k+1) ret[k-i] = charAt(k);
-        return new String(ret);
+        int REMOVE_RET = 0;
+        return new String(ret, REMOVE_RET);
     }
     public String trim() {
         int i = 0;
