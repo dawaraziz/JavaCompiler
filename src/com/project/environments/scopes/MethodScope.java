@@ -1,6 +1,7 @@
 package com.project.environments.scopes;
 
 import com.project.environments.ast.ASTHead;
+import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.Statement;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
@@ -18,6 +19,27 @@ public class MethodScope extends Scope {
     public final ArrayList<String> modifiers;
     public final ArrayList<Parameter> parameters;
     public final Statement body;
+
+    public final ArrayList<DefinitionStatement> stackIndexMap = new ArrayList<>();
+
+    /**
+     * Returns the stack offset from the ebp.
+     */
+    public int getStackOffset(final DefinitionStatement scope) {
+        final int i = stackIndexMap.indexOf(scope);
+
+        if (i == -1) {
+            System.err.println("Could not identify scope's stack offset.");
+            System.exit(42);
+        }
+
+        return -(12 + (i * 4));
+    }
+
+    public static int getThisStackOffset() {
+        return 8;
+    }
+
 
     MethodScope(final ASTHead method, final ClassScope classScope) {
         this.ast = method;
@@ -152,6 +174,14 @@ public class MethodScope extends Scope {
         }
     }
 
+    public String callEndLabel() {
+        return callLabel() + "@end_method";
+    }
+
+    public String setEndLabel() {
+        return callLabel() + "@end_method:";
+    }
+
     public String setLabel() {
         return callLabel() + ":";
     }
@@ -208,8 +238,10 @@ public class MethodScope extends Scope {
         code.addAll(generatePrologueCode());
 
         code.add("");
-        body.generatei386Code();
+        code.addAll(body.generatei386Code());
         code.add("");
+
+        code.add(setEndLabel());
 
         code.addAll(generateEpilogueCode());
 
@@ -221,5 +253,9 @@ public class MethodScope extends Scope {
 
     public String generateExternStatement() {
         return "extern " + callLabel();
+    }
+
+    public boolean isStatic() {
+        return modifiers.contains("static");
     }
 }

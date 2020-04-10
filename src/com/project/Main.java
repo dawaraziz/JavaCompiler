@@ -145,6 +145,11 @@ public class Main {
             classScope.linkSuperTypes();
             classScope.linkImplementsTypes();
             classScope.linkMethodTypes();
+            classScope.linkConstructorType();
+        }
+
+        for (final ClassScope classScope : classTable) {
+            classScope.linkFieldsTypes();
         }
 
         for (final ClassScope classScope : classTable) {

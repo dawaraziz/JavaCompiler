@@ -6,6 +6,8 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
+
 public class AssignmentExpression extends Expression {
     private final Expression LHS;
     private final Expression RHS;
@@ -75,23 +77,35 @@ public class AssignmentExpression extends Expression {
     }
 
     @Override
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
-        assembly.append(LHS.code());
-        assembly.append("\n");
-        assembly.append("mov eax, [eax];");
-        assembly.append("\n");
-        assembly.append("push eax;");
-        assembly.append("\n");
-        assembly.append(RHS.code());
-        assembly.append("\n");
-        assembly.append("pop ebx;");
-        assembly.append("\n");
-        // check if array?
-        assembly.append("mov [ebx], eax;");
-        assembly.append("\n");
+        // Evaluates the LHS. It should always be a NameExpression.
+        if (LHS instanceof  NameExpression) {
+            code.addAll(((NameExpression) LHS).generateNameAddrCode());
+        } else if (LHS instanceof ArrayAccessExpression) {
+            // TODO:
+        } else if (LHS instanceof FieldAccessExpression) {
+            // TODO:
+        } else {
+            System.err.println("Found non-name or array access LHS of assignment");
+            System.exit(42);
+        }
 
-        return assembly.toString();
+
+        // Since it's a NameExpression, eax should contain a memory location.
+        // We save that to the stack for now.
+        code.add("push eax");
+
+        // Evaluate the RHS.
+        code.addAll(RHS.generatei386Code());
+
+        // Grab the saved LHS memory address.
+        code.add("pop ebx");
+
+        // Replace the value at the memory address with the RHS value.
+        code.add("mov [ebx], eax");
+
+        return code;
     }
 }

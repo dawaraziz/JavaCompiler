@@ -15,9 +15,7 @@ public abstract class Statement extends Scope {
     // Rather, we state true as "maybe" and false as "false".
     public boolean in; // Can the statement begin execution?
     public boolean out; // Can the statement end execution?
-    public static int uniqueCount = 0;
 
-    abstract public String code();
     abstract public void assignReachability();
     abstract public void checkReachability();
     public void checkConditionals() { System.out.println("Exited Here"); return; };

@@ -2,9 +2,12 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.MethodScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
+
+import java.util.ArrayList;
 
 public class TypeExpression extends Expression {
     private final boolean isThis;
@@ -76,5 +79,16 @@ public class TypeExpression extends Expression {
 
     @Override
     public void checkTypeSoundness() {
+    }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        if (isThis) {
+            code.add("mov eax, [ebp + " + MethodScope.getThisStackOffset() + "] ; Get this pointer");
+        }
+
+        return code;
     }
 }

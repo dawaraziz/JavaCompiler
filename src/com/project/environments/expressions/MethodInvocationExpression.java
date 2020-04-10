@@ -127,6 +127,7 @@ public class MethodInvocationExpression extends Expression {
             resolvedMethod = containingScope.getMethodWithIdentifierAndParameters(identifier, arguments);
 
             if (resolvedMethod != null) {
+                name.namePointer = resolvedMethod;
                 type = resolvedMethod.type;
                 return;
             }
@@ -139,6 +140,7 @@ public class MethodInvocationExpression extends Expression {
             resolvedMethod = containingScope.getMethodWithIdentifierAndParameters(identifier, arguments);
 
             if (resolvedMethod != null) {
+                name.namePointer = resolvedMethod;
                 type = resolvedMethod.type;
                 return;
             }
@@ -155,20 +157,54 @@ public class MethodInvocationExpression extends Expression {
         // TODO:
     }
 
-
     @Override
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
-        assembly.append(primaryExpression.code());
-        assembly.append("\n");
-        assembly.append("push eax;");
-        assembly.append("\n");
-        assembly.append(argumentExpression.code());
-        assembly.append("\n");
-        assembly.append("push eax;"); // multiple push for each argument?
-        assembly.append("\n");
+        int argSize = 4;
+        if (argumentExpression != null) {
+            code.addAll(argumentExpression.generatei386Code());
+            if (!(argumentExpression instanceof ArgumentListExpression)) {
+                code.add("push eax");
+                argSize += 4;
+            } else {
+                argSize += ((ArgumentListExpression) argumentExpression).arguments.size() * 4;
+            }
+        }
 
-        return assembly.toString();
+        if (!(methodName instanceof NameExpression)) {
+            System.err.println("Found non-name method name.");
+            System.exit(42);
+        }
+
+        final NameExpression methodNameExpr = (NameExpression) methodName;
+
+        if (!(methodNameExpr.namePointer instanceof MethodScope)
+                && !methodNameExpr.getNameLexeme().equals("nativeWrite")) {
+            System.err.println("Found method name not pointing to method scope.");
+            System.exit(42);
+        }
+
+        final MethodScope methodScope = (MethodScope) methodNameExpr.namePointer;
+
+        if (methodScope.isStatic()) {
+            if (primaryExpression != null && !(primaryExpression instanceof NameExpression)) {
+                System.err.println("Found static method with expression primary.");
+                System.exit(42);
+            }
+            code.add("push 0 ; Static method has null this pointer.");
+        } else if (primaryExpression != null) {
+            code.addAll(primaryExpression.generatei386Code());
+            code.add("push eax");
+        } else {
+            code.add("mov eax, [ebp + 8]");
+            code.add("push eax");
+        }
+
+        code.add("call " + methodScope.callLabel());
+
+        code.add("add esp, " + argSize);
+
+        return code;
     }
 }

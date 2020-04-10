@@ -4,6 +4,8 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
+import java.util.ArrayList;
+
 public class PrimaryNoNewArrayExpression extends Expression {
     final Expression nextExpr;
 
@@ -38,9 +40,11 @@ public class PrimaryNoNewArrayExpression extends Expression {
     }
 
     @Override
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
 
-        return assembly.append(nextExpr.code()).toString();
+        code.addAll(nextExpr.generatei386Code());
+
+        return code;
     }
 }

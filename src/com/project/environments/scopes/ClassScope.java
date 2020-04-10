@@ -63,7 +63,7 @@ public class ClassScope extends Scope {
         final ArrayList<String> code = new ArrayList<>();
         for (final FieldScope fieldScope : codeFieldOrder) {
             if (fieldScope.initializer != null) {
-                fieldScope.initializer.generatei386Code();
+                code.addAll(fieldScope.initializer.generatei386Code());
                 code.add("push eax");
                 code.add("mov eax, [ebp + " + thisOffset + "] ; Get this object.");
                 code.add("mov eax, eax + " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
@@ -448,6 +448,12 @@ public class ClassScope extends Scope {
     public void linkMethodTypes() {
         if (this.methodTable != null) {
             methodTable.forEach(c -> c.linkTypes(this));
+        }
+    }
+
+    public void linkConstructorType() {
+        if (this.constructorTable != null) {
+            constructorTable.forEach(c -> c.linkTypes(this));
         }
     }
 
@@ -1121,6 +1127,29 @@ public class ClassScope extends Scope {
 
         System.err.println("Found class with no empty constructor?");
         System.exit(42);
+        return null;
+    }
+
+    public ConstructorScope getConstructorWithArgs(final Expression args) {
+        if (args == null) {
+            return getEmptyConstructor();
+        }
+
+        final ArrayList<Type> argTypes = new ArrayList<>();
+        if (args instanceof ArgumentListExpression) {
+            final ArgumentListExpression argList = (ArgumentListExpression) args;
+            argList.arguments.forEach(e -> argTypes.add(e.type));
+        } else {
+            argTypes.add(args.type);
+        }
+
+        for (final ConstructorScope constructorScope : constructorTable) {
+            if (constructorScope.matchesParameters(argTypes)) return constructorScope;
+        }
+
+        System.err.println("Could not identify given constructor; aborting!");
+        System.exit(42);
+
         return null;
     }
 

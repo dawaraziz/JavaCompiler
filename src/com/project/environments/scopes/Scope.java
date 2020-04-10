@@ -6,7 +6,6 @@ import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.ForStatement;
 import com.project.environments.structure.Type;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public abstract class Scope {
@@ -23,7 +22,7 @@ public abstract class Scope {
 
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();
-        code.add("Placeholder " + this.getClass().getName());
+//        code.add("Placeholder " + this.getClass().getName());
         return code;
     }
 
@@ -65,6 +64,15 @@ public abstract class Scope {
             return (MethodScope) this;
         } else {
             return parentScope.getParentMethod();
+        }
+    }
+
+    protected ConstructorScope getParentConstructor() {
+        if (parentScope == null) return null;
+        if (this instanceof ConstructorScope) {
+            return (ConstructorScope) this;
+        } else {
+            return parentScope.getParentConstructor();
         }
     }
 

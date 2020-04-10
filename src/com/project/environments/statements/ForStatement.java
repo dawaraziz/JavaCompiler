@@ -6,31 +6,22 @@ import com.project.environments.expressions.LiteralExpression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
-import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ForStatement extends Statement {
     public Scope forInit;
-    Expression forExpression;
-    Expression forUpdate;
-    final Statement forBody;
+    private Expression forExpression;
+    private Expression forUpdate;
+    private final Statement forBody;
+
+    private static long labelCounter = 0;
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
         forBody.checkReturnedTypes(type, classmap);
-        return;
     }
-
-//    @Override
-//    public void checkConditionals() {
-//        // expression must evaluate to boolean
-//        System.out.println("Expression type in for is: " + forExpression);
-//        if (!(forExpression.evaluatesTo() == Kind.BOOLEAN)){
-//            System.err.println("for Statement does not evaluate to a boolean");
-//            System.exit(42);
-//        }
-//    }
 
     @Override
     public void assignReachability() {
@@ -63,7 +54,7 @@ public class ForStatement extends Statement {
         forBody.checkReachability();
     }
 
-    public ForStatement(final ASTHead head, final Scope parentScope) {
+    ForStatement(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
@@ -113,45 +104,57 @@ public class ForStatement extends Statement {
 
     @Override
     public void checkTypeSoundness() {
-        // TODO: Uncomment when expression types are implemented.
-//        if (forExpression != null && forExpression.type.prim_type != BOOLEAN) {
-//            System.err.println("Encountered non-boolean for expression.");
-//            System.exit(42);
-//        }
-
         if (forInit != null) forInit.checkTypeSoundness();
         if (forExpression != null) forExpression.checkTypeSoundness();
         if (forUpdate != null) forUpdate.checkTypeSoundness();
         if (forBody != null) forBody.checkTypeSoundness();
     }
 
-    //Generate the assembly code
-    public String code() {
-        this.uniqueCount++;
-        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        String loopID = "loop" + uniqueID;
-        String endID = "end" + uniqueID;
+    @Override
+    public ArrayList<String> generatei386Code() {
+        labelCounter += 1;
 
-        //Am i missing initialization of a variable in the for loop?
+        final ArrayList<String> code = new ArrayList<>();
 
-        // Start of loop assembly
-        assembly.append(loopID + ": \n");
+        code.add(setLoopLabel());
 
-        // Evaluate the for loop condition
-        assembly.append(forExpression.code());
-        assembly.append("cmp eax, 0; evaluate value returned from for check in eax\n");
-        assembly.append("je " + endID + "; jump to end of for loop\n");
+        // Define the for loop variable.
+        if (forInit != null) code.addAll(forInit.generatei386Code());
 
-        // For loop body
-        assembly.append(forBody.code());
-        assembly.append("jmp " +  loopID + "; jump to top of loop \n");
+        // Evaluates the for loop condition.
+        if (forExpression != null) {
+            code.addAll(forExpression.generatei386Code());
+            code.add("cmp eax, 0; Check if expression returns false.");
+            code.add("je " + callEndLabel() + "; Jump to end of loop if expr. is false.");
+        }
 
-        // For update
-        assembly.append(forUpdate.code());
+        // Evaluates the for loop body.
+        code.addAll(forBody.generatei386Code());
 
-        // code after for loop
-        assembly.append(endID + ": \n");
-        return assembly.toString();
+        // Update the for loop variable.
+        code.addAll(forUpdate.generatei386Code());
+
+        // Goes back to the top of the loop.
+        code.add("jmp " + callLoopLabel() + "; Jump to top of loop.");
+
+        code.add(setEndLabel());
+
+        return code;
+    }
+
+    private String setLoopLabel() {
+        return "for_loop_" + labelCounter + ":";
+    }
+
+    private String callLoopLabel() {
+        return "for_loop_" + labelCounter;
+    }
+
+    private String setEndLabel() {
+        return "for_end_" + labelCounter + ":";
+    }
+
+    private String callEndLabel() {
+        return "for_end_" + labelCounter;
     }
 }

@@ -30,6 +30,7 @@ public class FieldScope extends Scope {
     @Override
     public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         type.linkType(rootClass);
+        if (initializer != null) initializer.linkTypesToQualifiedNames(rootClass);
         checkFieldDeclarations(rootClass);
     }
 

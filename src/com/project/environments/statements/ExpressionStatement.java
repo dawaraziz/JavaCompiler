@@ -5,10 +5,12 @@ import com.project.environments.expressions.Expression;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
+import java.util.ArrayList;
+
 import static com.project.environments.expressions.Expression.generateExpressionScope;
 
 public class ExpressionStatement extends Statement {
-    final Expression expression;
+    private final Expression expression;
 
     @Override
     public void assignReachability() {
@@ -49,13 +51,8 @@ public class ExpressionStatement extends Statement {
     }
 
 
-    //Generate the assembly code
-    public String code() {
-//        this.uniqueCount++;
-//        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        assembly.append(expression.code());
-        return assembly.toString();
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return new ArrayList<>(expression.generatei386Code());
     }
-
 }

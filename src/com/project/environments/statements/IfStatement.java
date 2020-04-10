@@ -7,14 +7,17 @@ import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 import com.project.scanner.structure.Kind;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.project.environments.expressions.Expression.generateExpressionScope;
 
 public class IfStatement extends Statement {
     public final Expression expression;
-    public final Statement ifBody;
-    public final Statement elseBody;
+    private final Statement ifBody;
+    private final Statement elseBody;
+
+    private static long labelCounter = 0;
 
     @Override
     public void checkConditionals() {
@@ -28,12 +31,11 @@ public class IfStatement extends Statement {
     }
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
         ifBody.checkReturnedTypes(type, classmap);
         if (elseBody != null) {
             elseBody.checkReturnedTypes(type, classmap);
         }
-        return;
     }
 
     @Override
@@ -104,29 +106,52 @@ public class IfStatement extends Statement {
 
     @Override
     public void checkTypeSoundness() {
-        // TODO: Uncomment when expression types are implemented.
-//        if (expression.type.prim_type != BOOLEAN) {
-//            System.err.println("Encountered non-boolean if expression.");
-//            System.exit(42);
-//        }
-
         expression.checkTypeSoundness();
         ifBody.checkTypeSoundness();
         if (elseBody != null) elseBody.checkTypeSoundness();
     }
 
-    //Generate the assembly code
-    public String code() {
-        this.uniqueCount++;
-        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        assembly.append(expression.code());
-        assembly.append("cmp eax, 0; compare value returned from if in eax to 0\n");
-        assembly.append("je else" + uniqueID + "; jump to the else statement\n");
-        assembly.append(ifBody.code());
-        assembly.append("jmp end" + uniqueID + ";\n");
-        assembly.append("else" + uniqueID + ": \n" + elseBody.code());
-        assembly.append("end" + uniqueID + ": \n");
-        return assembly.toString();
+    @Override
+    public ArrayList<String> generatei386Code() {
+        labelCounter += 1;
+
+        final ArrayList<String> code = new ArrayList<>();
+
+        // Check the if expression.
+        code.addAll(expression.generatei386Code());
+        code.add("cmp eax, 0 ; Check if expression returns false.");
+        code.add("je " + callElseLabel() + "; Jump to else if expr. is false.");
+
+        // Generates the if body code.
+        code.addAll(ifBody.generatei386Code());
+        code.add("jmp " + callEndLabel());
+
+        // Generate the else code if it exists.
+        // Note that elseLabel = endLabel if it doesn't.
+        code.add(setElseLabel());
+        if (elseBody != null) {
+            code.addAll(elseBody.generatei386Code());
         }
+
+        // Sets the end label.
+        code.add(setEndLabel());
+
+        return code;
+    }
+
+    private String setElseLabel() {
+        return "if_else_" + labelCounter + ":";
+    }
+
+    private String callElseLabel() {
+        return "if_else_" + labelCounter;
+    }
+
+    private String setEndLabel() {
+        return "if_end_" + labelCounter + ":";
+    }
+
+    private String callEndLabel() {
+        return "if_end_" + labelCounter;
+    }
 }

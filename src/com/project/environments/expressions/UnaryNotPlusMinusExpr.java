@@ -5,8 +5,12 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
+import java.util.ArrayList;
+
 public class UnaryNotPlusMinusExpr extends Expression {
     final Expression nextExpr;
+
+    private static long labelCounter = 0;
 
     UnaryNotPlusMinusExpr(final ASTHead head, final Scope parentScope) {
         this.ast = head;
@@ -36,8 +40,37 @@ public class UnaryNotPlusMinusExpr extends Expression {
         }
     }
 
+
     @Override
-    public String code() {
-        return nextExpr.code();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        code.addAll(nextExpr.generatei386Code());
+
+        code.add("cmp eax, 0");
+        code.add("je " + callNotLabel());
+        code.add("mov eax, 0; If eax is 1+, set it to 0.");
+        code.add("jmp " + callEndLabel());
+        code.add(setNotLabel());
+        code.add("mov eax, 1; If eax is 0, set it to 1.");
+        code.add(setEndLabel());
+
+        return code;
+    }
+
+    private String setNotLabel() {
+        return "unary_not_plus_not_" + labelCounter + ":";
+    }
+
+    private String callNotLabel() {
+        return "unary_not_plus_not_" + labelCounter;
+    }
+
+    private String setEndLabel() {
+        return "unary_not_plus_end_" + labelCounter + ":";
+    }
+
+    private String callEndLabel() {
+        return "unary_not_plus_end_" + labelCounter;
     }
 }

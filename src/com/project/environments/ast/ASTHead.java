@@ -755,6 +755,7 @@ public class ASTHead {
     }
 
     public boolean isNameExpr() {
+        String x = "2";
         return headNode.kind == EXPRESSIONNAME
                 || headNode.kind == TYPENAME
                 || headNode.kind == PACKAGEORTYPENAME

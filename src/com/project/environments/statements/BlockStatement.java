@@ -12,15 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BlockStatement extends Statement {
-    final ArrayList<Statement> childScopes;
+    private final ArrayList<Statement> childScopes;
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
-        for (Statement stmt : childScopes){
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
+        for (final Statement stmt : childScopes){
             System.out.println(stmt);
             stmt.checkReturnedTypes(type, classmap);
         }
-        return;
     }
 
 
@@ -28,7 +27,7 @@ public class BlockStatement extends Statement {
     public void checkConditionals() {
         // expression must evaluate to boolean
         System.out.println("Will iterate through num children: " + childScopes.size());
-        for (Statement stmt : childScopes){
+        for (final Statement stmt : childScopes){
             System.out.println(stmt);
             stmt.checkConditionals();
         }
@@ -108,15 +107,14 @@ public class BlockStatement extends Statement {
         childScopes.forEach(Scope::checkTypeSoundness);
     }
 
-    //Generate the assembly code
-    public String code() {
-//        this.uniqueCount++;
-//        String uniqueID = String.valueOf(uniqueCount);
-        StringBuilder assembly = new StringBuilder();
-        // Get the assembly for all statements in the block
-        for (Statement statement : childScopes){
-            assembly.append(statement.code());
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        for (final Statement statement : childScopes) {
+            code.addAll(statement.generatei386Code());
         }
-        return assembly.toString();
+
+        return code;
     }
 }
