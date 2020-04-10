@@ -6,7 +6,6 @@ import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.ForStatement;
 import com.project.environments.structure.Type;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public abstract class Scope {

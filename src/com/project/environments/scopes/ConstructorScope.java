@@ -4,6 +4,7 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.statements.DefinitionStatement;
 import com.project.environments.statements.Statement;
 import com.project.environments.structure.Parameter;
+import com.project.environments.structure.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,10 @@ public class ConstructorScope extends Scope {
         }
 
         return -(12 + (i * 4));
+    }
+
+    public static int getThisStackOffset() {
+        return 8;
     }
 
     ConstructorScope(final ASTHead constructor, final ClassScope classScope) {
@@ -97,6 +102,20 @@ public class ConstructorScope extends Scope {
 
         for (int i = 0; i < this.parameters.size(); ++i) {
             if (!this.parameters.get(i).equals(that.parameters.get(i))) return false;
+        }
+
+        return true;
+    }
+
+    boolean matchesParameters(final ArrayList<Type> argTypes) {
+        final ArrayList<Type> parameterTypes = new ArrayList<>();
+
+        parameters.forEach(e -> parameterTypes.add(e.type));
+
+        if (parameterTypes.size() != argTypes.size()) return false;
+
+        for (int i = 0; i < argTypes.size(); ++i) {
+            if (!parameterTypes.get(i).equals(argTypes.get(i))) return false;
         }
 
         return true;

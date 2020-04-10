@@ -39,4 +39,19 @@ public class ArgumentListExpression extends Expression {
     public void checkTypeSoundness() {
 
     }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+
+        for (int i = arguments.size() - 1; i >= 0; --i) {
+            code.addAll(arguments.get(i).generatei386Code());
+
+            // We expect to call a method directly after this, so for this expression
+            // and this expression only, we push without popping.
+            code.add("push eax");
+        }
+
+        return code;
+    }
 }

@@ -36,6 +36,11 @@ public class MethodScope extends Scope {
         return -(12 + (i * 4));
     }
 
+    public static int getThisStackOffset() {
+        return 8;
+    }
+
+
     MethodScope(final ASTHead method, final ClassScope classScope) {
         this.ast = method;
         this.parentScope = classScope;
@@ -248,5 +253,9 @@ public class MethodScope extends Scope {
 
     public String generateExternStatement() {
         return "extern " + callLabel();
+    }
+
+    public boolean isStatic() {
+        return modifiers.contains("static");
     }
 }

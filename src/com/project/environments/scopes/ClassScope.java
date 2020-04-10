@@ -1130,6 +1130,29 @@ public class ClassScope extends Scope {
         return null;
     }
 
+    public ConstructorScope getConstructorWithArgs(final Expression args) {
+        if (args == null) {
+            return getEmptyConstructor();
+        }
+
+        final ArrayList<Type> argTypes = new ArrayList<>();
+        if (args instanceof ArgumentListExpression) {
+            final ArgumentListExpression argList = (ArgumentListExpression) args;
+            argList.arguments.forEach(e -> argTypes.add(e.type));
+        } else {
+            argTypes.add(args.type);
+        }
+
+        for (final ConstructorScope constructorScope : constructorTable) {
+            if (constructorScope.matchesParameters(argTypes)) return constructorScope;
+        }
+
+        System.err.println("Could not identify given constructor; aborting!");
+        System.exit(42);
+
+        return null;
+    }
+
     @Override
     public ArrayList<String> generatei386Code() {
         final ArrayList<String> code = new ArrayList<>();

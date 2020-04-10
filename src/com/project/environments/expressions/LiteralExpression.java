@@ -86,12 +86,17 @@ public class LiteralExpression extends Expression {
                 // TODO:
                 break;
             case CHARACTER_LITERAL:
-                if (literal.getLexeme().length() != 3) {
+                final int charInt;
+
+                if (literal.getLexeme().length() == 1) {
+                    charInt = literal.getLexeme().charAt(0);
+                } else if (literal.getLexeme().length() == 3) {
+                    charInt = literal.getLexeme().charAt(1);
+                } else {
+                    charInt = 0;
                     System.err.println("Found char literal with 2+ chars?");
                     System.exit(42);
                 }
-
-                final int charInt = literal.getLexeme().charAt(1);
 
                 code.add("mov eax, " + charInt);
                 break;
