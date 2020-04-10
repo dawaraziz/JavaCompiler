@@ -320,7 +320,7 @@ public class Main {
         //System.out.println("Start of " + name + ": =============================");
         text.forEach(System.out::println);
         //System.out.println("End of code: =============================");
-        if (name.charAt(name.length()-2) == '.' && name.charAt(name.length()-1) == 's') {
+        if (name.charAt(name.length()-2) != '.' || name.charAt(name.length()-1) != 's') {
             name = name + ".s";
         }
 
