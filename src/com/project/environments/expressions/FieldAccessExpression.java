@@ -4,6 +4,8 @@ import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 
+import java.util.ArrayList;
+
 public class FieldAccessExpression extends Expression {
     Expression expressionName;
     Expression primary;
@@ -35,6 +37,12 @@ public class FieldAccessExpression extends Expression {
     @Override
     public void checkTypeSoundness() {
 
+    }
+
+    @Override
+    public ArrayList<String> generatei386Code() {
+        // TODO:
+        return super.generatei386Code();
     }
 
     @Override

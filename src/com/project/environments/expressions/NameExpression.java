@@ -419,6 +419,8 @@ public class NameExpression extends Expression {
             }
 
             code.add("mov eax, ebp + " + offset + "; Get local variable value.");
+        } else {
+            // TODO:
         }
 
         code.add("");
@@ -441,6 +443,8 @@ public class NameExpression extends Expression {
             }
 
             code.add("mov eax, [ebp + " + offset + "]; Get local variable value.");
+        } else {
+            // TODO:
         }
 
         code.add("");

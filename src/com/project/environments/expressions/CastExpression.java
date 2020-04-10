@@ -5,12 +5,14 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
-public class CastExpression extends Expression{
-    final Expression cast;
-    final Expression unary;
-    final boolean isArrayCast;
+import java.util.ArrayList;
 
-    public CastExpression(final ASTHead head, final Scope parentScope) {
+public class CastExpression extends Expression {
+    private final Expression cast;
+    private final Expression unary;
+    private final boolean isArrayCast;
+
+    CastExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
@@ -31,12 +33,12 @@ public class CastExpression extends Expression{
     }
 
     @Override
-    public boolean isVariableNameUsed(String variableName) {
+    public boolean isVariableNameUsed(final String variableName) {
         return true;
     }
 
     @Override
-    public void linkTypesToQualifiedNames(ClassScope rootClass) {
+    public void linkTypesToQualifiedNames(final ClassScope rootClass) {
         cast.linkTypesToQualifiedNames(rootClass);
         if (unary != null) unary.linkTypesToQualifiedNames(rootClass);
 
@@ -47,5 +49,11 @@ public class CastExpression extends Expression{
     public void checkTypeSoundness() {
         cast.checkTypeSoundness();
         unary.checkTypeSoundness();
+    }
+
+    // Casts are entirely a concept of the higher level code.
+    @Override
+    public ArrayList<String> generatei386Code() {
+        return new ArrayList<>(unary.generatei386Code());
     }
 }
