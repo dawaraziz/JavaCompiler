@@ -1160,8 +1160,17 @@ public class ClassScope extends Scope {
         code.addAll(methodExternList);
         code.addAll(staticExternSet);
 
-        methodTable.forEach(e -> code.add("global " + e.callLabel()));
-        constructorTable.forEach(e -> code.add("global " + e.callLabel()));
+        for (final MethodScope methodScope : methodTable) {
+            if (!methodScope.isAbstract()) {
+                code.add("global " + methodScope.callLabel());
+            }
+        }
+
+        for (final ConstructorScope constructorScope : constructorTable) {
+            if (!constructorScope.isAbstract()) {
+                code.add("global " + constructorScope.callLabel());
+            }
+        }
 
         code.add("section .data");
 
@@ -1169,7 +1178,14 @@ public class ClassScope extends Scope {
         code.add(setVtableLabel());
         code.add("dd " + callSITLabel() + " ; Pointer to the SIT.");
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
-        codeMethodOrder.forEach(e -> code.add("dd " + e.callLabel()));
+
+        for (final MethodScope methodScope : codeMethodOrder) {
+            if (!methodScope.isAbstract()) {
+                code.add("dd " + methodScope.callLabel());
+            } else {
+                code.add("dd 0");
+            }
+        }
 
         // Generates our method code.
         for (final MethodScope methodScope : methodTable) {

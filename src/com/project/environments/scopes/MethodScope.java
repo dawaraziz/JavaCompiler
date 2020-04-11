@@ -258,4 +258,8 @@ public class MethodScope extends Scope {
     public boolean isStatic() {
         return modifiers.contains("static");
     }
+
+    public boolean isAbstract() {
+        return modifiers.contains("abstract");
+    }
 }

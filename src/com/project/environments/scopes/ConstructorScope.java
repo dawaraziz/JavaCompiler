@@ -221,5 +221,9 @@ public class ConstructorScope extends Scope {
     public String generateExternStatement() {
         return "extern " + callLabel();
     }
+
+    public boolean isAbstract() {
+        return modifiers.contains("abstract");
+    }
 }
 
