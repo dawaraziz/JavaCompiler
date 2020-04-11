@@ -478,6 +478,22 @@ mov eax, 127
 mov [java.lang.Byte_static_MAX_VALUE], eax
 mov eax, 2147483647
 mov [java.lang.Integer_static_MAX_VALUE], eax
+mov eax, 1 ; Number of bytes allocated.
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+mov [eax], java.io.PrintStream_vtable
+push eax
+call java.io.PrintStream_PrintStream
+add esp, 4
 mov [java.lang.System_static_out], eax
 call default#.J1_300locals_test
 mov ebx, eax

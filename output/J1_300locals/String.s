@@ -275,6 +275,23 @@ push esi
 push edi
 
 
+
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -12], eax
 for_loop_4:
 
@@ -282,7 +299,31 @@ mov eax, 0
 mov [ebp + -16], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_4; Jump to end of loop if expr. is false.
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
 push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
+push eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -470,6 +511,18 @@ add eax, -12 ; Add local variable offset.
 push eax
 
 push eax ; Push add. expr. LSH.
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx ; Pop add. expr. LSH.
 add eax, ebx
 
@@ -651,6 +704,30 @@ jmp if_end_14
 if_else_14:
 if_end_14:
 
+
+
+
+push eax ; Push add. expr. LSH.
+
+
+pop ebx ; Pop add. expr. LSH.
+add eax, ebx
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -16], eax
 for_loop_8:
 
@@ -664,6 +741,25 @@ pop ebx
 mov [ebx], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_8; Jump to end of loop if expr. is false.
+
+
+mov eax, [ebp + -12]; Get local variable value.
+
+push eax ; Push add. expr. LSH.
+
+
+pop ebx ; Pop add. expr. LSH.
+add eax, ebx
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+pop ebx
+add eax, ebx
 push eax
 
 mov eax, [ebp + -12]; Get local variable value.
@@ -696,6 +792,30 @@ for_end_8:
 
 mov eax, 0
 mov [ebp + -20], eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+push eax
+
+mov eax, [ebp + -20]; Get local variable value.
+
+push eax
+mov eax, 2 ; Number of bytes allocated.
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+mov [eax], java.lang.String_vtable
+push eax
+call java.lang.String_String_INT_CHAR
+add esp, 12
 jmp java.lang.String_substring_INT_INT@end_method
 
 java.lang.String_substring_INT_INT@end_method:
@@ -889,6 +1009,22 @@ push esi
 push edi
 
 
+mov eax, 15
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -12], eax
 
 mov eax, 0
@@ -925,6 +1061,18 @@ if_else_21:
 if_end_21:
 cmp eax, 0 ; Check if expression returns false.
 je if_else_22; Jump to else if expr. is false.
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
 push eax
 mov eax, 48
 pop ebx
@@ -957,6 +1105,18 @@ mov [ebp + -24], eax
 push eax
 pop ebx
 mov [ebx], eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
 push eax
 
 
@@ -993,6 +1153,18 @@ mov eax, [ebp + -20]; Get local variable value.
 
 cmp eax, 0 ; Check if expression returns false.
 je if_else_23; Jump to else if expr. is false.
+
+mov eax, [ebp + -16]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
 push eax
 mov eax, 45
 pop ebx
@@ -1017,6 +1189,24 @@ jmp if_end_23
 if_else_23:
 if_end_23:
 
+
+mov eax, [ebp + -16]; Get local variable value.
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -28], eax
 for_loop_9:
 
@@ -1027,7 +1217,36 @@ pop ebx
 mov [ebx], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_9; Jump to end of loop if expr. is false.
+
+
+mov ebx, 4
+mul ebx
+add eax, 8
 push eax
+
+mov eax, [ebp + -28]; Get local variable value.
+
+pop ebx
+add eax, ebx
+push eax
+
+
+mov eax, [ebp + -16]; Get local variable value.
+
+push eax ; Push add. expr. LSH.
+pop ebx ; Pop add. expr. LSH.
+add eax, ebx
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -1045,6 +1264,26 @@ pop ebx
 mov [ebx], eax
 jmp for_loop_9; Jump to top of loop.
 for_end_9:
+
+mov eax, [ebp + -28]; Get local variable value.
+
+push eax
+mov eax, 2 ; Number of bytes allocated.
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+mov [eax], java.lang.String_vtable
+push eax
+call java.lang.String_String_CHAR
+add esp, 8
 jmp java.lang.String_valueOf_INT@end_method
 
 java.lang.String_valueOf_INT@end_method:
@@ -1064,12 +1303,58 @@ push esi
 push edi
 
 
+mov eax, 1
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -12], eax
+mov eax, 0
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+pop ebx
+add eax, ebx
 push eax
 
 
 pop ebx
 mov [ebx], eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+push eax
+mov eax, 2 ; Number of bytes allocated.
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+mov [eax], java.lang.String_vtable
+push eax
+call java.lang.String_String_CHAR
+add esp, 8
 jmp java.lang.String_valueOf_CHAR@end_method
 
 java.lang.String_valueOf_CHAR@end_method:
@@ -1092,6 +1377,34 @@ push edi
 mov eax, 0
 mov [ebp + -12], eax
 
+
+mov eax, [ebp + 8]
+push eax
+call 92
+add esp, 4
+push eax ; Push add. expr. LSH.
+mov eax, [ebp + 8]
+push eax
+call 92
+add esp, 4
+pop ebx ; Pop add. expr. LSH.
+add eax, ebx
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 mov [ebp + -16], eax
 for_loop_10:
 
@@ -1104,7 +1417,31 @@ pop ebx
 mov [ebx], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_10; Jump to end of loop if expr. is false.
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
 push eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+pop ebx
+add eax, ebx
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -1136,7 +1473,40 @@ pop ebx
 mov [ebx], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_11; Jump to end of loop if expr. is false.
+
+
+mov eax, [ebp + -12]; Get local variable value.
+
+push eax ; Push add. expr. LSH.
+mov eax, [ebp + 8]
 push eax
+call 92
+add esp, 4
+pop ebx ; Pop add. expr. LSH.
+add eax, ebx
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+mov eax, [ebp + -16]; Get local variable value.
+
+pop ebx
+add eax, ebx
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -1157,6 +1527,26 @@ pop ebx
 mov [ebx], eax
 jmp for_loop_11; Jump to top of loop.
 for_end_11:
+
+mov eax, [ebp + -16]; Get local variable value.
+
+push eax
+mov eax, 2 ; Number of bytes allocated.
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+mov [eax], java.lang.String_vtable
+push eax
+call java.lang.String_String_CHAR
+add esp, 8
 jmp java.lang.String_concat_java.lang.String@end_method
 
 java.lang.String_concat_java.lang.String@end_method:
@@ -1175,6 +1565,17 @@ push ebx
 push esi
 push edi
 
+
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 jmp java.lang.String_charAt_INT@end_method
 
 java.lang.String_charAt_INT@end_method:
@@ -1242,6 +1643,23 @@ call java.lang.Object_Object
 add esp, 4
 
 push eax
+
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 pop ebx
 mov [ebx], eax
 for_loop_12:
@@ -1250,7 +1668,28 @@ mov eax, 0
 mov [ebp + -12], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_12; Jump to end of loop if expr. is false.
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
 push eax
+pop ebx
+add eax, ebx
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -1292,6 +1731,23 @@ call java.lang.Object_Object
 add esp, 4
 
 push eax
+
+
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 pop ebx
 mov [ebx], eax
 for_loop_13:
@@ -1300,7 +1756,28 @@ mov eax, 0
 mov [ebp + -12], eax
 cmp eax, 0; Check if expression returns false.
 je for_end_13; Jump to end of loop if expr. is false.
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
 push eax
+pop ebx
+add eax, ebx
+push eax
+
+mov eax, [ebp + -12]; Get local variable value.
+
+mov ebx, 4
+mul ebx
+add eax, 8
+push eax
+
+
+pop ebx
+add eax, ebx
+mov eax, [eax]
 pop ebx
 mov [ebx], eax
 
@@ -1344,6 +1821,22 @@ add esp, 4
 
 
 push eax
+mov eax, 0
+push eax
+add eax, 8
+push ebp ; Saves the ebp.
+mov ebp, esp ; Saves the esp.
+push ebx
+push esi
+push edi
+call __malloc
+mov edi, [ebp - 12]
+mov esi, [ebp - 8]
+mov ebx, [ebp - 4]
+mov esp, ebp ; Restores the esp.
+pop ebp ; Restores the ebp.
+pop [eax + 4]
+mov dword [eax + 4], 0
 pop ebx
 mov [ebx], eax
 

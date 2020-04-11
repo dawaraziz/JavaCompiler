@@ -1,5 +1,3 @@
-@ubuntu1804-002% vi testa5.py 
-
 import subprocess
 import os
 import sys
@@ -30,13 +28,15 @@ def compile_and_test(directory):
         if f[-2:] == ".s":
             result = subprocess.run(['/u/cs444/bin/nasm', '-O1', '-f','elf','-g', '-F', 'dwarf', './'+directory+'/'+f], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
 
+    # Generate main
     os.system("ld -melf_i386 -o ./" + directory + "/main ./" + directory + "/*.o")
 
+    # Execute
     try:
         result = subprocess.run(['./' + directory + '/main'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-        print(directory + ": " + str(result.returncode))
+        print("******** EXECUTED ******** " + directory + ": " + str(result.returncode))
     except:
-        print(directory + ": FAILED")
+        a=1
 
 
 main()
