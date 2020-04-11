@@ -1180,10 +1180,12 @@ public class ClassScope extends Scope {
         code.add("dd " + callSubtypeTableLabel() + " ; Pointer to the subtype table.");
 
         for (final MethodScope methodScope : codeMethodOrder) {
-            if (!methodScope.isAbstract()) {
-                code.add("dd " + methodScope.callLabel());
-            } else {
+            if (methodScope.isAbstract()) {
                 code.add("dd 0");
+            } else if (methodScope.isNative()) {
+                code.add("dd NATIVEjava.io.OutputStream.nativeWrite");
+            } else {
+                code.add("dd " + methodScope.callLabel());
             }
         }
 
