@@ -147,9 +147,9 @@ public class DefinitionStatement extends Statement {
         code.addAll(initialization.generatei386Code());
 
         if (getParentMethod() != null) {
-            code.add("push [ebp + " + getParentMethod().getStackOffset(this) + "], eax");
+            code.add("mov [ebp + " + getParentMethod().getStackOffset(this) + "], eax");
         } else if (getParentConstructor() != null) {
-            code.add("push [ebp + " + getParentConstructor().getStackOffset(this) + "], eax");
+            code.add("mov [ebp + " + getParentConstructor().getStackOffset(this) + "], eax");
         } else {
             System.err.println("Found definition outside method or constructor?");
             System.exit(42);
