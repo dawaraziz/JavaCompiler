@@ -1172,6 +1172,8 @@ public class ClassScope extends Scope {
             }
         }
 
+        code.add("global " + callVtableLabel());
+
         code.add("section .data");
 
         // Generate the class vtable.
