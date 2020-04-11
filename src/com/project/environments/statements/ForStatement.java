@@ -114,9 +114,11 @@ public class ForStatement extends Statement {
     public ArrayList<String> generatei386Code() {
         labelCounter += 1;
 
+        final long count = labelCounter;
+
         final ArrayList<String> code = new ArrayList<>();
 
-        code.add(setLoopLabel());
+        code.add(setLoopLabel(count));
 
         // Define the for loop variable.
         if (forInit != null) code.addAll(forInit.generatei386Code());
@@ -125,7 +127,7 @@ public class ForStatement extends Statement {
         if (forExpression != null) {
             code.addAll(forExpression.generatei386Code());
             code.add("cmp eax, 0; Check if expression returns false.");
-            code.add("je " + callEndLabel() + "; Jump to end of loop if expr. is false.");
+            code.add("je " + callEndLabel(count) + "; Jump to end of loop if expr. is false.");
         }
 
         // Evaluates the for loop body.
@@ -135,26 +137,26 @@ public class ForStatement extends Statement {
         code.addAll(forUpdate.generatei386Code());
 
         // Goes back to the top of the loop.
-        code.add("jmp " + callLoopLabel() + "; Jump to top of loop.");
+        code.add("jmp " + callLoopLabel(count) + "; Jump to top of loop.");
 
-        code.add(setEndLabel());
+        code.add(setEndLabel(count));
 
         return code;
     }
 
-    private String setLoopLabel() {
-        return "for_loop_" + labelCounter + ":";
+    private String setLoopLabel(final long count) {
+        return "for_loop_" + count + ":";
     }
 
-    private String callLoopLabel() {
-        return "for_loop_" + labelCounter;
+    private String callLoopLabel(final long count) {
+        return "for_loop_" + count;
     }
 
-    private String setEndLabel() {
-        return "for_end_" + labelCounter + ":";
+    private String setEndLabel(final long count) {
+        return "for_end_" + count + ":";
     }
 
-    private String callEndLabel() {
-        return "for_end_" + labelCounter;
+    private String callEndLabel(final long count) {
+        return "for_end_" + count;
     }
 }

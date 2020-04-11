@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 public class WhileStatement extends Statement {
 
-    final Expression expression;
-    final Statement mainBody;
+    private final Expression expression;
+    private final Statement mainBody;
 
     private static long labelCounter = 0;
 
@@ -29,9 +29,8 @@ public class WhileStatement extends Statement {
     }
 
     @Override
-    public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) {
+    public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
         mainBody.checkReturnedTypes(type, classmap);
-        return;
     }
 
     @Override
@@ -96,40 +95,42 @@ public class WhileStatement extends Statement {
         mainBody.checkTypeSoundness();
     }
 
-    private String setLoopLabel() {
-        return "while_loop_" + labelCounter + ":";
+    private String setLoopLabel(final long count) {
+        return "while_loop_" + count + ":";
     }
 
-    private String callLoopLabel() {
-        return "while_loop_" + labelCounter;
+    private String callLoopLabel(final long count) {
+        return "while_loop_" + count;
     }
 
-    private String setEndLabel() {
-        return "while_end_" + labelCounter + ":";
+    private String setEndLabel(final long count) {
+        return "while_end_" + count + ":";
     }
 
-    private String callEndLabel() {
-        return "while_end_" + labelCounter;
+    private String callEndLabel(final long count) {
+        return "while_end_" + count;
     }
 
     @Override
     public ArrayList<String> generatei386Code() {
         labelCounter += 1;
 
+        final long count = labelCounter;
+
         final ArrayList<String> code = new ArrayList<>();
 
-        code.add(setLoopLabel());
+        code.add(setLoopLabel(count));
 
         // Evaluate the loop condition.
         code.addAll(expression.generatei386Code());
         code.add("cmp eax, 0; Check if expression returns false.");
-        code.add("je " + callEndLabel() + "; Jump to end of loop if expr. is false.");
+        code.add("je " + callEndLabel(count) + "; Jump to end of loop if expr. is false.");
 
         // Evaluate the loop body.
         code.addAll(mainBody.generatei386Code());
-        code.add("jmp " + callLoopLabel() + "; Jump to top of loop.");
+        code.add("jmp " + callLoopLabel(count) + "; Jump to top of loop.");
 
-        code.add(setEndLabel());
+        code.add(setEndLabel(count));
 
         return code;
     }

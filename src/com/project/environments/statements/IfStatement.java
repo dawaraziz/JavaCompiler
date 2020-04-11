@@ -115,43 +115,45 @@ public class IfStatement extends Statement {
     public ArrayList<String> generatei386Code() {
         labelCounter += 1;
 
+        final long count = labelCounter;
+
         final ArrayList<String> code = new ArrayList<>();
 
         // Check the if expression.
         code.addAll(expression.generatei386Code());
         code.add("cmp eax, 0 ; Check if expression returns false.");
-        code.add("je " + callElseLabel() + "; Jump to else if expr. is false.");
+        code.add("je " + callElseLabel(count) + "; Jump to else if expr. is false.");
 
         // Generates the if body code.
         code.addAll(ifBody.generatei386Code());
-        code.add("jmp " + callEndLabel());
+        code.add("jmp " + callEndLabel(count));
 
         // Generate the else code if it exists.
         // Note that elseLabel = endLabel if it doesn't.
-        code.add(setElseLabel());
+        code.add(setElseLabel(count));
         if (elseBody != null) {
             code.addAll(elseBody.generatei386Code());
         }
 
         // Sets the end label.
-        code.add(setEndLabel());
+        code.add(setEndLabel(count));
 
         return code;
     }
 
-    private String setElseLabel() {
-        return "if_else_" + labelCounter + ":";
+    private String setElseLabel(final long count) {
+        return "if_else_" + count + ":";
     }
 
-    private String callElseLabel() {
-        return "if_else_" + labelCounter;
+    private String callElseLabel(final long count) {
+        return "if_else_" + count;
     }
 
-    private String setEndLabel() {
-        return "if_end_" + labelCounter + ":";
+    private String setEndLabel(final long count) {
+        return "if_end_" + count + ":";
     }
 
-    private String callEndLabel() {
-        return "if_end_" + labelCounter;
+    private String callEndLabel(final long count) {
+        return "if_end_" + count;
     }
 }
