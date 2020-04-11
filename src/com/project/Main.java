@@ -200,6 +200,7 @@ public class Main {
         for (final ClassScope classScope : classTable) {
             for (final MethodScope methodScope : classScope.codeMethodOrder) {
                 if (methodScope.isNative()) continue;
+                if (methodScope.isAbstract()) continue;
 
                 methodExternSet.add(methodScope.generateExternStatement());
 
