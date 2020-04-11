@@ -202,7 +202,7 @@ public class Main {
                 methodExternSet.add(methodScope.generateExternStatement());
 
                 for (final ClassScope classScope1 : classTable) {
-                    if (!classScope1.equals(classScope)) {
+                    if (!methodScope.getParentClass().equals(classScope1)) {
                         classScope1.methodExternList.add(methodScope.generateExternStatement());
                     }
                 }
@@ -212,18 +212,23 @@ public class Main {
                 methodExternSet.add(constructorScope.generateExternStatement());
 
                 for (final ClassScope classScope1 : classTable) {
-                    if (!classScope1.equals(classScope)) {
+                    if (!constructorScope.getParentClass().equals(classScope1)) {
                         classScope1.methodExternList.add(constructorScope.generateExternStatement());
                     }
                 }
             }
 
             // Add the runtime.s routines.
-            methodExternSet.add("extern __malloc");
-            methodExternSet.add("extern __debexit");
-            methodExternSet.add("extern __exception");
-            methodExternSet.add("extern NATIVEjava.io.OutputStream.nativeWrite");
+            classScope.methodExternList.add("extern __malloc");
+            classScope.methodExternList.add("extern __debexit");
+            classScope.methodExternList.add("extern __exception");
+            classScope.methodExternList.add("extern NATIVEjava.io.OutputStream.nativeWrite");
         }
+
+        methodExternSet.add("extern __malloc");
+        methodExternSet.add("extern __debexit");
+        methodExternSet.add("extern __exception");
+        methodExternSet.add("extern NATIVEjava.io.OutputStream.nativeWrite");
     }
 
     private static void generateStatici386Code() {
