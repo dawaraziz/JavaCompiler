@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +44,11 @@ public class Main {
     public static final LinkedHashSet<String> methodExternSet = new LinkedHashSet<>();
     public static final LinkedHashSet<String> staticExternSet = new LinkedHashSet<>();
 
+    public static String subDir = "";
+
 
     public static void main(final String[] args) {
+
 
         if (args.length < 1) {
             System.err.println("No argument passed; expected file name.");
@@ -52,6 +56,12 @@ public class Main {
         }
 
         for (final String fileName : args) {
+
+            if (fileName.split("/")[fileName.split("/").length-1].charAt(0) == 'J') {
+                String f = fileName.split("/")[fileName.split("/").length-1];
+                subDir = f.substring(0, f.length()-5);
+            }
+
             System.out.println("Scanning " + fileName + ".");
             final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(fileName);
 
@@ -332,11 +342,22 @@ public class Main {
             name = name + ".s";
         }
 
-        File file = new File("/../output/" + name);
+        Boolean b = new File("./../output/" + subDir + "/").mkdirs();
+        File file = new File("./../output/" + subDir + "/" + name);
 
-        if (!file.canRead()) {
-            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
+        File oldRuntime = new File("./../JavaStdLib/runtime.s");
+        File newRuntime = new File("./../output/" + subDir + "/runtime.s");
+
+
+        try {
+            Files.copy(oldRuntime.toPath(), newRuntime.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            System.err.println("Couldnt copy runtime.s");
+            System.exit(42);
         }
+//        if (!file.canRead()) {
+//            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
+//        }
 
         try {
             Files.deleteIfExists(file.toPath());
