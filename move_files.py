@@ -40,7 +40,7 @@ def main():
 			move_files(directory)
 
 	else:
-		move_files('./output/' + directory)
+		move_files('./'+sys.argv[1])
 
 
 main()
