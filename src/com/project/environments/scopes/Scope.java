@@ -88,7 +88,7 @@ public abstract class Scope {
         return ret;
     }
 
-    protected ClassScope getParentClass() {
+    public ClassScope getParentClass() {
         if (this instanceof ClassScope) {
             return (ClassScope) this;
         } else {
