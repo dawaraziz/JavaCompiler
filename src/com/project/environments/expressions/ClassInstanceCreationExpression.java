@@ -2,15 +2,16 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
-import com.project.environments.scopes.ConstructorScope;
 import com.project.environments.scopes.Scope;
 import com.project.scanner.structure.Kind;
 
-public class ClassInstanceCreationExpression extends Expression {
-    final Expression classType;
-    final Expression argList;
+import java.util.ArrayList;
 
-    public ClassInstanceCreationExpression(final ASTHead head, final Scope parentScope) {
+public class ClassInstanceCreationExpression extends Expression {
+    private final Expression classType;
+    private final Expression argList;
+
+    ClassInstanceCreationExpression(final ASTHead head, final Scope parentScope) {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = null;
@@ -52,73 +53,30 @@ public class ClassInstanceCreationExpression extends Expression {
         return booleanOrKind(Kind.EXPRESSIONNAME);
     }
 
-
     @Override
-    public String code() {
-        StringBuilder assembly = new StringBuilder();
-        ClassScope parentClass = ((ClassScope) ((NameExpression) classType).namePointer);
-        assembly.append("mov eax, 4"); // sizeof class ?
-        assembly.append("\n");
-        assembly.append("call __malloc");
-        assembly.append("\n");
-        assembly.append("mov [eax], " + parentClass.callVtableLabel());
-        assembly.append("\n");
-        assembly.append("push eax");
-        assembly.append('\n');
-        assembly.append(pushArguments(argList));
-        assembly.append('\n');
-        assembly.append("call " + parentClass.getConstructorLabel(argList));
-        assembly.append('\n');
-        assembly.append(popArguments(argList));
-        assembly.append('\n');
-        assembly.append("pop eax");
-        assembly.append('\n');
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+        final ClassScope newClass = ((ClassScope) ((NameExpression) classType).namePointer);
 
-        return assembly.toString();
-    }
-
-    public String pushArguments(Expression arguments) {
-        String label = "";
-
-        if (arguments instanceof NameExpression) {
-
-            label = "push " + arguments.code() + ";\n";
-
-        } else if (arguments instanceof ArgumentListExpression) {
-
-            for (Expression arg : ((ArgumentListExpression) arguments).arguments) {
-                label += "push " + arg.code() + ";\n";
+        int argSize = 4;
+        if (argList != null) {
+            code.addAll(argList.generatei386Code());
+            if (!(argList instanceof ArgumentListExpression)) {
+                code.add("push eax");
+                argSize += 4;
+            } else {
+                argSize += ((ArgumentListExpression) argList).arguments.size() * 4;
             }
-
-        } else {
-            System.out.println("Why is it anything else");
-            System.exit(42);
         }
 
+        code.addAll(newClass.generateAllocationCode());
 
-        return label;
+        code.add("push eax");
+
+        code.add("call " + newClass.getConstructorWithArgs(argList).callLabel());
+
+        code.add("add esp, " + argSize);
+
+        return code;
     }
-
-    public String popArguments(Expression arguments) {
-        String label = "";
-
-        if (arguments instanceof NameExpression) {
-
-            label = "pop " + arguments.code() + ";\n";
-
-        } else if (arguments instanceof ArgumentListExpression) {
-
-            for (Expression arg : ((ArgumentListExpression) arguments).arguments) {
-                label += "pop " + arguments.code() + ";\n";
-            }
-
-        } else {
-            System.out.println("Why is it anything else");
-            System.exit(42);
-        }
-
-
-        return label;
-    }
-
 }
