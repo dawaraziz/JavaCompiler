@@ -349,12 +349,12 @@ public class Main {
         File newRuntime = new File("./../output/" + subDir + "/runtime.s");
 
 
-        try {
-            Files.copy(oldRuntime.toPath(), newRuntime.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            System.err.println("Couldnt copy runtime.s");
-            System.exit(42);
-        }
+//        try {
+//            Files.copy(oldRuntime.toPath(), newRuntime.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//        } catch (Exception e) {
+//            System.err.println("Couldnt copy runtime.s");
+//            System.exit(42);
+//        }
 //        if (!file.canRead()) {
 //            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
 //        }

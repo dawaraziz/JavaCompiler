@@ -56,7 +56,9 @@ def main():
                                         if 'Hierarchy check' in line or 'HIERARCHY' in line:
                                             print('*****Hierarchy FILE: ' + file_path)
                                             doH = True
-                                #if (doH):
+                            dirname = file_path.split('/')[len(file_path.split('/'))-1].split('.')[0]
+                            result = subprocess.run(['mkdir', 'output/' + dirname], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                            result = subprocess.run(['cp', 'JavaStdLib/runtime.s', 'output/'+dirname+'/runtime.s'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                             result = subprocess.run(['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar', file_path] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                             Passed, Failed = passOrFail(test, result, illegalTest, show_all, show_stdout, Passed, Failed)
 
@@ -74,6 +76,9 @@ def main():
                                                 doH = True
                                 #if (doH):
                             compilation_unit = ['java', '-jar', 'out/artifacts/cs444_w20_group33_jar/cs444-w20-group33.jar'] + file_paths + stdLib
+                            dirname = file_path.split('/')[len(file_path.split('/'))-1].split('.')[0]
+                            result = subprocess.run(['mkdir', 'output/' + dirname] + stdLib, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                            result = subprocess.run(['cp', 'JavaStdLib/runtime.s', 'output/runtime.s'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                             result = subprocess.run(compilation_unit, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                             Passed, Failed = passOrFail(test, result, illegalTest, show_all, show_stdout, Passed, Failed)
 
