@@ -71,7 +71,7 @@ public class ArrayCreationExpression extends Expression {
         code.addAll(generateEpilogueCode());
 
         // Puts the array length in the correct spot.
-        code.add("pop [eax + 4]");
+        code.add("pop dword [eax + 4]");
 
         // Puts the vtable of the array object in the correct spot.
         if (arrayTypeExpr instanceof TypeExpression) {
