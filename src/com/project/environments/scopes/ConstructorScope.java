@@ -163,20 +163,13 @@ public class ConstructorScope extends Scope {
 
         code.addAll(generatePrologueCode());
 
-        final int thisOffset;
-        if (parameters != null) {
-            thisOffset = (8 + (parameters.size() * 4));
-        } else {
-            thisOffset = 8;
-        }
-
         if (getParentClass().getSuperConstructor() != null) {
-            code.add("push [ebx + " + thisOffset + "]");
+            code.add("push dword [ebp + 8]");
             code.add("call " + getParentClass().getSuperConstructor().callLabel());
             code.add("add esp, 4");
         }
 
-        code.addAll(getParentClass().generateFieldInitializationCode(thisOffset));
+        code.addAll(getParentClass().generateFieldInitializationCode(8));
 
         code.add("");
         code.addAll(body.generatei386Code());
