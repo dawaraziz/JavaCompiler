@@ -1065,7 +1065,7 @@ public class ClassScope extends Scope {
         code.addAll(generatePrologueCode());
         code.add("call __malloc");
         code.addAll(generateEpilogueCode());
-        code.add("mov [eax], " + callVtableLabel());
+        code.add("mov dword [eax], " + callVtableLabel());
 
         return code;
     }
