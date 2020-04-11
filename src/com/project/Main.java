@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -317,18 +318,21 @@ public class Main {
     }
 
     public static void writeCodeToFile(String name, final ArrayList<String> text) {
-        //System.out.println("Start of " + name + ": =============================");
         text.forEach(System.out::println);
-        //System.out.println("End of code: =============================");
+
         if (name.charAt(name.length()-2) != '.' || name.charAt(name.length()-1) != 's') {
             name = name + ".s";
         }
 
-        final File file = new File("./../output/" + name);
+        File file = new File("/../output/" + name);
 
-
+        if (!file.canRead()) {
+            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
+        }
 
         try {
+            Files.deleteIfExists(file.toPath());
+
             if (!file.createNewFile()) throw new IOException();
 
             final FileWriter fileWriter = new FileWriter(file);
