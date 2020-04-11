@@ -114,6 +114,8 @@ public class WhileStatement extends Statement {
 
     @Override
     public ArrayList<String> generatei386Code() {
+        labelCounter += 1;
+
         final ArrayList<String> code = new ArrayList<>();
 
         code.add(setLoopLabel());
