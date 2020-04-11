@@ -231,6 +231,14 @@ public class Main {
                 }
             }
 
+            // Add the vtable labels of all other classes.
+            methodExternSet.add("extern " + classScope.callVtableLabel());
+            for (final ClassScope classScope1 : classTable) {
+                if (!classScope.equals(classScope1)) {
+                    classScope1.methodExternList.add("extern " + classScope.callVtableLabel());
+                }
+            }
+
             // Add the runtime.s routines.
             classScope.methodExternList.add("extern __malloc");
             classScope.methodExternList.add("extern __debexit");
