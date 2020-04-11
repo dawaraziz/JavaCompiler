@@ -1,3 +1,5 @@
+@ubuntu1804-002% vi testa5.py 
+
 import subprocess
 import os
 import sys
@@ -10,8 +12,10 @@ if len(sys.argv) >= 2:
 def main():
     if every:
         directories = os.listdir('./')
-        for directory in directories:
-            compile_and_test(directory)
+        for i in range(len(directories)):
+            print(directories[i])
+            if "." not in directories[i]:
+                compile_and_test(directories[i])
     else:
         compile_and_test(directory)
 
@@ -28,13 +32,11 @@ def compile_and_test(directory):
 
     os.system("ld -melf_i386 -o ./" + directory + "/main ./" + directory + "/*.o")
 
-    result = subprocess.run(['./' + directory + '/main'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-
-    print(directory + ": " + str(result.returncode))
-
-    sys.exit(result.returncode)
-
+    try:
+        result = subprocess.run(['./' + directory + '/main'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+        print(directory + ": " + str(result.returncode))
+    except:
+        print(directory + ": FAILED")
 
 
 main()
-

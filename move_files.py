@@ -4,8 +4,8 @@ import os
 import sys
 
 server = "linux.student.cs.uwaterloo.ca"
-username = ""
-password = ""
+username = "daahmad"
+password = "coolboy1x1A!"
 all = True
 directory = ""
 if (len(sys.argv) >= 2):
@@ -31,7 +31,6 @@ def move_files(directory):
 			sftp.put(localpath, remotepath)
 			sftp.close()
 	
-	return exit_code
 
 def main():
 	directories = os.listdir('./output/')
