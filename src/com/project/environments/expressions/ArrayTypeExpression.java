@@ -5,6 +5,8 @@ import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Type;
 
+import java.util.ArrayList;
+
 public class ArrayTypeExpression extends Expression {
     private final Expression typeName;
 
@@ -32,7 +34,9 @@ public class ArrayTypeExpression extends Expression {
     }
 
     @Override
-    public String code() {
-        return typeName.code();
+    public ArrayList<String> generatei386Code() {
+        final ArrayList<String> code = new ArrayList<>();
+        code.addAll(typeName.generatei386Code());
+        return code;
     }
 }

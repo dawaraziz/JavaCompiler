@@ -51,7 +51,6 @@ public class CastExpression extends Expression {
         unary.checkTypeSoundness();
     }
 
-    // Casts are entirely a concept of the higher level code.
     @Override
     public ArrayList<String> generatei386Code() {
         return new ArrayList<>(unary.generatei386Code());
