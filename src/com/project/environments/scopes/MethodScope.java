@@ -262,4 +262,8 @@ public class MethodScope extends Scope {
     public boolean isAbstract() {
         return modifiers.contains("abstract");
     }
+
+    public boolean isNative() {
+        return modifiers.contains("native");
+    }
 }

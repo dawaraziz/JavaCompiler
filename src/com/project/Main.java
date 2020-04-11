@@ -199,6 +199,8 @@ public class Main {
     private static void generateExternList() {
         for (final ClassScope classScope : classTable) {
             for (final MethodScope methodScope : classScope.codeMethodOrder) {
+                if (methodScope.isNative()) continue;
+
                 methodExternSet.add(methodScope.generateExternStatement());
 
                 for (final ClassScope classScope1 : classTable) {

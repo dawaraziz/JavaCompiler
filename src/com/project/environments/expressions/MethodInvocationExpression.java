@@ -187,21 +187,24 @@ public class MethodInvocationExpression extends Expression {
 
         final MethodScope methodScope = (MethodScope) methodNameExpr.namePointer;
 
-        if (methodScope.isStatic()) {
+        if (methodScope.isNative()) {
+            // TODO:
+        } else if (methodScope.isStatic()) {
             if (primaryExpression != null && !(primaryExpression instanceof NameExpression)) {
                 System.err.println("Found static method with expression primary.");
                 System.exit(42);
             }
             code.add("push 0 ; Static method has null this pointer.");
+            code.add("call " + methodScope.callLabel());
         } else if (primaryExpression != null) {
             code.addAll(primaryExpression.generatei386Code());
             code.add("push eax");
+            code.add("call " + primaryExpression.getParentClass().getVTableOffset(methodScope));
         } else {
             code.add("mov eax, [ebp + 8]");
             code.add("push eax");
+            code.add("call " + methodScope.getParentClass().getVTableOffset(methodScope));
         }
-
-        code.add("call " + methodScope.callLabel());
 
         code.add("add esp, " + argSize);
 
