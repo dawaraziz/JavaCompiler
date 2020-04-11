@@ -80,7 +80,7 @@ public class LiteralExpression extends Expression {
 
         switch (literal.getKind()) {
             case INTEGER_LITERAL:
-                code.add("mov eax, " + literal.getLexeme());
+                code.add("mov dword eax, " + literal.getLexeme());
                 break;
             case STRING_LITERAL:
                 // TODO:
@@ -98,7 +98,7 @@ public class LiteralExpression extends Expression {
                     System.exit(42);
                 }
 
-                code.add("mov eax, " + charInt);
+                code.add("mov dword eax, " + charInt);
                 break;
             case NULL:
             case FALSE:

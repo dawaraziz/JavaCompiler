@@ -65,8 +65,8 @@ public class ClassScope extends Scope {
             if (fieldScope.initializer != null) {
                 code.addAll(fieldScope.initializer.generatei386Code());
                 code.add("push eax");
-                code.add("mov eax, [ebp + " + thisOffset + "] ; Get this object.");
-                code.add("mov eax, eax + " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
+                code.add("mov dword eax, [ebp + " + thisOffset + "] ; Get this object.");
+                code.add("mov dword eax, eax + " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
                 code.add("pop word [eax] ; Put the value of the field into the object.");
                 code.add("");
             }
@@ -1061,11 +1061,11 @@ public class ClassScope extends Scope {
     public ArrayList<String> generateAllocationCode() {
         final ArrayList<String> code = new ArrayList<>();
 
-        code.add("mov eax, " + getWordSize() + " ; Number of bytes allocated.");
+        code.add("mov dword eax, " + getWordSize() + " ; Number of bytes allocated.");
         code.addAll(generatePrologueCode());
         code.add("call __malloc");
         code.addAll(generateEpilogueCode());
-        code.add("mov [eax], " + callVtableLabel());
+        code.add("mov dword [eax], " + callVtableLabel());
 
         return code;
     }
