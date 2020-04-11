@@ -2,6 +2,7 @@ package com.project.environments.expressions;
 
 import com.project.environments.ast.ASTHead;
 import com.project.environments.scopes.ClassScope;
+import com.project.environments.scopes.FieldScope;
 import com.project.environments.scopes.Scope;
 
 import java.util.ArrayList;
@@ -41,8 +42,29 @@ public class FieldAccessExpression extends Expression {
 
     @Override
     public ArrayList<String> generatei386Code() {
-        // TODO:
-        return super.generatei386Code();
+        final ArrayList<String> code = new ArrayList<>();
+//
+//        // Resolve the primary expression.
+//        code.addAll(primary.generatei386Code());
+//
+//        // The field's class should be part of the primary's type.
+//        final ClassScope classScope = getParentClass().getClassFromPackage(
+//                primary.type.name.getPackageName().getQualifiedName(),
+//                primary.type.name.getSimpleName());
+//
+//        // The field should be part of the name expression.
+//        if (!(primary instanceof NameExpression)) {
+//            System.err.println("Field should be name expression.");
+//            System.exit(42);
+//        }
+//        final FieldScope fieldScope =
+//
+//        code.add("mov eax, [eax]");
+//
+//        classScope.getNonStaticFieldOffset()
+//
+//
+        return code;
     }
 
     @Override

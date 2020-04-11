@@ -84,7 +84,7 @@ public class AssignmentExpression extends Expression {
         if (LHS instanceof  NameExpression) {
             code.addAll(((NameExpression) LHS).generateNameAddrCode());
         } else if (LHS instanceof ArrayAccessExpression) {
-            // TODO:
+            code.addAll(((ArrayAccessExpression) LHS).generateArrayAddrCode());
         } else if (LHS instanceof FieldAccessExpression) {
             // TODO:
         } else {
