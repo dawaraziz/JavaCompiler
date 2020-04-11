@@ -418,7 +418,8 @@ public class NameExpression extends Expression {
                 offset = getParentConstructor().getStackOffset(actName);
             }
 
-            code.add("mov eax, ebp + " + offset + "; Get local variable value.");
+            code.add("mov eax, ebp ; Get stack base pointer." );
+            code.add("add eax, " + offset + " ; Add local variable offset.");
         } else {
             // TODO:
         }
