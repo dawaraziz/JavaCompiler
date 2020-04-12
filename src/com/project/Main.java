@@ -50,9 +50,22 @@ public class Main {
     public static void main(final String[] args) {
 
 
+        String[] newArgs = new String[args.length+1];
+
         if (args.length < 1) {
             System.err.println("No argument passed; expected file name.");
             System.exit(42);
+        }
+
+        final File testFolder = new File("./../tests/a5_legalJoos");
+
+        for (final File file : testFolder.listFiles()) {
+            if (file.isDirectory()) {
+                // deal with the four later
+                int a = 1;
+            } else {
+                System.out.println(file.getName());
+            }
         }
 
         for (final String fileName : args) {
@@ -357,12 +370,12 @@ public class Main {
         File newRuntime = new File("./../output/" + subDir + "/runtime.s");
 
 
-//        try {
-//            Files.copy(oldRuntime.toPath(), newRuntime.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (Exception e) {
-//            System.err.println("Couldnt copy runtime.s");
-//            System.exit(42);
-//        }
+        try {
+            Files.copy(oldRuntime.toPath(), newRuntime.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            System.err.println("Couldnt copy runtime.s");
+            System.exit(42);
+        }
 //        if (!file.canRead()) {
 //            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
 //        }

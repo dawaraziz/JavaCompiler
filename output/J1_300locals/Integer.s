@@ -5,10 +5,12 @@ extern java.lang.Object_toString
 extern java.lang.Object_equals_java.lang.Object
 extern default#.J1_300locals_test
 extern default#.J1_300locals_J1_300locals
+extern default#.J1_300locals_vtable
 extern java.io.OutputStream_flush
 extern java.io.OutputStream_write_INT
 extern java.io.OutputStream_write_CHAR
 extern java.io.OutputStream_OutputStream
+extern java.io.OutputStream_vtable
 extern java.io.PrintStream_print_INT
 extern java.io.PrintStream_print_SHORT
 extern java.io.PrintStream_print_CHAR
@@ -25,26 +27,36 @@ extern java.io.PrintStream_println_java.lang.String
 extern java.io.PrintStream_println
 extern java.io.PrintStream_print_java.lang.String
 extern java.io.PrintStream_PrintStream
+extern java.io.PrintStream_vtable
+extern java.io.Serializable_vtable
 extern java.lang.Boolean_toString
 extern java.lang.Boolean_Boolean
 extern java.lang.Boolean_Boolean_BOOLEAN
+extern java.lang.Boolean_vtable
 extern java.lang.Byte_toString
 extern java.lang.Byte_Byte
 extern java.lang.Byte_Byte_BYTE
+extern java.lang.Byte_vtable
 extern java.lang.Character_toString
 extern java.lang.Character_Character
 extern java.lang.Character_Character_CHAR
+extern java.lang.Character_vtable
 extern java.lang.Class_Class
+extern java.lang.Class_vtable
+extern java.lang.Cloneable_vtable
 extern __malloc
 extern __debexit
 extern __exception
 extern NATIVEjava.io.OutputStream.nativeWrite
 extern java.lang.Number_Number
+extern java.lang.Number_vtable
 extern java.lang.Object_Object
+extern java.lang.Object_vtable
 extern java.lang.Short_toString
 extern java.lang.Short_intValue
 extern java.lang.Short_Short
 extern java.lang.Short_Short_SHORT
+extern java.lang.Short_vtable
 extern java.lang.String_hashCode
 extern java.lang.String_toString
 extern java.lang.String_indexOf_java.lang.String
@@ -68,11 +80,14 @@ extern java.lang.String_String_java.lang.String
 extern java.lang.String_String_INT_CHAR
 extern java.lang.String_String_CHAR
 extern java.lang.String_String
+extern java.lang.String_vtable
 extern java.lang.System_gc
 extern java.lang.System_System
+extern java.lang.System_vtable
 extern java.util.Arrays_equals_CHAR_CHAR
 extern java.util.Arrays_equals_BOOLEAN_BOOLEAN
 extern java.util.Arrays_Arrays
+extern java.util.Arrays_vtable
 extern default#.J1_300locals_sitrow
 extern java.io.OutputStream_sitrow
 extern java.io.PrintStream_sitrow
@@ -115,6 +130,7 @@ global java.lang.Integer_intValue
 global java.lang.Integer_Integer
 global java.lang.Integer_Integer_java.lang.String
 global java.lang.Integer_Integer_INT
+global java.lang.Integer_vtable
 section .data
 java.lang.Integer_vtable:
 dd java.lang.Integer_sitrow ; Pointer to the SIT.
@@ -159,13 +175,13 @@ push esi
 push edi
 
 
-mov eax, 0
+mov dword eax, 0
 mov [ebp + -12], eax
 
 mov eax, 0
 mov [ebp + -16], eax
 
-mov eax, 0
+mov dword eax, 0
 mov [ebp + -20], eax
 while_loop_1:
 cmp eax, 0; Check if expression returns false.
@@ -214,7 +230,7 @@ push eax
 mov eax, [ebp + -20]; Get local variable value.
 
 push eax ; Push add. expr. LSH.
-mov eax, 1
+mov dword eax, 1
 pop ebx ; Pop add. expr. LSH.
 add eax, ebx
 
@@ -288,7 +304,7 @@ add esp, 4
 
 
 push eax
-mov eax, 0
+mov dword eax, 0
 pop ebx
 mov [ebx], eax
 

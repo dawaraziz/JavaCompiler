@@ -4,8 +4,8 @@ import os
 import sys
 
 server = "linux.student.cs.uwaterloo.ca"
-username = "daahmad"
-password = "coolboy1x1A!"
+username = ""
+password = ""
 all = True
 directory = ""
 if (len(sys.argv) >= 2):

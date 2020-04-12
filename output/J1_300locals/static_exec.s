@@ -5,10 +5,12 @@ extern java.lang.Object_toString
 extern java.lang.Object_equals_java.lang.Object
 extern default#.J1_300locals_test
 extern default#.J1_300locals_J1_300locals
+extern default#.J1_300locals_vtable
 extern java.io.OutputStream_flush
 extern java.io.OutputStream_write_INT
 extern java.io.OutputStream_write_CHAR
 extern java.io.OutputStream_OutputStream
+extern java.io.OutputStream_vtable
 extern java.io.PrintStream_print_INT
 extern java.io.PrintStream_print_SHORT
 extern java.io.PrintStream_print_CHAR
@@ -25,28 +27,39 @@ extern java.io.PrintStream_println_java.lang.String
 extern java.io.PrintStream_println
 extern java.io.PrintStream_print_java.lang.String
 extern java.io.PrintStream_PrintStream
+extern java.io.PrintStream_vtable
+extern java.io.Serializable_vtable
 extern java.lang.Boolean_toString
 extern java.lang.Boolean_Boolean
 extern java.lang.Boolean_Boolean_BOOLEAN
+extern java.lang.Boolean_vtable
 extern java.lang.Byte_toString
 extern java.lang.Byte_Byte
 extern java.lang.Byte_Byte_BYTE
+extern java.lang.Byte_vtable
 extern java.lang.Character_toString
 extern java.lang.Character_Character
 extern java.lang.Character_Character_CHAR
+extern java.lang.Character_vtable
 extern java.lang.Class_Class
+extern java.lang.Class_vtable
+extern java.lang.Cloneable_vtable
 extern java.lang.Integer_toString
 extern java.lang.Integer_intValue
 extern java.lang.Integer_parseInt_java.lang.String
 extern java.lang.Integer_Integer
 extern java.lang.Integer_Integer_java.lang.String
 extern java.lang.Integer_Integer_INT
+extern java.lang.Integer_vtable
 extern java.lang.Number_Number
+extern java.lang.Number_vtable
 extern java.lang.Object_Object
+extern java.lang.Object_vtable
 extern java.lang.Short_toString
 extern java.lang.Short_intValue
 extern java.lang.Short_Short
 extern java.lang.Short_Short_SHORT
+extern java.lang.Short_vtable
 extern java.lang.String_hashCode
 extern java.lang.String_toString
 extern java.lang.String_indexOf_java.lang.String
@@ -70,11 +83,14 @@ extern java.lang.String_String_java.lang.String
 extern java.lang.String_String_INT_CHAR
 extern java.lang.String_String_CHAR
 extern java.lang.String_String
+extern java.lang.String_vtable
 extern java.lang.System_gc
 extern java.lang.System_System
+extern java.lang.System_vtable
 extern java.util.Arrays_equals_CHAR_CHAR
 extern java.util.Arrays_equals_BOOLEAN_BOOLEAN
 extern java.util.Arrays_Arrays
+extern java.util.Arrays_vtable
 extern __malloc
 extern __debexit
 extern __exception
@@ -472,13 +488,13 @@ dd 1 ; Subclass Arrays, Superclass Arrays
 section .text
 global _start
 _start:
-mov eax, 127
+mov dword eax, 127
 mov [java.lang.Boolean_static_MAX_VALUE], eax
-mov eax, 127
+mov dword eax, 127
 mov [java.lang.Byte_static_MAX_VALUE], eax
-mov eax, 2147483647
+mov dword eax, 2147483647
 mov [java.lang.Integer_static_MAX_VALUE], eax
-mov eax, 1 ; Number of bytes allocated.
+mov dword eax, 1 ; Number of bytes allocated.
 push ebp ; Saves the ebp.
 mov ebp, esp ; Saves the esp.
 push ebx
@@ -490,7 +506,7 @@ mov esi, [ebp - 8]
 mov ebx, [ebp - 4]
 mov esp, ebp ; Restores the esp.
 pop ebp ; Restores the ebp.
-mov [eax], java.io.PrintStream_vtable
+mov dword [eax], java.io.PrintStream_vtable
 push eax
 call java.io.PrintStream_PrintStream
 add esp, 4
