@@ -344,9 +344,12 @@ public class Main {
 
         if (name.split("/")[name.split("/").length-1].charAt(0) == 'J') {
             subDir = name;
-            dirName = "./../output/" + subDir + "/";
-        } else {
-            dirName = "./../output/";
+//            dirName = "./output/";
+            dirName = "./output/" + subDir + "/";
+        }
+        else {
+//            dirName = "./output/";
+            dirName = "./output/" + subDir + "/";
         }
 
 
@@ -359,7 +362,8 @@ public class Main {
         Boolean b = new File(dirName).mkdirs();
         File file = new File(dirName + name);
 
-        File oldRuntime = new File("./../JavaStdLib/runtime.s");
+
+        File oldRuntime = new File("./JavaStdLib/runtime.s");
         File newRuntime = new File(dirName + "runtime.s");
 
 
@@ -369,6 +373,8 @@ public class Main {
             System.err.println("Couldnt copy runtime.s");
             System.exit(42);
         }
+
+
 //        if (!file.canRead()) {
 //            file = new File("C:\\Users\\Alfred\\Desktop\\Git Repos\\cs444-w20-group33\\output\\" + name);
 //        }
