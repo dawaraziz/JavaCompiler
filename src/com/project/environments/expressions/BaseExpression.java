@@ -181,7 +181,7 @@ public class BaseExpression extends Expression {
             code.add("cmp eax, ebx");
 
             // Treat this as an equality expression otherwise.
-            code.add("eq " + callMidLabel(count));
+            code.add("je " + callMidLabel(count));
             code.add("mov eax, 0");
             code.add("jmp " + callEndLabel(count));
             code.add(setMidLabel(count));
