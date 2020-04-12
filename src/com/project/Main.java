@@ -50,30 +50,12 @@ public class Main {
     public static void main(final String[] args) {
 
 
-        String[] newArgs = new String[args.length+1];
-
         if (args.length < 1) {
             System.err.println("No argument passed; expected file name.");
             System.exit(42);
         }
 
-        final File testFolder = new File("./../tests/a5_legalJoos");
-
-        for (final File file : testFolder.listFiles()) {
-            if (file.isDirectory()) {
-                // deal with the four later
-                int a = 1;
-            } else {
-                System.out.println(file.getName());
-            }
-        }
-
         for (final String fileName : args) {
-
-            if (fileName.split("/")[fileName.split("/").length-1].charAt(0) == 'J') {
-                String f = fileName.split("/")[fileName.split("/").length-1];
-                subDir = f.substring(0, f.length()-5);
-            }
 
             System.out.println("Scanning " + fileName + ".");
             final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(fileName);
@@ -357,17 +339,28 @@ public class Main {
     }
 
     public static void writeCodeToFile(String name, final ArrayList<String> text) {
+
+        String dirName = "";
+
+        if (name.split("/")[name.split("/").length-1].charAt(0) == 'J') {
+            subDir = name;
+            dirName = "./../output/" + subDir + "/";
+        } else {
+            dirName = "./../output/";
+        }
+
+
         text.forEach(System.out::println);
 
         if (name.charAt(name.length()-2) != '.' || name.charAt(name.length()-1) != 's') {
             name = name + ".s";
         }
 
-        Boolean b = new File("./../output/" + subDir + "/").mkdirs();
-        File file = new File("./../output/" + subDir + "/" + name);
+        Boolean b = new File(dirName).mkdirs();
+        File file = new File(dirName + name);
 
         File oldRuntime = new File("./../JavaStdLib/runtime.s");
-        File newRuntime = new File("./../output/" + subDir + "/runtime.s");
+        File newRuntime = new File(dirName + "runtime.s");
 
 
         try {
