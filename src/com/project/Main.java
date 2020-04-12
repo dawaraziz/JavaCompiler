@@ -57,6 +57,12 @@ public class Main {
 
         for (final String fileName : args) {
 
+            System.out.println("The filename is: " + fileName.split("/")[fileName.split("/").length-1]);
+            if (fileName.split("/")[fileName.split("/").length-1].charAt(0) == 'J') {
+                String fullName = fileName.split("/")[fileName.split("/").length-1];
+                subDir = fullName.substring(0, fullName.length()-5);
+            }
+
             System.out.println("Scanning " + fileName + ".");
             final ArrayList<ParserSymbol> tokens = JavaScanner.tokenizeFile(fileName);
 
@@ -342,8 +348,8 @@ public class Main {
 
         String dirName = "";
 
+        System.out.println("HI " + name);
         if (name.split("/")[name.split("/").length-1].charAt(0) == 'J') {
-            subDir = name;
 //            dirName = "./output/";
             dirName = "./output/" + subDir + "/";
         }

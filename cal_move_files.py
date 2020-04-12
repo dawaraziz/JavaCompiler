@@ -5,7 +5,6 @@ import sys
 
 server = "linux.student.cs.uwaterloo.ca"
 username = "ccvbruto"
-password = ""
 all = True
 directory = ""
 if (len(sys.argv) >= 2):
@@ -15,7 +14,6 @@ if (len(sys.argv) >= 2):
 ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect(server, username=username, password=password)
 
 def move_files(directory):
 	mkdir_cmd = "mkdir /u1/"+username+"/cs644/" + directory
@@ -33,15 +31,20 @@ def move_files(directory):
 	
 
 def main():
-	directories = os.listdir('./output/')
+    print("enter password: ")
+    password = input()
+    print("Moving Files: ")
+    ssh.connect(server, username=username, password=password)
+    directories = os.listdir('./output/')
 
-	if all:
-		for directory in directories:
-		    if directory[-2:] != '.s':
-			    move_files(directory)
+    if all:
+        for directory in directories:
+            if directory[-2:] != '.s' and directory[0] != ".":
+                print(directory)
+                move_files(directory)
 
-	else:
-		move_files('./'+sys.argv[1])
+    else:
+        move_files('./'+sys.argv[1])
 
 
 main()
