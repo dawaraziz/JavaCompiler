@@ -199,7 +199,10 @@ public class MethodInvocationExpression extends Expression {
         } else if (primaryExpression != null) {
             code.addAll(primaryExpression.generatei386Code());
             code.add("push eax");
-            code.add("call " + primaryExpression.getParentClass().getVTableOffset(methodScope));
+            final ClassScope classScope = getParentClass().getClassFromPackage(
+                    primaryExpression.type.name.getPackageName().getQualifiedName(),
+                    primaryExpression.type.name.getSimpleName());
+            code.add("call " + classScope.getVTableOffset(methodScope));
         } else {
             code.add("mov eax, [ebp + 8]");
             code.add("push eax");

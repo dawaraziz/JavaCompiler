@@ -110,6 +110,12 @@ public class ConstructorScope extends Scope {
     boolean matchesParameters(final ArrayList<Type> argTypes) {
         final ArrayList<Type> parameterTypes = new ArrayList<>();
 
+        if (argTypes.size() == 0 && (parameters == null || parameters.size() == 0)) {
+            return true;
+        } else if (parameters == null) {
+            return false;
+        }
+
         parameters.forEach(e -> parameterTypes.add(e.type));
 
         if (parameterTypes.size() != argTypes.size()) return false;
