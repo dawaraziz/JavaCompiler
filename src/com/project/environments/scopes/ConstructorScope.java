@@ -46,7 +46,7 @@ public class ConstructorScope extends Scope {
         this.type = classScope.type;
 
         modifiers = constructor.getConstructorModifiers().get(0);
-        parameters = constructor.getMethodParameters();
+        parameters = constructor.getMethodParameters(this);
         body = Statement.generateStatementScope(constructor.getConstructorBlock(), this);
     }
 

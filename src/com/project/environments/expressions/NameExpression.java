@@ -444,7 +444,12 @@ public class NameExpression extends Expression {
             }
 
             code.add("mov eax, [ebp + " + offset + "]; Get local variable value.");
+        } else if (namePointer instanceof Parameter) {
+            namePointer.generatei386Code();
+        } else if (namePointer instanceof FieldScope) {
+
         } else {
+            System.out.println("x");
             // TODO:
         }
 
