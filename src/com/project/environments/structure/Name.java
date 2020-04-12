@@ -95,7 +95,7 @@ public class Name {
 
     public String getDefaultlessQualifiedName() {
         final String qualifiedName = getQualifiedName();
-        return qualifiedName.contains("default#") ? qualifiedName.substring(9) : qualifiedName;
+        return qualifiedName.contains("default___") ? qualifiedName.substring(9) : qualifiedName;
     }
 
     public String toString() {
