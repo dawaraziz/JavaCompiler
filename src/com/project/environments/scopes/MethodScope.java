@@ -48,7 +48,7 @@ public class MethodScope extends Scope {
         this.type = method.getMethodReturnType();
 
         modifiers = method.getMethodModifiers().get(0);
-        parameters = method.getMethodParameters();
+        parameters = method.getMethodParameters(this);
         body = Statement.generateStatementScope(method.getMethodBlock(), this);
 
         // If there is no test method, check if we are it.

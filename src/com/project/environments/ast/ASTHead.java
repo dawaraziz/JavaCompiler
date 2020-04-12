@@ -5,6 +5,7 @@ import com.project.environments.ast.structure.IntegerLiteralHolder;
 import com.project.environments.ast.structure.StringLiteralHolder;
 import com.project.environments.scopes.ClassScope;
 import com.project.environments.scopes.ImportScope;
+import com.project.environments.scopes.Scope;
 import com.project.environments.structure.Name;
 import com.project.environments.structure.Parameter;
 import com.project.environments.structure.Type;
@@ -514,7 +515,7 @@ public class ASTHead {
         return null;
     }
 
-    public ArrayList<Parameter> getMethodParameters() {
+    public ArrayList<Parameter> getMethodParameters(final Scope scope) {
         final ArrayList<Parameter> parameterList = new ArrayList<>();
 
         final ArrayList<ASTNode> parameters = headNode.findNodesWithLexeme(FORMAL_PARAMETER);
@@ -524,7 +525,7 @@ public class ASTHead {
         for (final ASTNode parameter : parameters) {
             final Name name = new Name(lexemesToStringList(parameter.children.get(0).getLeafNodes()));
             final Type type = new Type(lexemesToStringList(parameter.children.get(1).getLeafNodes()));
-            parameterList.add(new Parameter(type, name));
+            parameterList.add(new Parameter(type, name, scope));
         }
 
         return parameterList;

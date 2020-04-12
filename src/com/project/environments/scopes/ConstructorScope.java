@@ -46,7 +46,7 @@ public class ConstructorScope extends Scope {
         this.type = classScope.type;
 
         modifiers = constructor.getConstructorModifiers().get(0);
-        parameters = constructor.getMethodParameters();
+        parameters = constructor.getMethodParameters(this);
         body = Statement.generateStatementScope(constructor.getConstructorBlock(), this);
     }
 
@@ -109,6 +109,12 @@ public class ConstructorScope extends Scope {
 
     boolean matchesParameters(final ArrayList<Type> argTypes) {
         final ArrayList<Type> parameterTypes = new ArrayList<>();
+
+        if (argTypes.size() == 0 && (parameters == null || parameters.size() == 0)) {
+            return true;
+        } else if (parameters == null) {
+            return false;
+        }
 
         parameters.forEach(e -> parameterTypes.add(e.type));
 
