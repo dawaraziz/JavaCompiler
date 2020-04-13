@@ -21,7 +21,7 @@ public class WhileStatement extends Statement {
     @Override
     public void checkConditionals() {
         // expression must evaluate to boolean
-        System.out.println("Expression type is: " + expression);
+
         if (!(expression.evaluatesTo() == Kind.BOOLEAN)) {
             System.err.println("While Statement does not evaluate to a boolean");
             System.exit(42);

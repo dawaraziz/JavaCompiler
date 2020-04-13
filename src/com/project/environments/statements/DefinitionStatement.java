@@ -22,16 +22,13 @@ public class DefinitionStatement extends Statement {
     @Override
     public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
         for (final Statement stmt : statements) {
-            System.out.println(stmt);
             stmt.checkReturnedTypes(type, classmap);
         }
     }
 
     @Override
     public void checkConditionals() {
-        System.out.println("Will iterate through defintion Statment children: " + statements.size());
         for (final Statement stmt : statements) {
-            System.out.println(stmt);
             stmt.checkConditionals();
         }
     }

@@ -66,7 +66,7 @@ public class ClassScope extends Scope {
                 code.addAll(fieldScope.initializer.generatei386Code());
                 code.add("push eax");
                 code.add("mov dword eax, [ebp + " + thisOffset + "] ; Get this object.");
-                code.add("mov dword eax, eax + " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
+                code.add("add eax, " + getNonStaticFieldOffset(fieldScope) + "; Find the field location");
                 code.add("pop word [eax] ; Put the value of the field into the object.");
                 code.add("");
             }
@@ -556,10 +556,8 @@ public class ClassScope extends Scope {
 
         //Dealing with assignable
         checkAssignments(ast);
-        System.out.println("CALUM CHECKING CONDITIONALS --------------- " + this.name);
         methodTable.forEach(MethodScope::checkConditionals);
         constructorTable.forEach(ConstructorScope::checkConditionals);
-        System.out.println("CALUM CHECKING RETURNS --------------- " + this.name);
         methodTable.forEach(n -> n.checkReturnedTypes(classMap));
         constructorTable.forEach(n -> n.checkReturnedTypes(classMap));
 //        constructorTable.forEach();
@@ -571,21 +569,15 @@ public class ClassScope extends Scope {
     public void checkAssignments(ASTHead astHead) {
         ASTNode ast = astHead.unsafeGetHeadNode();
         ArrayList<ASTNode> declarations = ast.findNodesWithLexeme("LOCALVARIABLEDECLARATION", "FIELDDECLARATION");
-        System.out.println("CALUM: " + declarations.size() + " : " + name);
 
         // for each local variable declaration get the LHS type and RHS
         for (ASTNode node : declarations) {
             // Boolean whether type array and its kind
             Triplet<Boolean, Kind, String> lhs_type = getDeclarationLHSType(node);
             Triplet<Boolean, Kind, String> rhs_type = getDeclarationRHSType(node);
-            System.out.println("Class: " + name);
-            System.out.println("GOT LHS: " + lhs_type);
-            System.out.println("GOT RHS: " + rhs_type);
-            System.out.println("EQUAL: " + lhs_type.equals(rhs_type));
 
             // If rhs is null it is a declaration not an assignment we can break
             if (rhs_type.getO2() == null) {
-                System.out.println("Breaking: " + rhs_type.getO2() + rhs_type.getO2() == null);
                 break;
             }
 
@@ -674,14 +666,12 @@ public class ClassScope extends Scope {
     public Triplet<Boolean, Kind, String> getDeclarationLHSType(ASTNode node) {
         ASTNode typeNode = null;
         if (node.lexeme.equals("LOCALVARIABLEDECLARATION")) {
-            System.out.println("Local Variable Declaration");
             typeNode = node.children.get(node.children.size() - 1);
         } else if (node.lexeme.equals("FIELDDECLARATION")) {
             // assumes a field Declaration always has a modifier
-            System.out.println("Field Declaration");
             typeNode = node.children.get(node.children.size() - 2);
         }
-        System.out.println("HERE --------------------");
+
         node.printAST();
 
         // An array type
@@ -690,7 +680,6 @@ public class ClassScope extends Scope {
             // if array of integral type need to go one more level
             if (nextNode.kind != TYPENAME) {
                 Kind type = nextNode.children.get(nextNode.children.size() - 1).kind;
-                System.out.println("TYPE : !! " + type);
                 return new Triplet(true, type, "");
             } else {
                 return new Triplet(true, TYPENAME, nextNode.lexeme);
@@ -776,7 +765,6 @@ public class ClassScope extends Scope {
         if (varDecNode != null) {
             // Figure out what after the = sign resolves to
             ASTNode nodeAfterEquals = varDecNode.findFirstChildAfterChildWithKind(Kind.EQUAL);
-            System.out.println("Got: " + nodeAfterEquals);
 
             // If a class instance
             if (nodeAfterEquals.lexeme.equals("CLASSINSTANCECREATIONEXPRESSION")) {
@@ -873,7 +861,7 @@ public class ClassScope extends Scope {
     }
 
     public Scope resolveSimpleTypeName(final String identifier) {
-        System.out.println("Using: " + identifier);
+
         if (checkIdentifier(identifier)) {
             return this;
         } else if (checkIdentifierAgainstSingleImports(identifier)) {

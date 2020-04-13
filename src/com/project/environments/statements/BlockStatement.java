@@ -17,7 +17,6 @@ public class BlockStatement extends Statement {
     @Override
     public void checkReturnedTypes(final Type type, final HashMap<String, ClassScope> classmap) {
         for (final Statement stmt : childScopes){
-            System.out.println(stmt);
             stmt.checkReturnedTypes(type, classmap);
         }
     }
@@ -26,9 +25,7 @@ public class BlockStatement extends Statement {
     @Override
     public void checkConditionals() {
         // expression must evaluate to boolean
-        System.out.println("Will iterate through num children: " + childScopes.size());
         for (final Statement stmt : childScopes){
-            System.out.println(stmt);
             stmt.checkConditionals();
         }
     }

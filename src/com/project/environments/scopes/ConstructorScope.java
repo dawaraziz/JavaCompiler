@@ -142,14 +142,12 @@ public class ConstructorScope extends Scope {
 
     void checkConditionals() {
         if (body != null) {
-            System.out.println(body);
             body.checkConditionals();
         }
     }
 
     public void checkReturnedTypes(final HashMap<String, ClassScope> classmap) {
         if (body != null) {
-            System.out.println("Constructor Scope body: " + body);
             body.checkReturnedTypes(type, classmap);
         }
     }

@@ -18,7 +18,7 @@ public abstract class Statement extends Scope {
 
     abstract public void assignReachability();
     abstract public void checkReachability();
-    public void checkConditionals() { System.out.println("Exited Here"); return; };
+    public void checkConditionals() { };
     public void checkReturnedTypes(Type type, HashMap<String, ClassScope> classmap) { return; }
 
     static ArrayList<Statement> generateStatementScope

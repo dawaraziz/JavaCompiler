@@ -29,7 +29,6 @@ public class ReturnStatement extends Statement {
                 System.exit(42);
             }
         } else if (expression.type == null) {
-            System.out.println("There is no information on the return type");
         } else if (type.prim_type == VOID) {
             System.err.println("Encountered non-void return in void method.");
             System.exit(42);
@@ -67,7 +66,6 @@ public class ReturnStatement extends Statement {
             final ClassScope retScope = classmap.get(retName);
             if (retScope != null && decScope != null) {
                 if (retScope.isSubClassOf(decScope)) {
-                    System.out.println(retScope.name + " is subclass$ of :" + decScope.name);
                     return decRetType.isArray == retType.isArray;
                 }
             }

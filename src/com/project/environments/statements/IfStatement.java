@@ -23,7 +23,6 @@ public class IfStatement extends Statement {
     public void checkConditionals() {
         // expression must evaluate to boolean
         expression.ast.printAST();
-        System.out.println("Expression type is: " + expression);
         if (!(expression.evaluatesTo() == Kind.BOOLEAN)){
             System.err.println("If Statement does not evaluate to a boolean");
             System.exit(42);
@@ -68,7 +67,6 @@ public class IfStatement extends Statement {
     }
 
     IfStatement(final ASTHead head, final Scope parentScope) {
-        System.out.println("MADE IF STATEMENT: ");
         head.printAST();
         this.ast = head;
         this.parentScope = parentScope;

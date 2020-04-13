@@ -16,7 +16,6 @@ public class TypeExpression extends Expression {
     private final String literalValue;
 
     public Kind evaluatesTo(){
-        System.out.println("TYPEEXPRESSION: " + literalKind + " : interest " + literalValue);
         return booleanOrKind(literalKind);
     }
 

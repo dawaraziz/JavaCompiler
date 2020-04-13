@@ -43,34 +43,38 @@ public class UnaryNotPlusMinusExpr extends Expression {
 
     @Override
     public ArrayList<String> generatei386Code() {
+        labelCounter += 1;
+
+        final long count = labelCounter;
+
         final ArrayList<String> code = new ArrayList<>();
 
         code.addAll(nextExpr.generatei386Code());
 
         code.add("cmp eax, 0");
-        code.add("je " + callNotLabel());
+        code.add("je " + callNotLabel(count));
         code.add("mov eax, 0; If eax is 1+, set it to 0.");
-        code.add("jmp " + callEndLabel());
-        code.add(setNotLabel());
+        code.add("jmp " + callEndLabel(count));
+        code.add(setNotLabel(count));
         code.add("mov eax, 1; If eax is 0, set it to 1.");
-        code.add(setEndLabel());
+        code.add(setEndLabel(count));
 
         return code;
     }
 
-    private String setNotLabel() {
-        return "unary_not_plus_not_" + labelCounter + ":";
+    private String setNotLabel(final long count) {
+        return "unary_not_plus_not_" + count + ":";
     }
 
-    private String callNotLabel() {
-        return "unary_not_plus_not_" + labelCounter;
+    private String callNotLabel(final long count) {
+        return "unary_not_plus_not_" + count;
     }
 
-    private String setEndLabel() {
-        return "unary_not_plus_end_" + labelCounter + ":";
+    private String setEndLabel(final long count) {
+        return "unary_not_plus_end_" + count + ":";
     }
 
-    private String callEndLabel() {
-        return "unary_not_plus_end_" + labelCounter;
+    private String callEndLabel(final long count) {
+        return "unary_not_plus_end_" + count;
     }
 }

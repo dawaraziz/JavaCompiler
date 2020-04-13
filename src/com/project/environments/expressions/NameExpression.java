@@ -54,7 +54,6 @@ public class NameExpression extends Expression {
 
     @Override
     public Kind evaluatesTo() {
-        System.out.println("NAMEKIND: " + nameKind + " kind: " + namePointer.type.typeToKind());
         return booleanOrKind(namePointer.type.typeToKind());
     }
 
@@ -449,7 +448,6 @@ public class NameExpression extends Expression {
         } else if (namePointer instanceof FieldScope) {
 
         } else {
-            System.out.println("x");
             // TODO:
         }
 

@@ -251,10 +251,7 @@ public class ASTNode {
             final Pair<ASTNode, Integer> pair = stack.pop();
             final ASTNode curr = pair.getO1();
             final int level = pair.getO2();
-            for (int i = 0; i < level; i++) {
-                System.out.print("\t");
-            }
-            System.out.println(curr.lexeme + " : " + curr.kind + " : " + level);
+
             for (final ASTNode child : curr.children) {
                 stack.add(new Pair<>(child, level + 1));
             }

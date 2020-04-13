@@ -242,7 +242,6 @@ public class TypeLinker {
                         if (currentScope.stream()
                                 .flatMap(Collection::stream)
                                 .anyMatch(newVar::equals)) {
-                            classTable.forEach(c -> System.out.println(c.name));
                             System.err.println("Redeclaration of variable: " + newVar);
                             System.exit(42);
                         }

@@ -16,7 +16,6 @@ public class FieldScope extends Scope {
         this.ast = head;
         this.parentScope = parentScope;
         this.name = ast.getFieldName();
-        System.out.println("Name is: " + this.name);
         this.type = ast.getFieldType();
         this.modifiers = head.getFieldModifiers();
         this.initializer = Expression.generateExpressionScope(ast.getFieldInitializer(), this);
@@ -42,8 +41,6 @@ public class FieldScope extends Scope {
         ArrayList<ASTNode> culledNames = new ArrayList<>();
 
         if (names != null){
-//            culledNames = recursiveCulling(names, null);
-            System.out.println("LENGTH: " + culledNames);
 
             // Remove any expressions used as qualified names, field access, or Assignments
             for (ASTNode n : names){
@@ -62,22 +59,17 @@ public class FieldScope extends Scope {
                 }
             }
 
-            System.out.println("CHECK FSCOPE DECLARATION: "+ this.name);
-
             // Create a hashset of field variables already declared
             HashSet<String> seenDeclarations = new HashSet<>();
             for (int i = rootClass.fieldTable.size()-1; i >=0; i-- ){
                 FieldScope fscope = rootClass.fieldTable.get(i);
-                System.out.println("seeing: "+ fscope.name);
                 if (fscope == this){
                     break;
                 }
-                System.out.println("add: "+ fscope.name);
                 seenDeclarations.add(fscope.name);
             }
 
             for(ASTNode name : culledNames){
-                System.out.println("check: "+ name.lexeme);
                 // If name wasn't previously declared as a field or it is the variable that is currently being declared fail
                 if (name.lexeme.equals(this.name) || !seenDeclarations.contains(name.lexeme)){
                         System.err.println("Expression Name " + name.lexeme + " used in RHS of field declaration that is declared as another field variable in " + rootClass.name);
@@ -92,23 +84,18 @@ public class FieldScope extends Scope {
         if (names != null) {
             // Remove any expressions used as qualified names, field access, or Assignments
             for (ASTNode n : names) {
-                System.out.println("COMON " + n.lexeme + " : " + n.parent.lexeme);
                 if (!n.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS", "ASSIGNMENT")) {
-                    System.out.println("ADD IT");
                     culledNames.add(n);
                 }
                 if (n.parentOneOfLexeme("ASSIGNMENT") && n.parent != lastParent) {
-                    System.out.println("forever: " + n.lexeme);
                     ArrayList<ASTNode> RHSNames = n.parent.findChildKindsAfterNodeWithLexeme(Kind.EXPRESSIONNAME, "ASSIGNMENTOPERATOR");
                     ArrayList<ASTNode> recurse = new ArrayList<>();
                     for (ASTNode node : RHSNames){
                         if(!node.parentOneOfLexeme("QUALIFIEDNAME", "FIELDACCESS", "ASSIGNMENT")) {
                             culledNames.add(n);
-                            System.out.println("add to RHS cull: " + n.lexeme);
                         }
                         else{
                             recurse.add(n);
-                            System.out.println("add to recurse: " + n.lexeme);
                         }
                     }
                     culledNames.addAll(recursiveCulling(recurse, n.parent));

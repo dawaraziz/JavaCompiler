@@ -348,7 +348,6 @@ public class Main {
 
         String dirName = "";
 
-        System.out.println("HI " + name);
         if (name.split("/")[name.split("/").length-1].charAt(0) == 'J') {
 //            dirName = "./output/";
             dirName = "./output/" + subDir + "/";
@@ -357,9 +356,6 @@ public class Main {
 //            dirName = "./output/";
             dirName = "./output/" + subDir + "/";
         }
-
-
-        text.forEach(System.out::println);
 
         if (name.charAt(name.length()-2) != '.' || name.charAt(name.length()-1) != 's') {
             name = name + ".s";
